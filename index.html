@@ -4,219 +4,142 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flashcard Program</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #007bff; /* Main theme color */
-            --primary-hover-color: #0056b3;
-            --card-bg-color: #f0f7ff; /* Lighter blue for cards */
-            --card-border-color: #a3c9f0; /* Slightly darker blue for card borders */
-            --text-dark: #2c3e50; /* Darker text for better readability */
-            --text-light: #555;
-            --bg-light: #f7f9fc; /* Slightly different light background */
-            --container-bg: #ffffff;
-            --input-bg: #fdfdfd;
-            --shadow-color: rgba(0, 0, 0, 0.08); /* Softer shadow */
-            --success-color: #28a745;
-            --warning-color: #ffc107;
-            --danger-color: #dc3545;
-        }
-
         html {
-            height: 100%;
+            height: 100%; 
         }
         body {
-            font-family: 'Poppins', Arial, sans-serif;
-            padding: 25px;
-            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); /* Gradient background */
+            font-family: Arial, sans-serif;
+            padding: 20px; 
+            background-color: #f0f2f5; 
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100%;
-            box-sizing: border-box;
-            color: var(--text-dark);
-            line-height: 1.6;
-        }
-        .container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            background-color: var(--container-bg);
-            padding: 25px 30px; /* Increased padding */
-            border-radius: 12px; /* More rounded corners */
-            box-shadow: 0 5px 15px var(--shadow-color);
-            max-width: 750px; /* Slightly wider */
-            width: 100%;
+            justify-content: center; 
+            align-items: flex-start; 
+            min-height: 100%; 
             box-sizing: border-box;
         }
-
-        .logo-container { /* For the logo */
-            text-align: center;
-            margin-bottom: 10px;
+        .container { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            background-color: #ffffff; 
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+            max-width: 700px; 
+            width: 100%; 
+            box-sizing: border-box;
         }
-        .logo-container img {
-            max-width: 150px; /* Adjust as needed */
-            height: auto;
-            border-radius: 8px; /* Optional: if your logo benefits from rounded corners */
-        }
-
-        h1 {
+        h1 { /* Styling for the new main title */
             text-align: center;
-            color: var(--text-dark);
-            margin-bottom: 25px;
-            font-weight: 600; /* Bolder title */
-            font-size: 2.2em; /* Larger title */
+            color: #333;
+            margin-bottom: 20px; /* Space below the main title */
         }
         h2 {
-            color: var(--primary-color); /* Use primary color for subheadings */
-            margin-top: 0;
-            margin-bottom: 18px;
-            font-weight: 500;
-            border-bottom: 1px solid #eee; /* Subtle separator */
-            padding-bottom: 8px;
+            color: #333; 
+            margin-top: 0; 
+            margin-bottom: 15px; 
         }
         .input-area {
-            background-color: var(--input-bg);
-            padding: 25px;
-            border-radius: 10px;
-            border: 1px solid #e7e7e7;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            background-color: #f9f9f9; 
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0; 
+            margin-bottom: 10px; 
         }
         .input-row {
             display: flex;
-            gap: 15px; /* Increased gap */
-            margin-bottom: 12px;
+            gap: 10px;
+            margin-bottom: 10px;
         }
-        .input-row input,
-        textarea {
+        .input-row input {
             flex: 1;
-            padding: 12px 15px; /* Increased padding */
-            border: 1px solid #ced4da; /* Softer border */
-            border-radius: 6px; /* More rounded */
-            font-size: 15px; /* Slightly larger font */
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            padding: 10px; 
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px; 
         }
         textarea {
             width: 100%;
-            box-sizing: border-box;
-            margin-bottom: 15px;
-            line-height: 1.5;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box; 
+            margin-bottom: 10px;
+            line-height: 1.5; 
         }
-
-        .input-row input:focus,
-        textarea:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25); /* Bootstrap-like focus */
-            outline: none;
-        }
-
         button {
-            background-color: var(--primary-color);
+            background-color: #007bff; 
             color: white;
             border: none;
-            padding: 12px 20px; /* Enhanced padding */
-            border-radius: 25px; /* Pill-shaped buttons */
+            padding: 10px 15px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 15px; /* Adjusted font size */
-            font-weight: 500; /* Slightly bolder text */
-            margin-right: 8px;
-            margin-top: 8px;
-            transition: background-color 0.2s ease-in-out, transform 0.1s ease, box-shadow 0.2s ease; /* Added transform and shadow */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            text-transform: uppercase; /* Uppercase button text */
-            letter-spacing: 0.5px; /* Slight letter spacing */
+            font-size: 16px;
+            margin-right: 5px;
+            margin-top: 5px; 
+            transition: background-color 0.3s ease; 
         }
-        button:hover {
-            background-color: var(--primary-hover-color);
-            transform: translateY(-2px); /* Slight lift on hover */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        button:hover { 
+            background-color: #0056b3; 
         }
-        button:active {
-            transform: translateY(0px); /* Pressed effect */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        button:disabled {
-            background-color: #b0bec5; /* Softer disabled color */
+        button:disabled { 
+            background-color: #cccccc;
             cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
         }
-        /* Specific button variations */
-        #show-bulk-input, #show-manual-input, #back-to-input {
-            background-color: #6c757d; /* Secondary button color */
-        }
-        #show-bulk-input:hover, #show-manual-input:hover, #back-to-input:hover {
-            background-color: #5a6268;
-        }
-        #print-cards {
-            background-color: var(--success-color); /* Green for print */
-        }
-        #print-cards:hover {
-            background-color: #1e7e34;
-        }
-
-
         .display-area {
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 20px;
-            background-color: var(--container-bg);
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px; 
+            background-color: #ffffff; 
             display: flex;
             flex-direction: column;
-            box-shadow: 0 3px 10px var(--shadow-color);
         }
-        .hidden {
-            display: none !important;
+        .hidden { 
+            display: none !important; 
         }
         .flashcard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive columns */
-            grid-auto-rows: minmax(130px, auto);
-            height: auto;
-            min-height: 685px; /* Keep if specific height is needed, or adjust */
-            grid-gap: 20px; /* Increased gap */
+            grid-template-columns: repeat(2, 1fr); 
+            grid-auto-rows: minmax(125px, auto); 
+            height: auto; 
+            min-height: 685px; 
+            grid-gap: 15px; 
         }
         .card-item {
-            border: 1px solid var(--card-border-color);
-            background-color: var(--card-bg-color);
+            border: 1px solid #007bff; 
+            background-color: #e9f5ff; 
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 15px; /* Increased padding */
-            font-size: 14px; /* Adjusted font size */
-            border-radius: 8px; /* More rounded */
-            box-shadow: 0 3px 7px rgba(0,0,0,0.07);
-            word-wrap: break-word;
-            min-height: 120px;
-            overflow-wrap: break-word;
-            white-space: pre-wrap;
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Added hover transition */
+            padding: 10px; 
+            font-size: 13px; 
+            font-weight: normal; 
+            border-radius: 6px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
+            word-wrap: break-word; 
+            min-height: 115px; 
+            overflow-wrap: break-word; 
+            white-space: pre-wrap; 
         }
-        .card-item:hover {
-            transform: translateY(-5px) scale(1.02); /* Lift and slightly scale on hover */
-            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-        }
-        .card-item .label {
-            font-weight: 600; /* Bolder label */
-            font-size: 11px; /* Slightly larger label */
-            color: var(--primary-color); /* Use primary color */
-            margin-bottom: 8px;
-            text-transform: uppercase; /* Uppercase label */
-            letter-spacing: 0.5px;
+        .card-item .label { 
+            font-weight: bold;
+            font-size: 10px; 
+            color: #0056b3;
+            margin-bottom: 6px; 
         }
         .controls {
-            margin-top: 20px;
-            text-align: center;
+            margin-top: 15px; 
+            text-align: center; 
         }
         #page-info {
             text-align: center;
-            margin-bottom: 15px;
-            font-size: 17px; /* Larger page info */
-            color: var(--text-light);
-            font-weight: 500;
+            margin-bottom: 10px; 
+            font-size: 16px;
+            color: #555;
         }
 
         .message-box {
@@ -224,173 +147,126 @@
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: var(--warning-color);
-            color: var(--text-dark);
-            padding: 15px 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            background-color: #ffc107; 
+            color: #333;
+            padding: 15px 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
             z-index: 1000;
-            display: none;
+            display: none; 
             font-size: 16px;
-            font-weight: 500;
-            animation: fadeInOut 3s ease-in-out; /* Fade in/out animation */
         }
-
-        @keyframes fadeInOut {
-            0%, 100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-            10%, 90% { opacity: 1; transform: translateX(-50%) translateY(0); }
-        }
-
 
         .print-page-title {
-            display: none;
+            display: none; 
         }
         .input-instructions {
-            font-size: 0.95em; /* Slightly larger */
-            color: var(--text-light);
-            margin-bottom: 15px;
-            background-color: #f9f9f9; /* Light background for instructions */
-            padding: 15px;
-            border-radius: 6px;
-            border: 1px solid #eee;
+            font-size: 0.9em;
+            color: #555;
+            margin-bottom: 10px;
         }
         .input-instructions p {
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
         .input-instructions code {
-            background-color: #e0e0e0; /* Darker code background */
-            padding: 3px 6px;
-            border-radius: 4px;
-            font-family: 'Courier New', Courier, monospace; /* Classic monospace */
-            color: #333;
-        }
-        .input-instructions hr {
-            border: 0;
-            height: 1px;
-            background-color: #ddd;
-            margin: 15px 0;
+            background-color: #e8e8e8;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: monospace;
         }
         .delimiter-options {
-            margin-bottom: 15px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 6px;
-        }
-        .delimiter-options strong {
-            margin-right: 10px;
-            font-weight: 500;
+            margin-bottom: 10px; 
         }
         .delimiter-options label {
-            margin-right: 15px;
-            font-size: 0.98em;
-            cursor: pointer;
-        }
-        .delimiter-options input[type="radio"] {
-            margin-right: 5px;
-            accent-color: var(--primary-color); /* Style radio button */
+            margin-right: 10px; 
+            font-size: 0.95em;
         }
         #custom-delimiter-input {
-            width: 50px;
-            padding: 8px;
-            font-size: 0.95em;
+            width: 40px; 
+            padding: 5px;
+            font-size: 0.9em;
             margin-left: 5px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            text-align: center;
         }
 
 
         @media print {
-            html, body {
-                height: auto;
-                background-color: #fff !important; /* Ensure white background */
-                font-family: Arial, sans-serif; /* Standard print font */
-                font-size: 10pt; /* Adjust base font size for print */
-                color: #000 !important; /* Ensure black text */
+             html, body {
+                height: auto; 
+                background-color: #fff; 
             }
-            body {
-                padding: 0;
-                margin: 0;
-                max-width: 100%;
-                display: block;
+            body { 
+                padding: 0; 
+                margin: 0; 
+                max-width: 100%; 
+                display: block; 
+            } 
+            .container { 
+                box-shadow: none; 
+                padding: 0; 
+                margin: 0 auto; 
+                width: 96%; 
+                max-width: 7.8in; 
+                gap: 3mm; 
             }
-            .container {
-                box-shadow: none;
-                padding: 0;
-                margin: 0 auto;
-                width: 98%; /* Slightly more width for content */
-                max-width: 7.8in;
-                gap: 2.5mm; /* Reduced gap */
-                border-radius: 0;
-            }
-            h1, .logo-container { /* Hide logo and main title for print */
+            /* Hide the main title for print to save space */
+            h1 { 
                 display: none !important;
             }
-            .input-area, .controls, #page-info, .message-box, #add-row, #start-flashcards, #back-to-input, #prev-page, #next-page, #print-cards, #parse-bulk-data, #show-manual-input, #show-bulk-input {
-                display: none !important;
+            .input-area, .controls, #page-info, .message-box, #add-row, #start-flashcards, #back-to-input, #prev-page, #next-page, #print-cards, #parse-bulk-data, #show-manual-input, #show-bulk-input { 
+                display: none !important; 
             }
             .display-area {
                 border: none;
                 padding: 0;
                 margin: 0;
                 width: 100%;
-                box-shadow: none;
             }
-            @page {
-                size: letter;
-                margin: 0.3in; /* Slightly more margin */
+            @page { 
+                size: letter; 
+                margin: 0.25in; 
             }
-            .print-page-title {
-                display: block !important;
+            .print-page-title { 
+                display: block !important; 
                 text-align: center;
-                font-size: 9pt;
-                margin-bottom: 2mm;
+                font-size: 9pt; 
+                margin-bottom: 2mm; 
                 font-weight: bold;
-                color: #000;
             }
-            .flashcard-grid {
-                page-break-after: always;
-                grid-template-columns: repeat(2, 1fr) !important; /* Strict 2 columns */
-                grid-gap: 2.5mm !important; /* Strict gap */
-                height: auto;
-                min-height: 0;
-                background-color: #fff !important;
-                grid-auto-rows: 1fr; /* Equal height rows */
-                border: none; /* No border around the grid itself */
+            .flashcard-grid { 
+                page-break-after: always; 
+                grid-template-columns: repeat(2, 1fr); 
+                grid-gap: 3mm; 
+                height: auto; 
+                min-height: 0; 
+                background-color: #ffffff; 
+                grid-auto-rows: 1fr; 
             }
             .card-item {
-                border: 0.8pt solid #333 !important; /* Thinner solid border */
-                font-size: 8pt !important;
-                min-height: 1.7in !important; /* Adjust based on content and preference */
-                background-color: #fdfdfd !important; /* Very light grey */
-                padding: 2mm !important; /* Reduced padding */
-                page-break-inside: avoid !important;
-                box-shadow: none !important;
-                white-space: pre-wrap !important;
-                display: flex !important;
-                flex-direction: column !important;
-                justify-content: center !important;
-                align-items: center !important;
-                overflow: hidden !important;
-                border-radius: 4px !important; /* Slight radius for printed cards */
-                color: #000 !important;
+                border: 1px solid #000; 
+                font-size: 8pt; 
+                min-height: 1.65in; 
+                background-color: #f8f8f8; 
+                padding: 2.5mm; 
+                page-break-inside: avoid; 
+                box-shadow: none; 
+                white-space: pre-wrap; 
+                display: flex; 
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                overflow: hidden; 
             }
             .card-item .label {
-                font-size: 7pt !important;
-                color: #000 !important;
-                font-weight: bold !important;
-                margin-bottom: 1.5mm !important;
-                text-transform: uppercase;
+                font-size: 7pt; 
+                color: #000; 
+                margin-bottom: 1.5mm; 
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo-container"> <img src="logo.png" alt="Flashcard Maker Logo">
-        </div>
-
-        <div class="input-area" id="manual-input-area">
+        <h1>Flashcard Maker</h1> <div class="input-area" id="manual-input-area">
             <h2>Enter Terms and Definitions Manually</h2>
             <div id="term-def-inputs">
                 <div class="input-row">
@@ -431,7 +307,7 @@
             <button id="parse-bulk-data">Parse Bulk Data & Generate Flashcards</button>
             <button id="show-manual-input">Switch to Manual Row Input</button>
         </div>
-
+        
         <div class="display-area hidden" id="flashcard-display">
             <div id="page-info"></div>
             <div id="cards-container">
@@ -451,7 +327,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // DOM elements
             const addRowBtn = document.getElementById('add-row');
-            const startManualBtn = document.getElementById('start-flashcards');
+            const startManualBtn = document.getElementById('start-flashcards'); 
             const termDefInputs = document.getElementById('term-def-inputs');
             const displayArea = document.getElementById('flashcard-display');
             const cardsContainer = document.getElementById('cards-container');
@@ -460,7 +336,7 @@
             const nextBtn = document.getElementById('next-page');
             const printBtn = document.getElementById('print-cards');
             const backBtn = document.getElementById('back-to-input');
-
+            
             const manualInputArea = document.getElementById('manual-input-area');
             const bulkInputArea = document.getElementById('bulk-input-area');
             const showBulkInputBtn = document.getElementById('show-bulk-input');
@@ -475,30 +351,18 @@
             const controlsDiv = document.querySelector('.controls');
 
             let rowCount = 1;
-            let flashcardData = [];
+            let flashcardData = []; 
             let currentPage = 0;
             let totalPages = 0;
-            const CARDS_PER_PAGE = 10;
+            const CARDS_PER_PAGE = 10; 
 
             // --- Utility Functions ---
-            function showMessage(message, type = 'warning') { // Added type for different message styles
+            function showMessage(message) {
                 customAlertBox.textContent = message;
-                customAlertBox.className = 'message-box'; // Reset classes
-                if (type === 'success') {
-                    customAlertBox.classList.add('success'); // You'd define .success in CSS
-                } else if (type === 'error') {
-                    customAlertBox.classList.add('error'); // You'd define .error in CSS
-                } else {
-                    customAlertBox.classList.add('warning'); // Default
-                }
                 customAlertBox.style.display = 'block';
-                // Clear existing animation timeouts if any
-                if (customAlertBox.animationTimeout) {
-                    clearTimeout(customAlertBox.animationTimeout);
-                }
-                customAlertBox.animationTimeout = setTimeout(() => {
+                setTimeout(() => {
                     customAlertBox.style.display = 'none';
-                }, 3000);
+                }, 3000); 
             }
 
             function isOptionLine(line) {
@@ -528,7 +392,7 @@
                 bulkInputArea.classList.add('hidden');
                 manualInputArea.classList.remove('hidden');
             });
-
+            
             // --- Manual Input Logic ---
             addRowBtn.addEventListener('click', function() {
                 rowCount++;
@@ -540,38 +404,38 @@
                 `;
                 termDefInputs.appendChild(newRow);
             });
-
+            
             startManualBtn.addEventListener('click', function() {
-                flashcardData = [];
-                const termInputs = manualInputArea.querySelectorAll('.term');
-                const defInputs = manualInputArea.querySelectorAll('.definition');
-
+                flashcardData = []; 
+                const termInputs = manualInputArea.querySelectorAll('.term'); 
+                const defInputs = manualInputArea.querySelectorAll('.definition'); 
+                
                 for (let i = 0; i < termInputs.length; i++) {
                     const term = termInputs[i].value.trim();
                     const definition = defInputs[i].value.trim();
-
+                    
                     if (term || definition) {
-                        flashcardData.push({
-                            term: term || `(No Term Provided ${flashcardData.length + 1})`,
-                            definition: definition || `(No Definition Provided ${flashcardData.length + 1})`
+                        flashcardData.push({ 
+                            term: term || `(No Term Provided ${flashcardData.length + 1})`, 
+                            definition: definition || `(No Definition Provided ${flashcardData.length + 1})` 
                         });
                     }
                 }
-
+                
                 if (flashcardData.length === 0) {
-                    showMessage('Please enter at least one term or definition in the manual input fields.', 'error');
+                    showMessage('Please enter at least one term or definition in the manual input fields.');
                     return;
                 }
-
+                
                 proceedToFlashcardDisplay();
             });
 
             // --- Bulk Input Logic (with Delimiter Choice) ---
             parseBulkDataBtn.addEventListener('click', function() {
-                flashcardData = [];
-                const bulkText = bulkDataInput.value;
+                flashcardData = []; 
+                const bulkText = bulkDataInput.value; 
                 if (!bulkText.trim()) {
-                    showMessage('Please enter some data in the bulk input field.', 'error');
+                    showMessage('Please enter some data in the bulk input field.');
                     return;
                 }
 
@@ -585,12 +449,12 @@
                 } else if (selectedDelimiterOption === 'custom') {
                     delimiterChar = customDelimiterInput.value.trim();
                     if (delimiterChar.length !== 1) {
-                        showMessage('Custom delimiter must be a single character.', 'error');
+                        showMessage('Custom delimiter must be a single character.');
                         customDelimiterInput.focus();
                         return;
                     }
                 } else {
-                    showMessage('Invalid delimiter selected.', 'error');
+                    showMessage('Invalid delimiter selected.'); 
                     return;
                 }
 
@@ -603,7 +467,7 @@
 
                     let termLines = [];
                     let definition = '';
-
+                    
                     const lastLineInBlock = blockLines[blockLines.length - 1].trim();
                     const lastDelimiterIndex = lastLineInBlock.lastIndexOf(delimiterChar);
 
@@ -614,55 +478,50 @@
                         }
                         termLines.push(lastLineInBlock.substring(0, lastDelimiterIndex).trim());
                     } else {
-                        // If no delimiter on the last line of the block, assume the whole block is a term
-                        // and mark definition as not provided for this specific card.
+                        definition = `(No definition provided ${flashcardData.length + 1})`;
                         termLines = blockLines.map(line => line.trim());
-                        definition = `(No definition provided for this card)`;
                     }
 
-                    let term = termLines.filter(line => line).join('\n').trim();
+                    let term = termLines.filter(line => line).join('\n').trim(); 
 
-                    if (!term && definition === `(No definition provided for this card)`) return null; // Skip if completely empty
+                    if (!term && !definition) return null; 
 
                     if (!term) {
                         term = `(No term provided ${flashcardData.length + 1})`;
                     }
-                     // Keep definition as is, even if it was "(No definition provided...)"
-
+                    if (!definition && lastDelimiterIndex === -1) { 
+                    } else if (!definition) { 
+                        definition = `(No definition provided ${flashcardData.length + 1})`;
+                    }
                     return { term, definition };
                 }
 
                 for (let i = 0; i < allLines.length; i++) {
-                    const currentLine = allLines[i];
+                    const currentLine = allLines[i]; 
                     const trimmedCurrentLine = currentLine.trim();
 
                     if (trimmedCurrentLine === "" && currentCardBlockLines.length === 0) {
-                        continue; // Skip leading empty lines for a new block
+                        continue;
                     }
-
-                    // Start a new card block if the current line is not an option (a., b., etc.)
-                    // AND we already have lines in the current block.
-                    // OR if the line is empty and signals a clear break between blocks.
-                    if ((!isOptionLine(trimmedCurrentLine) && currentCardBlockLines.length > 0 && trimmedCurrentLine !== "") ||
-                        (trimmedCurrentLine === "" && currentCardBlockLines.length > 0 && !isOptionLine(allLines[i-1]?.trim() || ""))) {
+                    
+                    if (!isOptionLine(trimmedCurrentLine) && currentCardBlockLines.length > 0) {
                         const card = processCardBlock(currentCardBlockLines);
                         if (card) flashcardData.push(card);
-                        currentCardBlockLines = [];
+                        currentCardBlockLines = []; 
                     }
-
-                    if (trimmedCurrentLine !== "") { // Only add non-empty lines to the current block
-                         currentCardBlockLines.push(currentLine);
+                    
+                    if (trimmedCurrentLine !== "" || currentCardBlockLines.length > 0) {
+                         currentCardBlockLines.push(currentLine); 
                     }
                 }
 
-                // Process the last remaining block
                 if (currentCardBlockLines.length > 0) {
                     const card = processCardBlock(currentCardBlockLines);
                     if (card) flashcardData.push(card);
                 }
-
+                
                 if (flashcardData.length === 0) {
-                    showMessage('No valid flashcards could be parsed. Please check the format and selected delimiter.', 'error');
+                    showMessage('No valid flashcards could be parsed. Please check the format and selected delimiter.');
                     return;
                 }
                 proceedToFlashcardDisplay();
@@ -671,73 +530,56 @@
 
             // --- Common Flashcard Processing and Display Logic ---
             function proceedToFlashcardDisplay() {
-                // Pad with empty cards only if there's at least one card, to make full pages for printing
-                if (flashcardData.length > 0) {
-                    while (flashcardData.length % CARDS_PER_PAGE !== 0) {
-                        const idx = flashcardData.length + 1;
-                        flashcardData.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` });
-                    }
-                } else { // Should not happen if checks above are working
-                    showMessage('No data to display.', 'error');
-                    return;
+                while (flashcardData.length % CARDS_PER_PAGE !== 0) {
+                    const idx = flashcardData.length + 1;
+                    flashcardData.push({ term: `(Empty Term ${idx})`, definition: `(Empty Definition ${idx})` });
                 }
-
-
+                
                 manualInputArea.classList.add('hidden');
                 bulkInputArea.classList.add('hidden');
                 displayArea.classList.remove('hidden');
-
+                
                 currentPage = 0;
-                totalPages = (flashcardData.length / CARDS_PER_PAGE) * 2; // Terms and Definitions pages
+                totalPages = (flashcardData.length / CARDS_PER_PAGE) * 2; 
                 updateDisplay();
-                showMessage(`Generated ${flashcardData.filter(c => c.term !== '(Empty Slot)').length} flashcards!`, 'success');
             }
-
+            
             function updateDisplay() {
-                cardsContainer.innerHTML = '';
-
+                cardsContainer.innerHTML = ''; 
+                
                 const isTermPage = currentPage % 2 === 0;
-                const setIndex = Math.floor(currentPage / 2); // 0 for page 0&1, 1 for page 2&3, etc.
+                const setIndex = Math.floor(currentPage / 2);
                 const startIdx = setIndex * CARDS_PER_PAGE;
-
-                if (totalPages === 0) { // Should not happen if generation logic is correct
-                    pageInfo.textContent = 'No flashcards to display.';
-                    controlsDiv.classList.add('hidden');
-                    return;
-                }
-
-
-                pageInfo.textContent = `Page ${currentPage + 1} of ${totalPages} - ${isTermPage ? 'Terms' : 'Definitions'} (Card Set ${setIndex + 1})`;
-                pageInfo.classList.remove('hidden');
-                controlsDiv.classList.remove('hidden');
+                
+                pageInfo.textContent = `Page ${currentPage + 1} of ${totalPages} - ${isTermPage ? 'Terms' : 'Definitions'} (Set ${setIndex + 1})`;
+                pageInfo.classList.remove('hidden'); 
+                controlsDiv.classList.remove('hidden'); 
 
                 const grid = document.createElement('div');
-                grid.className = 'flashcard-grid';
-
+                grid.className = 'flashcard-grid'; 
+                
                 for (let i = 0; i < CARDS_PER_PAGE; i++) {
-                    const itemIndex = startIdx + i;
-                    if (itemIndex >= flashcardData.length) break; // Should not happen if padded correctly
-
+                    const itemIndex = startIdx + i; 
                     const card = document.createElement('div');
                     card.className = 'card-item';
-
+                    
                     const itemToDisplay = flashcardData[itemIndex];
-                    const labelText = isTermPage ?
-                        `TERM ${itemIndex + 1}` :
-                        `DEFINITION ${itemIndex + 1}`;
-                    const contentText = isTermPage ?
-                        itemToDisplay.term :
-                        itemToDisplay.definition;
-
-                    card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`;
+                    const labelText = isTermPage 
+                        ? `TERM ${itemIndex + 1}` 
+                        : `DEFINITION ${itemIndex + 1}`;
+                    const contentText = isTermPage 
+                        ? itemToDisplay.term 
+                        : itemToDisplay.definition;
+                    
+                    card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`; 
                     grid.appendChild(card);
                 }
                 cardsContainer.appendChild(grid);
-
+                
                 prevBtn.disabled = currentPage === 0;
                 nextBtn.disabled = currentPage === totalPages - 1;
             }
-
+            
             // --- Navigation and Print Controls ---
             nextBtn.addEventListener('click', function() {
                 if (currentPage < totalPages - 1) {
@@ -745,112 +587,85 @@
                     updateDisplay();
                 }
             });
-
+            
             prevBtn.addEventListener('click', function() {
                 if (currentPage > 0) {
                     currentPage--;
                     updateDisplay();
                 }
             });
-
+            
             printBtn.addEventListener('click', function() {
-                if (flashcardData.length === 0 || totalPages === 0) {
-                    showMessage('No flashcards to print.', 'error');
+                if (flashcardData.length === 0 || totalPages === 0) { 
+                    showMessage('No flashcards to print.');
                     return;
                 }
 
-                // Temporarily hide non-print elements and prepare print layout
-                const originalPageInfoClass = pageInfo.className;
-                const originalControlsClass = controlsDiv.className;
-
                 pageInfo.classList.add('hidden');
                 controlsDiv.classList.add('hidden');
-                cardsContainer.innerHTML = ''; // Clear current view for print version
+                cardsContainer.innerHTML = ''; 
 
-                for (let i = 0; i < totalPages; i++) { // Iterate through all pages (term and def)
+                for (let i = 0; i < totalPages; i++) { 
                     const isTermPageForPrint = i % 2 === 0;
                     const setIndexForPrint = Math.floor(i / 2);
                     const startIdxForPrint = setIndexForPrint * CARDS_PER_PAGE;
 
                     const printPageTitle = document.createElement('h3');
-                    printPageTitle.className = 'print-page-title'; // This class is styled for print
+                    printPageTitle.className = 'print-page-title'; 
                     printPageTitle.textContent = `Page ${i + 1} / ${totalPages} - ${isTermPageForPrint ? 'Terms' : 'Definitions'} (Set ${setIndexForPrint + 1})`;
                     cardsContainer.appendChild(printPageTitle);
 
                     const grid = document.createElement('div');
-                    grid.className = 'flashcard-grid'; // This class is styled for print
+                    grid.className = 'flashcard-grid'; 
 
-                    for (let j = 0; j < CARDS_PER_PAGE; j++) {
-                        let indexToFetchDataFrom = startIdxForPrint + j;
-                        if (indexToFetchDataFrom >= flashcardData.length) break; // Safety break
+                    for (let j = 0; j < CARDS_PER_PAGE; j++) { 
+                        let indexToFetchDataFrom = startIdxForPrint + j; 
 
-                        // Logic for duplex printing card backs (matching definitions to terms on the flip side)
-                        if (!isTermPageForPrint) { // If it's a definition page
-                            const numColumns = 2; // Assuming 2 columns in print
-                            const col = j % numColumns; // 0 for left, 1 for right
+                        if (!isTermPageForPrint) { 
+                            const numColumns = 2; 
+                            const col = j % numColumns; 
 
-                            // This swaps adjacent cards for back-to-back printing if cut down the middle
-                            // For a 2-column layout:
-                            // Card 0 (Term) prints. Its Definition (Def 0) should be on the back.
-                            // Card 1 (Term) prints. Its Definition (Def 1) should be on the back.
-                            // If printing duplex and cutting, the back of Card 0 is where Card 1's definition might naturally fall.
-                            // So we need to arrange definitions: Def 1, Def 0, Def 3, Def 2 ...
-                            if (col === 0) { // Left column card on definition page (e.g., position 0, 2, 4...)
-                                if (indexToFetchDataFrom + 1 < startIdxForPrint + CARDS_PER_PAGE && indexToFetchDataFrom + 1 < flashcardData.length) {
-                                    indexToFetchDataFrom = startIdxForPrint + j + 1;
-                                }
-                            } else { // Right column card on definition page (e.g., position 1, 3, 5...)
-                                 if (indexToFetchDataFrom - 1 >= startIdxForPrint) {
-                                    indexToFetchDataFrom = startIdxForPrint + j - 1;
-                                 }
+                            if (col === 0) { 
+                                indexToFetchDataFrom = startIdxForPrint + j + 1;
+                            } else { 
+                                indexToFetchDataFrom = startIdxForPrint + j - 1;
+                            }
+                            if (indexToFetchDataFrom >= startIdxForPrint + CARDS_PER_PAGE || indexToFetchDataFrom < startIdxForPrint) {
+                                indexToFetchDataFrom = startIdxForPrint + j; 
                             }
                         }
+                        
+                        const itemToDisplay = (indexToFetchDataFrom < flashcardData.length) 
+                                            ? flashcardData[indexToFetchDataFrom] 
+                                            : { term: '(Error)', definition: '(Error)'}; 
 
-
-                        const itemToDisplay = flashcardData[indexToFetchDataFrom];
                         const card = document.createElement('div');
-                        card.className = 'card-item'; // Styled for print
-
-                        const labelText = isTermPageForPrint ?
-                            `TERM ${indexToFetchDataFrom + 1}` :
-                            `DEFINITION ${indexToFetchDataFrom + 1}`;
-                        const contentText = isTermPageForPrint ?
-                            itemToDisplay.term :
-                            itemToDisplay.definition;
-
-                        card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`;
+                        card.className = 'card-item';
+                        
+                        const labelText = isTermPageForPrint 
+                            ? `TERM ${indexToFetchDataFrom + 1}` 
+                            : `DEFINITION ${indexToFetchDataFrom + 1}`; 
+                        const contentText = isTermPageForPrint 
+                            ? itemToDisplay.term 
+                            : itemToDisplay.definition;
+                        
+                        card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`; 
                         grid.appendChild(card);
                     }
                     cardsContainer.appendChild(grid);
                 }
 
-                window.print();
-
-                // Restore view after print dialog
-                cardsContainer.innerHTML = ''; // Clear print layout
-                pageInfo.className = originalPageInfoClass; // Restore original classes
-                controlsDiv.className = originalControlsClass;
-                if (!displayArea.classList.contains('hidden')) { // if display area was visible
-                     updateDisplay(); // Re-render the current page for screen
-                }
+                window.print(); 
+                updateDisplay(); 
             });
-
+            
             backBtn.addEventListener('click', function() {
                 displayArea.classList.add('hidden');
-                manualInputArea.classList.remove('hidden'); // Default to manual input
-                bulkInputArea.classList.add('hidden');
+                manualInputArea.classList.remove('hidden');
+                bulkInputArea.classList.add('hidden'); 
 
-                pageInfo.classList.add('hidden');
-                controlsDiv.classList.add('hidden');
-                // Optionally reset flashcardData if you want a clean slate
-                // flashcardData = [];
-                // rowCount = 1;
-                // termDefInputs.innerHTML = `
-                //  <div class="input-row">
-                //      <input type="text" placeholder="Term 1" class="term">
-                //      <input type="text" placeholder="Definition 1" class="definition">
-                //  </div>`;
-                // bulkDataInput.value = '';
+                pageInfo.classList.add('hidden'); 
+                controlsDiv.classList.add('hidden'); 
             });
         });
     </script>
