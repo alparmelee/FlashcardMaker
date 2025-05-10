@@ -4,142 +4,229 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flashcard Program</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #4A90E2; /* A nice blue */
+            --primary-dark: #357ABD;
+            --secondary-color: #50E3C2; /* A contrasting teal/mint */
+            --light-gray: #f7f9fc;
+            --medium-gray: #e0e6ed;
+            --dark-gray: #4a4a4a;
+            --text-color: #333333;
+            --white: #ffffff;
+            --danger-color: #D0021B;
+            --warning-color: #f5a623;
+            --success-color: #7ED321;
+            --border-radius-sm: 4px;
+            --border-radius-md: 8px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --box-shadow-light: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
         html {
-            height: 100%; 
+            height: 100%;
+            scroll-behavior: smooth;
         }
+
         body {
-            font-family: Arial, sans-serif;
-            padding: 20px; 
-            background-color: #f0f2f5; 
-            display: flex;
-            justify-content: center; 
-            align-items: flex-start; 
-            min-height: 100%; 
-            box-sizing: border-box;
-        }
-        .container { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 15px; 
-            background-color: #ffffff; 
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
-            max-width: 700px; 
-            width: 100%; 
-            box-sizing: border-box;
-        }
-        h1 { /* Styling for the new main title */
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px; /* Space below the main title */
-        }
-        h2 {
-            color: #333; 
-            margin-top: 0; 
-            margin-bottom: 15px; 
-        }
-        .input-area {
-            background-color: #f9f9f9; 
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0; 
-            margin-bottom: 10px; 
-        }
-        .input-row {
+            background-color: var(--light-gray);
             display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100%;
+            box-sizing: border-box;
+            color: var(--text-color);
         }
-        .input-row input {
-            flex: 1;
-            padding: 10px; 
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px; 
-        }
-        textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
-            box-sizing: border-box; 
-            margin-bottom: 10px;
-            line-height: 1.5; 
-        }
-        button {
-            background-color: #007bff; 
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-right: 5px;
-            margin-top: 5px; 
-            transition: background-color 0.3s ease; 
-        }
-        button:hover { 
-            background-color: #0056b3; 
-        }
-        button:disabled { 
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-        .display-area {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px; 
-            background-color: #ffffff; 
+
+        .container {
             display: flex;
             flex-direction: column;
+            gap: 25px; /* Increased gap */
+            background-color: var(--white);
+            padding: 30px; /* Increased padding */
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--box-shadow);
+            max-width: 750px; /* Slightly wider */
+            width: 100%;
+            box-sizing: border-box;
         }
-        .hidden { 
-            display: none !important; 
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid var(--medium-gray);
+            padding-bottom: 20px;
+            margin-bottom: 10px;
         }
+
+        .header img.logo {
+            height: 50px; /* Adjust as needed */
+            width: auto;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin: 0; /* Removed default margins */
+            font-size: 2em; /* Larger title */
+            font-weight: 700;
+        }
+
+        h2 {
+            color: var(--dark-gray);
+            margin-top: 0;
+            margin-bottom: 20px; /* Increased bottom margin */
+            font-size: 1.5em;
+            font-weight: 500;
+            border-bottom: 1px solid var(--medium-gray);
+            padding-bottom: 10px;
+        }
+
+        .input-area, .display-area {
+            background-color: var(--white);
+            padding: 25px;
+            border-radius: var(--border-radius-md);
+            border: 1px solid var(--medium-gray);
+            box-shadow: var(--box-shadow-light);
+        }
+
+        .input-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .input-row input,
+        textarea {
+            flex: 1;
+            padding: 12px 15px; /* Increased padding */
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius-sm);
+            font-size: 1em; /* Consistent font size */
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .input-row input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            line-height: 1.6;
+            min-height: 120px; /* Good default height */
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 12px 20px; /* Increased padding */
+            border-radius: var(--border-radius-sm);
+            cursor: pointer;
+            font-size: 1em; /* Consistent font size */
+            font-weight: 500;
+            margin-right: 8px;
+            margin-top: 10px;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            text-transform: capitalize; /* Slight text transform */
+        }
+
+        button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px); /* Subtle lift */
+        }
+        button:active {
+            transform: translateY(0px);
+        }
+
+        button:disabled {
+            background-color: var(--medium-gray);
+            color: #9b9b9b;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Specific button styles for variety if needed */
+        button.secondary {
+            background-color: var(--secondary-color);
+        }
+        button.secondary:hover {
+            background-color: #3dbca0; /* Darker shade of secondary */
+        }
+        button.danger {
+            background-color: var(--danger-color);
+        }
+        button.danger:hover {
+            background-color: #b00216;
+        }
+
+
+        .hidden {
+            display: none !important;
+        }
+
         .flashcard-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); 
-            grid-auto-rows: minmax(125px, auto); 
-            height: auto; 
-            min-height: 685px; 
-            grid-gap: 15px; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive columns */
+            grid-auto-rows: minmax(150px, auto); /* Taller cards */
+            gap: 20px; /* Increased gap */
+            min-height: auto; /* Let content define height, adjust if needed */
+            padding-bottom: 20px; /* Space at the bottom of the grid */
         }
+
         .card-item {
-            border: 1px solid #007bff; 
-            background-color: #e9f5ff; 
+            border: 1px solid var(--primary-color);
+            background-color: #eef7ff; /* Lighter blue shade */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 10px; 
-            font-size: 13px; 
-            font-weight: normal; 
-            border-radius: 6px; 
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
-            word-wrap: break-word; 
-            min-height: 115px; 
-            overflow-wrap: break-word; 
-            white-space: pre-wrap; 
+            padding: 15px; /* Increased padding */
+            font-size: 1em;
+            border-radius: var(--border-radius-md); /* Softer corners */
+            box-shadow: var(--box-shadow-light);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: pre-wrap;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        .card-item .label { 
-            font-weight: bold;
-            font-size: 10px; 
-            color: #0056b3;
-            margin-bottom: 6px; 
+        .card-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(74, 144, 226, 0.2);
         }
+
+        .card-item .label {
+            font-weight: 700; /* Bolder label */
+            font-size: 0.8em; /* Smaller label */
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
         .controls {
-            margin-top: 15px; 
-            text-align: center; 
+            margin-top: 25px; /* Increased margin */
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid var(--medium-gray);
         }
+
         #page-info {
             text-align: center;
-            margin-bottom: 10px; 
-            font-size: 16px;
-            color: #555;
+            margin-bottom: 15px;
+            font-size: 1.1em; /* Slightly larger */
+            color: var(--dark-gray);
+            font-weight: 500;
         }
 
         .message-box {
@@ -147,126 +234,205 @@
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: #ffc107; 
-            color: #333;
-            padding: 15px 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            background-color: var(--warning-color);
+            color: var(--white);
+            padding: 15px 25px;
+            border-radius: var(--border-radius-sm);
+            box-shadow: var(--box-shadow);
             z-index: 1000;
-            display: none; 
-            font-size: 16px;
+            display: none;
+            font-size: 1em;
+            font-weight: 500;
+        }
+        .message-box.success {
+             background-color: var(--success-color);
+        }
+        .message-box.error {
+             background-color: var(--danger-color);
         }
 
+
         .print-page-title {
-            display: none; 
+            display: none;
         }
+
         .input-instructions {
-            font-size: 0.9em;
-            color: #555;
-            margin-bottom: 10px;
-        }
-        .input-instructions p {
-            margin-bottom: 5px;
-        }
-        .input-instructions code {
-            background-color: #e8e8e8;
-            padding: 2px 4px;
-            border-radius: 3px;
-            font-family: monospace;
-        }
-        .delimiter-options {
-            margin-bottom: 10px; 
-        }
-        .delimiter-options label {
-            margin-right: 10px; 
             font-size: 0.95em;
+            color: var(--dark-gray);
+            margin-bottom: 15px;
+            background-color: #f0f2f580; /* Light background for instructions */
+            padding: 15px;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--medium-gray);
         }
-        #custom-delimiter-input {
-            width: 40px; 
-            padding: 5px;
+
+        .input-instructions p {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        .input-instructions p:last-child {
+            margin-bottom: 0;
+        }
+
+        .input-instructions code {
+            background-color: #e0e0e0;
+            padding: 3px 6px;
+            border-radius: var(--border-radius-sm);
+            font-family: 'Courier New', Courier, monospace;
             font-size: 0.9em;
+        }
+        .input-instructions hr {
+            border: none;
+            border-top: 1px solid var(--medium-gray);
+            margin: 15px 0;
+        }
+
+        .delimiter-options {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f0f2f580;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--medium-gray);
+        }
+
+        .delimiter-options strong {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .delimiter-options label {
+            margin-right: 15px;
+            font-size: 1em;
+            cursor: pointer;
+            display: inline-flex; /* Align radio and text nicely */
+            align-items: center;
+        }
+        .delimiter-options input[type="radio"] {
+            margin-right: 5px;
+            accent-color: var(--primary-color); /* Style the radio button */
+        }
+
+        #custom-delimiter-input {
+            width: 50px; /* Slightly wider */
+            padding: 8px;
+            font-size: 1em;
             margin-left: 5px;
+            text-align: center;
+            border: 1px solid var(--medium-gray);
+            border-radius: var(--border-radius-sm);
+        }
+        #custom-delimiter-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+
+        /* Footer (Optional) */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid var(--medium-gray);
+            font-size: 0.9em;
+            color: #777;
         }
 
 
         @media print {
-             html, body {
-                height: auto; 
-                background-color: #fff; 
+            html, body {
+                height: auto;
+                background-color: var(--white);
+                font-size: 10pt; /* Base font size for print */
             }
-            body { 
-                padding: 0; 
-                margin: 0; 
-                max-width: 100%; 
-                display: block; 
-            } 
-            .container { 
-                box-shadow: none; 
-                padding: 0; 
-                margin: 0 auto; 
-                width: 96%; 
-                max-width: 7.8in; 
-                gap: 3mm; 
+            body {
+                padding: 0;
+                margin: 0;
+                max-width: 100%;
+                display: block;
             }
-            /* Hide the main title for print to save space */
-            h1 { 
+            .container {
+                box-shadow: none;
+                padding: 0;
+                margin: 0 auto;
+                width: 100%; /* Use full width within margins */
+                max-width: 7.8in; /* Standard letter paper width minus margins */
+                gap: 2mm;
+                border: none; /* Remove container border for print */
+            }
+
+            .header, /* Hide the screen header */
+            h1,
+            .input-area, .controls, #page-info, .message-box, #add-row, #start-flashcards, #back-to-input, #prev-page, #next-page, #print-cards, #parse-bulk-data, #show-manual-input, #show-bulk-input, .footer {
                 display: none !important;
             }
-            .input-area, .controls, #page-info, .message-box, #add-row, #start-flashcards, #back-to-input, #prev-page, #next-page, #print-cards, #parse-bulk-data, #show-manual-input, #show-bulk-input { 
-                display: none !important; 
-            }
+
             .display-area {
                 border: none;
                 padding: 0;
                 margin: 0;
                 width: 100%;
+                box-shadow: none;
             }
-            @page { 
-                size: letter; 
-                margin: 0.25in; 
+
+            @page {
+                size: letter;
+                margin: 0.5in; /* Standard margins */
             }
-            .print-page-title { 
-                display: block !important; 
+
+            .print-page-title {
+                display: block !important;
                 text-align: center;
-                font-size: 9pt; 
-                margin-bottom: 2mm; 
+                font-size: 9pt;
+                margin-bottom: 3mm; /* Increased margin */
                 font-weight: bold;
+                width: 100%;
             }
-            .flashcard-grid { 
-                page-break-after: always; 
-                grid-template-columns: repeat(2, 1fr); 
-                grid-gap: 3mm; 
-                height: auto; 
-                min-height: 0; 
-                background-color: #ffffff; 
-                grid-auto-rows: 1fr; 
+
+            .flashcard-grid {
+                page-break-after: always;
+                grid-template-columns: repeat(2, 1fr) !important; /* Strict 2 columns */
+                grid-gap: 5mm !important; /* Slightly larger gap for cutting */
+                height: auto;
+                min-height: 0;
+                background-color: var(--white);
+                grid-auto-rows: minmax(1.8in, 1fr); /* Ensure cards fill space, adjust as needed */
+                border: none; /* Remove grid border */
             }
+
             .card-item {
-                border: 1px solid #000; 
-                font-size: 8pt; 
-                min-height: 1.65in; 
-                background-color: #f8f8f8; 
-                padding: 2.5mm; 
-                page-break-inside: avoid; 
-                box-shadow: none; 
-                white-space: pre-wrap; 
-                display: flex; 
+                border: 1px dashed #666 !important; /* Dashed border for cutting guides */
+                font-size: 9pt !important;
+                min-height: 1.8in !important; /* Consistent min-height for print */
+                background-color: #fdfdfd !important; /* Very light background */
+                padding: 3mm !important;
+                page-break-inside: avoid !important;
+                box-shadow: none !important;
+                white-space: pre-wrap !important;
+                display: flex;
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
-                overflow: hidden; 
+                overflow: hidden !important;
+                color: #000 !important; /* Ensure text is black for print */
             }
+
             .card-item .label {
-                font-size: 7pt; 
-                color: #000; 
-                margin-bottom: 1.5mm; 
+                font-size: 7.5pt !important;
+                color: #333 !important;
+                margin-bottom: 2mm !important;
+                font-weight: bold !important;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Flashcard Maker</h1> <div class="input-area" id="manual-input-area">
+        <div class="header">
+            <img src="logo.png" alt="Flashcard Maker Logo" class="logo"> <h1>Flashcard Maker</h1>
+        </div>
+
+        <div class="input-area" id="manual-input-area">
             <h2>Enter Terms and Definitions Manually</h2>
             <div id="term-def-inputs">
                 <div class="input-row">
@@ -275,7 +441,7 @@
                 </div>
             </div>
             <button id="add-row">Add Another Term/Definition</button>
-            <button id="start-flashcards">Generate Flashcards from Manual Input</button>
+            <button id="start-flashcards" class="secondary">Generate Flashcards</button>
             <button id="show-bulk-input">Switch to Bulk Input</button>
         </div>
 
@@ -304,10 +470,10 @@
                 <p><code>Term with pipe|Definition with pipe</code></p>
             </div>
             <textarea id="bulk-data-input" rows="15" placeholder="What substance promotes ripening or cause spoilage in some fruits?&#10;a. glucose&#10;b. ethylene gas&#10;c. oxalic acid&#10;d. tartaric acid,ethylene gas&#10;Common fruits~Apples, Oranges, Bananas&#10;Custom example|This is the definition"></textarea>
-            <button id="parse-bulk-data">Parse Bulk Data & Generate Flashcards</button>
-            <button id="show-manual-input">Switch to Manual Row Input</button>
+            <button id="parse-bulk-data" class="secondary">Parse Bulk Data & Generate</button>
+            <button id="show-manual-input">Switch to Manual Input</button>
         </div>
-        
+
         <div class="display-area hidden" id="flashcard-display">
             <div id="page-info"></div>
             <div id="cards-container">
@@ -315,9 +481,13 @@
             <div class="controls">
                 <button id="prev-page">Previous Page</button>
                 <button id="next-page">Next Page</button>
-                <button id="print-cards">Print Flashcards</button>
-                <button id="back-to-input">Back to Input</button>
+                <button id="print-cards" class="secondary">Print Flashcards</button>
+                <button id="back-to-input" class="danger">Back to Input</button>
             </div>
+        </div>
+
+        <div class="footer">
+            <p>&copy; <span id="currentYear"></span> Flashcard Maker. All Rights Reserved.</p>
         </div>
     </div>
 
@@ -327,7 +497,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // DOM elements
             const addRowBtn = document.getElementById('add-row');
-            const startManualBtn = document.getElementById('start-flashcards'); 
+            const startManualBtn = document.getElementById('start-flashcards');
             const termDefInputs = document.getElementById('term-def-inputs');
             const displayArea = document.getElementById('flashcard-display');
             const cardsContainer = document.getElementById('cards-container');
@@ -336,7 +506,7 @@
             const nextBtn = document.getElementById('next-page');
             const printBtn = document.getElementById('print-cards');
             const backBtn = document.getElementById('back-to-input');
-            
+
             const manualInputArea = document.getElementById('manual-input-area');
             const bulkInputArea = document.getElementById('bulk-input-area');
             const showBulkInputBtn = document.getElementById('show-bulk-input');
@@ -346,30 +516,40 @@
             const customDelimiterInput = document.getElementById('custom-delimiter-input');
             const delimiterRadioButtons = document.querySelectorAll('input[name="delimiter"]');
 
-
             const customAlertBox = document.getElementById('custom-alert');
             const controlsDiv = document.querySelector('.controls');
+            const currentYearSpan = document.getElementById('currentYear');
+            if(currentYearSpan) {
+                currentYearSpan.textContent = new Date().getFullYear();
+            }
+
 
             let rowCount = 1;
-            let flashcardData = []; 
+            let flashcardData = [];
             let currentPage = 0;
             let totalPages = 0;
-            const CARDS_PER_PAGE = 10; 
+            const CARDS_PER_PAGE = 10; // Keep this as 10 for 2x5 grid
 
             // --- Utility Functions ---
-            function showMessage(message) {
+            function showMessage(message, type = 'warning') { // type can be 'warning', 'success', 'error'
                 customAlertBox.textContent = message;
+                customAlertBox.className = 'message-box'; // Reset classes
+                customAlertBox.classList.add(type); // Add specific type class
                 customAlertBox.style.display = 'block';
+                // Make sure it's visible if screen is scrolled
+                customAlertBox.style.top = (window.scrollY + 20) + 'px';
+
+
                 setTimeout(() => {
                     customAlertBox.style.display = 'none';
-                }, 3000); 
+                }, 3500); // Slightly longer display time
             }
+
 
             function isOptionLine(line) {
                 return /^\s*[a-zA-Z]\.\s/.test(line);
             }
 
-            // Show/hide custom delimiter input field
             delimiterRadioButtons.forEach(radio => {
                 radio.addEventListener('change', function() {
                     if (this.value === 'custom') {
@@ -382,7 +562,6 @@
             });
 
 
-            // --- Input Mode Switching ---
             showBulkInputBtn.addEventListener('click', function() {
                 manualInputArea.classList.add('hidden');
                 bulkInputArea.classList.remove('hidden');
@@ -392,8 +571,7 @@
                 bulkInputArea.classList.add('hidden');
                 manualInputArea.classList.remove('hidden');
             });
-            
-            // --- Manual Input Logic ---
+
             addRowBtn.addEventListener('click', function() {
                 rowCount++;
                 const newRow = document.createElement('div');
@@ -403,39 +581,40 @@
                     <input type="text" placeholder="Definition ${rowCount}" class="definition">
                 `;
                 termDefInputs.appendChild(newRow);
+                // Focus on the new term input
+                newRow.querySelector('.term').focus();
             });
-            
+
             startManualBtn.addEventListener('click', function() {
-                flashcardData = []; 
-                const termInputs = manualInputArea.querySelectorAll('.term'); 
-                const defInputs = manualInputArea.querySelectorAll('.definition'); 
-                
+                flashcardData = [];
+                const termInputs = manualInputArea.querySelectorAll('.term');
+                const defInputs = manualInputArea.querySelectorAll('.definition');
+
                 for (let i = 0; i < termInputs.length; i++) {
                     const term = termInputs[i].value.trim();
                     const definition = defInputs[i].value.trim();
-                    
+
                     if (term || definition) {
-                        flashcardData.push({ 
-                            term: term || `(No Term Provided ${flashcardData.length + 1})`, 
-                            definition: definition || `(No Definition Provided ${flashcardData.length + 1})` 
+                        flashcardData.push({
+                            term: term || `(No Term Provided ${flashcardData.length + 1})`,
+                            definition: definition || `(No Definition Provided ${flashcardData.length + 1})`
                         });
                     }
                 }
-                
+
                 if (flashcardData.length === 0) {
-                    showMessage('Please enter at least one term or definition in the manual input fields.');
+                    showMessage('Please enter at least one term or definition.', 'error');
                     return;
                 }
-                
+                showMessage(`${flashcardData.length} flashcards generated from manual input.`, 'success');
                 proceedToFlashcardDisplay();
             });
 
-            // --- Bulk Input Logic (with Delimiter Choice) ---
             parseBulkDataBtn.addEventListener('click', function() {
-                flashcardData = []; 
-                const bulkText = bulkDataInput.value; 
+                flashcardData = [];
+                const bulkText = bulkDataInput.value;
                 if (!bulkText.trim()) {
-                    showMessage('Please enter some data in the bulk input field.');
+                    showMessage('Please enter some data in the bulk input field.', 'error');
                     return;
                 }
 
@@ -449,15 +628,14 @@
                 } else if (selectedDelimiterOption === 'custom') {
                     delimiterChar = customDelimiterInput.value.trim();
                     if (delimiterChar.length !== 1) {
-                        showMessage('Custom delimiter must be a single character.');
+                        showMessage('Custom delimiter must be a single character.', 'error');
                         customDelimiterInput.focus();
                         return;
                     }
                 } else {
-                    showMessage('Invalid delimiter selected.'); 
+                    showMessage('Invalid delimiter selected.', 'error');
                     return;
                 }
-
 
                 const allLines = bulkText.split('\n');
                 let currentCardBlockLines = [];
@@ -467,7 +645,7 @@
 
                     let termLines = [];
                     let definition = '';
-                    
+
                     const lastLineInBlock = blockLines[blockLines.length - 1].trim();
                     const lastDelimiterIndex = lastLineInBlock.lastIndexOf(delimiterChar);
 
@@ -478,40 +656,50 @@
                         }
                         termLines.push(lastLineInBlock.substring(0, lastDelimiterIndex).trim());
                     } else {
-                        definition = `(No definition provided ${flashcardData.length + 1})`;
-                        termLines = blockLines.map(line => line.trim());
+                        // If no delimiter is found on the last line, assume the whole block is a term,
+                        // or it's a term without a definition if only one line
+                        if (blockLines.length === 1 && !lastLineInBlock.includes(delimiterChar)) {
+                             termLines.push(lastLineInBlock);
+                             definition = `(No Definition Provided ${flashcardData.length + 1})`;
+                        } else {
+                            termLines = blockLines.map(line => line.trim());
+                            definition = `(No Definition Provided ${flashcardData.length + 1})`;
+                        }
                     }
 
-                    let term = termLines.filter(line => line).join('\n').trim(); 
 
-                    if (!term && !definition) return null; 
+                    let term = termLines.filter(line => line).join('\n').trim();
+
+                    if (!term && !definition.startsWith('(No Definition Provided')) return null;
+
 
                     if (!term) {
-                        term = `(No term provided ${flashcardData.length + 1})`;
+                        term = `(No Term Provided ${flashcardData.length + 1})`;
                     }
-                    if (!definition && lastDelimiterIndex === -1) { 
-                    } else if (!definition) { 
-                        definition = `(No definition provided ${flashcardData.length + 1})`;
-                    }
+
                     return { term, definition };
                 }
 
                 for (let i = 0; i < allLines.length; i++) {
-                    const currentLine = allLines[i]; 
+                    const currentLine = allLines[i];
                     const trimmedCurrentLine = currentLine.trim();
 
                     if (trimmedCurrentLine === "" && currentCardBlockLines.length === 0) {
-                        continue;
+                        continue; // Skip multiple empty lines between blocks
                     }
-                    
-                    if (!isOptionLine(trimmedCurrentLine) && currentCardBlockLines.length > 0) {
+
+                    // A new block starts if the current line is not an option (a., b., etc.)
+                    // AND we already have lines in the current block.
+                    // Also, an empty line can signify the end of a block if it's not the very first line of input.
+                    if ((!isOptionLine(trimmedCurrentLine) && trimmedCurrentLine !== "" && currentCardBlockLines.length > 0 && !isOptionLine(currentCardBlockLines[0])) || (trimmedCurrentLine === "" && currentCardBlockLines.length > 0)) {
                         const card = processCardBlock(currentCardBlockLines);
                         if (card) flashcardData.push(card);
-                        currentCardBlockLines = []; 
+                        currentCardBlockLines = [];
+                        if (trimmedCurrentLine === "") continue; // Don't add the empty line itself
                     }
-                    
-                    if (trimmedCurrentLine !== "" || currentCardBlockLines.length > 0) {
-                         currentCardBlockLines.push(currentLine); 
+
+                    if (trimmedCurrentLine !== "") {
+                         currentCardBlockLines.push(currentLine);
                     }
                 }
 
@@ -519,153 +707,215 @@
                     const card = processCardBlock(currentCardBlockLines);
                     if (card) flashcardData.push(card);
                 }
-                
+
                 if (flashcardData.length === 0) {
-                    showMessage('No valid flashcards could be parsed. Please check the format and selected delimiter.');
+                    showMessage('No valid flashcards could be parsed. Please check the format and selected delimiter.', 'error');
                     return;
                 }
+                showMessage(`${flashcardData.length} flashcards parsed from bulk input.`, 'success');
                 proceedToFlashcardDisplay();
             });
 
 
-            // --- Common Flashcard Processing and Display Logic ---
             function proceedToFlashcardDisplay() {
-                while (flashcardData.length % CARDS_PER_PAGE !== 0) {
-                    const idx = flashcardData.length + 1;
-                    flashcardData.push({ term: `(Empty Term ${idx})`, definition: `(Empty Definition ${idx})` });
-                }
-                
+                // Pad with empty cards ONLY IF printing will occur.
+                // For display, it's better not to show empty cards.
+                // The padding for print is handled in the printBtn event listener.
+
                 manualInputArea.classList.add('hidden');
                 bulkInputArea.classList.add('hidden');
                 displayArea.classList.remove('hidden');
-                
+
                 currentPage = 0;
-                totalPages = (flashcardData.length / CARDS_PER_PAGE) * 2; 
+                // Total pages for display (not necessarily for print yet)
+                totalPages = Math.ceil(flashcardData.length / CARDS_PER_PAGE) * 2;
+                if (flashcardData.length === 0) totalPages = 0;
+
                 updateDisplay();
             }
-            
+
             function updateDisplay() {
-                cardsContainer.innerHTML = ''; 
-                
+                cardsContainer.innerHTML = '';
+
+                if (flashcardData.length === 0) {
+                    pageInfo.textContent = 'No flashcards to display.';
+                    prevBtn.disabled = true;
+                    nextBtn.disabled = true;
+                    printBtn.disabled = true;
+                    // Optionally, hide the controls div entirely if no cards
+                    // controlsDiv.classList.add('hidden');
+                    const grid = document.createElement('div'); // Create grid even if empty for consistency
+                    grid.className = 'flashcard-grid';
+                    cardsContainer.appendChild(grid); // Append empty grid
+                    return;
+                }
+
+
                 const isTermPage = currentPage % 2 === 0;
                 const setIndex = Math.floor(currentPage / 2);
                 const startIdx = setIndex * CARDS_PER_PAGE;
-                
-                pageInfo.textContent = `Page ${currentPage + 1} of ${totalPages} - ${isTermPage ? 'Terms' : 'Definitions'} (Set ${setIndex + 1})`;
-                pageInfo.classList.remove('hidden'); 
-                controlsDiv.classList.remove('hidden'); 
+                const endIdx = Math.min(startIdx + CARDS_PER_PAGE, flashcardData.length);
+
+                const actualCardsOnThisPageSet = endIdx - startIdx;
+
+                // Recalculate totalPages based on actual flashcardData length for display
+                const displayTotalPages = Math.ceil(flashcardData.length / CARDS_PER_PAGE) * 2;
+
+
+                pageInfo.textContent = `Page ${currentPage + 1} of ${displayTotalPages} - ${isTermPage ? 'Terms' : 'Definitions'} (Set ${setIndex + 1})`;
+                pageInfo.classList.remove('hidden');
+                controlsDiv.classList.remove('hidden');
 
                 const grid = document.createElement('div');
-                grid.className = 'flashcard-grid'; 
-                
-                for (let i = 0; i < CARDS_PER_PAGE; i++) {
-                    const itemIndex = startIdx + i; 
+                grid.className = 'flashcard-grid';
+
+                for (let i = 0; i < actualCardsOnThisPageSet; i++) {
+                    const itemIndex = startIdx + i;
+                    if (itemIndex >= flashcardData.length) break; // Should not happen with endIdx logic
+
                     const card = document.createElement('div');
                     card.className = 'card-item';
-                    
+
                     const itemToDisplay = flashcardData[itemIndex];
-                    const labelText = isTermPage 
-                        ? `TERM ${itemIndex + 1}` 
+                    const labelText = isTermPage
+                        ? `TERM ${itemIndex + 1}`
                         : `DEFINITION ${itemIndex + 1}`;
-                    const contentText = isTermPage 
-                        ? itemToDisplay.term 
+                    const contentText = isTermPage
+                        ? itemToDisplay.term
                         : itemToDisplay.definition;
-                    
-                    card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`; 
+
+                    card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`;
                     grid.appendChild(card);
                 }
+                 // Add placeholder cards if fewer than CARDS_PER_PAGE to maintain grid structure for display
+                for (let i = actualCardsOnThisPageSet; i < CARDS_PER_PAGE; i++) {
+                    const placeholderCard = document.createElement('div');
+                    placeholderCard.className = 'card-item';
+                    placeholderCard.style.visibility = 'hidden'; // Make them invisible but take up space
+                    grid.appendChild(placeholderCard);
+                }
+
+
                 cardsContainer.appendChild(grid);
-                
+
                 prevBtn.disabled = currentPage === 0;
-                nextBtn.disabled = currentPage === totalPages - 1;
+                nextBtn.disabled = currentPage === displayTotalPages - 1;
+                printBtn.disabled = flashcardData.length === 0;
             }
-            
-            // --- Navigation and Print Controls ---
+
             nextBtn.addEventListener('click', function() {
-                if (currentPage < totalPages - 1) {
+                const displayTotalPages = Math.ceil(flashcardData.length / CARDS_PER_PAGE) * 2;
+                if (currentPage < displayTotalPages - 1) {
                     currentPage++;
                     updateDisplay();
                 }
             });
-            
+
             prevBtn.addEventListener('click', function() {
                 if (currentPage > 0) {
                     currentPage--;
                     updateDisplay();
                 }
             });
-            
+
             printBtn.addEventListener('click', function() {
-                if (flashcardData.length === 0 || totalPages === 0) { 
-                    showMessage('No flashcards to print.');
+                if (flashcardData.length === 0) {
+                    showMessage('No flashcards to print.', 'error');
                     return;
                 }
 
+                // Create a temporary array for printing, padded to fill pages
+                let printData = [...flashcardData];
+                while (printData.length % CARDS_PER_PAGE !== 0) {
+                    const idx = printData.length + 1;
+                    printData.push({ term: `(Empty Term ${idx})`, definition: `(Empty Definition ${idx})` });
+                }
+                const printTotalPages = (printData.length / CARDS_PER_PAGE) * 2;
+
+
                 pageInfo.classList.add('hidden');
                 controlsDiv.classList.add('hidden');
-                cardsContainer.innerHTML = ''; 
+                const originalCardsHTML = cardsContainer.innerHTML; // Save current view
+                cardsContainer.innerHTML = ''; // Clear for printing
 
-                for (let i = 0; i < totalPages; i++) { 
+                for (let i = 0; i < printTotalPages; i++) {
                     const isTermPageForPrint = i % 2 === 0;
                     const setIndexForPrint = Math.floor(i / 2);
                     const startIdxForPrint = setIndexForPrint * CARDS_PER_PAGE;
 
-                    const printPageTitle = document.createElement('h3');
-                    printPageTitle.className = 'print-page-title'; 
-                    printPageTitle.textContent = `Page ${i + 1} / ${totalPages} - ${isTermPageForPrint ? 'Terms' : 'Definitions'} (Set ${setIndexForPrint + 1})`;
-                    cardsContainer.appendChild(printPageTitle);
+                    const printPageTitleEl = document.createElement('h3');
+                    printPageTitleEl.className = 'print-page-title';
+                    printPageTitleEl.textContent = `Page ${i + 1} / ${printTotalPages} - ${isTermPageForPrint ? 'Terms' : 'Definitions'} (Set ${setIndexForPrint + 1})`;
+                    cardsContainer.appendChild(printPageTitleEl);
 
                     const grid = document.createElement('div');
-                    grid.className = 'flashcard-grid'; 
+                    grid.className = 'flashcard-grid';
 
-                    for (let j = 0; j < CARDS_PER_PAGE; j++) { 
-                        let indexToFetchDataFrom = startIdxForPrint + j; 
+                    for (let j = 0; j < CARDS_PER_PAGE; j++) {
+                        let indexToFetchDataFrom = startIdxForPrint + j;
 
-                        if (!isTermPageForPrint) { 
-                            const numColumns = 2; 
-                            const col = j % numColumns; 
+                        // Logic for duplex printing (matching front and back)
+                        if (!isTermPageForPrint) { // If it's a definition page
+                            const numColumns = 2; // Defined in CSS print @media .flashcard-grid
+                            const col = j % numColumns;
 
-                            if (col === 0) { 
+                            // This logic attempts to ensure the definition on the back matches the term on the front
+                            // when cards are cut and flipped (assuming a specific flip direction)
+                            // For a 2-column layout, if cards are laid out [1, 2], [3, 4] on terms page,
+                            // definitions should be [2, 1], [4, 3] to match when flipped over the vertical axis.
+                            if (col === 0) { // Card in the first column (left)
                                 indexToFetchDataFrom = startIdxForPrint + j + 1;
-                            } else { 
+                            } else { // Card in the second column (right)
                                 indexToFetchDataFrom = startIdxForPrint + j - 1;
                             }
+                            // Boundary checks, though with padding this should be less of an issue
                             if (indexToFetchDataFrom >= startIdxForPrint + CARDS_PER_PAGE || indexToFetchDataFrom < startIdxForPrint) {
-                                indexToFetchDataFrom = startIdxForPrint + j; 
+                                indexToFetchDataFrom = startIdxForPrint + j; // Fallback
                             }
                         }
-                        
-                        const itemToDisplay = (indexToFetchDataFrom < flashcardData.length) 
-                                            ? flashcardData[indexToFetchDataFrom] 
-                                            : { term: '(Error)', definition: '(Error)'}; 
+
+                        const itemToDisplay = (indexToFetchDataFrom < printData.length)
+                            ? printData[indexToFetchDataFrom]
+                            : { term: '(Padding)', definition: '(Padding)'}; // Should be handled by padding
 
                         const card = document.createElement('div');
                         card.className = 'card-item';
-                        
-                        const labelText = isTermPageForPrint 
-                            ? `TERM ${indexToFetchDataFrom + 1}` 
-                            : `DEFINITION ${indexToFetchDataFrom + 1}`; 
-                        const contentText = isTermPageForPrint 
-                            ? itemToDisplay.term 
+
+                        const labelText = isTermPageForPrint
+                            ? `TERM ${indexToFetchDataFrom + 1}`
+                            : `DEFINITION ${indexToFetchDataFrom + 1}`;
+                        const contentText = isTermPageForPrint
+                            ? itemToDisplay.term
                             : itemToDisplay.definition;
-                        
-                        card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`; 
+
+                        card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`;
                         grid.appendChild(card);
                     }
                     cardsContainer.appendChild(grid);
                 }
 
-                window.print(); 
-                updateDisplay(); 
+                window.print();
+                // Restore previous view after print dialog
+                // cardsContainer.innerHTML = originalCardsHTML; // This would restore non-paginated view
+                updateDisplay(); // This is better as it restores the paginated view
+                showMessage('Print dialog initiated. Ensure your print settings are correct for duplex (2-sided) printing if desired.', 'success');
+
             });
-            
+
             backBtn.addEventListener('click', function() {
                 displayArea.classList.add('hidden');
-                manualInputArea.classList.remove('hidden');
-                bulkInputArea.classList.add('hidden'); 
+                manualInputArea.classList.remove('hidden'); // Default to manual input
+                bulkInputArea.classList.add('hidden');
 
-                pageInfo.classList.add('hidden'); 
-                controlsDiv.classList.add('hidden'); 
+                pageInfo.classList.add('hidden');
+                controlsDiv.classList.add('hidden');
+                flashcardData = []; // Clear data when going back
+                rowCount = 1; // Reset manual row count
+                termDefInputs.innerHTML = ` <div class="input-row">
+                                                <input type="text" placeholder="Term 1" class="term">
+                                                <input type="text" placeholder="Definition 1" class="definition">
+                                            </div>`; // Reset manual inputs
+                bulkDataInput.value = ''; // Clear bulk input
             });
         });
     </script>
