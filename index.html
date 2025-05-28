@@ -31,6 +31,9 @@
       font-family: 'Poppins', sans-serif;
       background-color: var(--bg-light);
       color: var(--text-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     header {
@@ -38,6 +41,9 @@
       padding: 1rem 2rem;
       background-color: var(--container-bg);
       box-shadow: 0 2px 6px var(--shadow-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .auth-buttons {
@@ -65,20 +71,20 @@
     }
 
     .site-title {
-      text-align: center;
       font-size: 2rem;
       font-weight: 600;
       color: var(--accent-color);
     }
 
     main {
+      flex-grow: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: calc(100vh - 100px); /* subtract header height */
+      padding: 2rem 1rem;
+      max-width: 900px;
+      margin: 0 auto 2rem auto;
       text-align: center;
-      padding: 2rem;
     }
 
     .logo-center {
@@ -92,14 +98,81 @@
 
     h1 {
       font-size: 3rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
       color: var(--accent-color);
     }
 
-    p {
+    p.lead {
       font-size: 1.2rem;
       color: var(--text-light);
+      margin-bottom: 2rem;
       max-width: 600px;
+    }
+
+    /* Feature Highlights Section */
+    section.features {
+      background: var(--container-bg);
+      padding: 2rem 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px var(--shadow-color);
+      margin-bottom: 3rem;
+      width: 100%;
+    }
+
+    section.features h2 {
+      color: var(--accent-color);
+      margin-bottom: 1rem;
+      font-weight: 600;
+      font-size: 2rem;
+    }
+
+    section.features ul {
+      list-style-type: disc;
+      margin-left: 1.5rem;
+      color: var(--text-dark);
+      font-size: 1.1rem;
+      text-align: left;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    section.features ul li {
+      margin-bottom: 0.7rem;
+      line-height: 1.4;
+    }
+
+    /* Tutorial Video Section */
+    section.tutorial {
+      width: 100%;
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    section.tutorial h2 {
+      color: var(--accent-color);
+      margin-bottom: 1rem;
+      font-weight: 600;
+      font-size: 2rem;
+    }
+
+    .tutorial-video {
+      border-radius: 10px;
+      box-shadow: 0 4px 10px var(--shadow-color);
+      max-width: 100%;
+      height: auto;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      section.features h2,
+      section.tutorial h2 {
+        font-size: 1.5rem;
+      }
     }
   </style>
 </head>
@@ -116,7 +189,29 @@
   <main>
     <img src="Cramcraft.png" alt="CramCraft Logo" class="logo-center" />
     <h1>Welcome to CramCraft</h1>
-    <p>Your magical flashcard companion for smarter studying and better memory retention.</p>
+    <p class="lead">Your magical flashcard companion for smarter studying and better memory retention.</p>
+
+    <section class="features">
+      <h2>Why Choose CramCraft?</h2>
+      <ul>
+        <li>Personalized dashboard to manage your flashcard sets</li>
+        <li>Manually add or remove cards, or bulk import from Quizlet</li>
+        <li>Digital flashcards with smooth flip animation</li>
+        <li>Print double-sided or export your flashcards as PDFs</li>
+        <li>Interactive quiz mode to test your knowledge</li>
+        <li>Search and discover flashcards created by others</li>
+        <li>Dark and light mode toggle for comfortable studying</li>
+        <li>Optimized layout for mobile devices</li>
+      </ul>
+    </section>
+
+    <section class="tutorial">
+      <h2>How to Use CramCraft</h2>
+      <video class="tutorial-video" controls>
+        <source src="tutorial.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </section>
   </main>
 
 </body>
