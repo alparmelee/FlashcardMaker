@@ -82,8 +82,12 @@
     }
 
     .logo-center {
-      max-height: 150px;
+      height: 200px;          /* increased size */
+      width: 200px;           /* square for circle */
+      object-fit: cover;      /* crop nicely */
+      border-radius: 50%;     /* circle shape */
       margin-bottom: 1rem;
+      box-shadow: 0 4px 10px var(--shadow-color); /* subtle shadow */
     }
 
     h1 {
