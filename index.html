@@ -64,8 +64,8 @@
       font-weight: 500;
       cursor: pointer;
       transition: background-color 0.3s ease;
-      text-decoration: none; /* Added for link styling if used as <a> */
-      display: inline-block; /* Added for link styling if used as <a> */
+      text-decoration: none;
+      display: inline-block;
     }
 
     .btn:hover {
@@ -90,12 +90,12 @@
     }
 
     .logo-center {
-      height: 500px;        /* increased size */
-      width: 500px;         /* square for circle */
-      object-fit: cover;    /* crop nicely */
-      border-radius: 50%;   /* circle shape */
+      height: 500px;
+      width: 500px;
+      object-fit: cover;
+      border-radius: 50%;
       margin-bottom: 1rem;
-      box-shadow: 0 4px 10px var(--shadow-color); /* subtle shadow */
+      box-shadow: 0 4px 10px var(--shadow-color);
     }
 
     h1 {
@@ -107,16 +107,15 @@
     p.lead {
       font-size: 1.2rem;
       color: var(--text-light);
-      margin-bottom: 2rem; /* Adjusted margin to make space for the new button */
+      margin-bottom: 2rem;
       max-width: 600px;
     }
 
-    /* Style for the new "Create & Print" button container */
     .cta-print-button-container {
-        margin-bottom: 2.5rem; /* Added margin below the button */
+        margin-bottom: 2.5rem;
     }
 
-    .btn-large-accent { /* New class for a more prominent button */
+    .btn-large-accent {
         background-color: var(--accent-color);
         color: #fff;
         padding: 0.75rem 1.5rem;
@@ -127,11 +126,9 @@
     }
 
     .btn-large-accent:hover {
-        background-color: #5a359a; /* A slightly darker shade of accent for hover */
+        background-color: #5a359a;
     }
 
-
-    /* Feature Highlights Section */
     section.features {
       background: var(--container-bg);
       padding: 2rem 1.5rem;
@@ -167,7 +164,7 @@
     /* Tutorial Video Section */
     section.tutorial {
       width: 100%;
-      max-width: 700px;
+      max-width: 700px; /* Container for the video section */
       margin: 0 auto;
       text-align: center;
     }
@@ -179,11 +176,25 @@
       font-size: 2rem;
     }
 
-    .tutorial-video {
+    /* Responsive iframe container */
+    .tutorial-video-embed-container {
+      position: relative;
+      overflow: hidden;
+      width: 100%; /* Will take the width of its parent, section.tutorial */
+      /* Aspect ratio: (height / width) * 100%. (887 / 499 * 100) = 177.75% */
+      padding-top: 177.75%; 
       border-radius: 10px;
       box-shadow: 0 4px 10px var(--shadow-color);
-      max-width: 100%;
-      height: auto;
+      background-color: #000; /* Optional: background for the area before iframe loads */
+    }
+
+    .tutorial-video-embed-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0; /* Ensures no border from the iframe itself */
     }
 
     @media (max-width: 600px) {
@@ -192,8 +203,8 @@
       }
 
       .logo-center {
-        height: 300px;
-        width: 300px;
+        height: 300px; /* Adjusted for smaller screens */
+        width: 300px;  /* Adjusted for smaller screens */
       }
 
       p.lead {
@@ -251,10 +262,16 @@
 
     <section class="tutorial">
       <h2>How to Use CramCraft</h2>
-      <video class="tutorial-video" controls>
-        <source src="tutorial.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
+      <div class="tutorial-video-embed-container">
+        <iframe 
+            src="https://www.youtube.com/embed/Np4swmKgRIA" 
+            title="FASTEST way to print DOUBLE-SIDED Flashcards" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            referrerpolicy="strict-origin-when-cross-origin" 
+            allowfullscreen>
+        </iframe>
+      </div>
     </section>
   </main>
 
