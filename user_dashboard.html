@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard - FlashcardPRO</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>User Dashboard - CramCraft</title> <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-color: #007bff;
             --primary-hover-color: #0056b3;
-            --nav-bg-color: #2c3e50;
+            --nav-bg-color: #343a40; /* Consistent with index.html */
             --card-bg-color: #f0f7ff;
             --card-border-color: #a3c9f0;
             --text-dark: #2c3e50;
+            --text-light: #555; /* Added from index.html */
         }
         body {
             font-family: 'Poppins', Arial, sans-serif;
@@ -25,53 +25,59 @@
             flex-direction: column;
             min-height: 100vh;
         }
-        .top-nav {
+        .top-nav { /* Using styles from index.html for consistency */
             background-color: var(--nav-bg-color);
-            padding: 12px 0px;
+            padding: 0.75rem 0;
             width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             position: sticky; top: 0; z-index: 1001;
         }
         .top-nav-inner {
             width: 100%; max-width: 1200px; display: flex;
             justify-content: space-between; align-items: center;
-            padding: 0 20px; box-sizing: border-box;
+            padding: 0 2rem; /* Consistent with index.html */
         }
         .top-nav .nav-logo a {
-            color: white; text-decoration: none; font-size: 1.6em; font-weight: 700;
+            color: white; text-decoration: none; font-size: 1.75rem; font-weight: 700; /* Consistent with index.html */
         }
         .top-nav ul {
-            list-style-type: none; margin: 0; padding: 0; display: flex; align-items: center;
+            list-style-type: none; display: flex; align-items: center; gap: 1.5rem; /* Consistent with index.html */
+            margin:0; padding:0; 
         }
-        .top-nav ul li { margin-left: 25px; }
-        .top-nav ul li a {
-            color: #f0f7ff; text-decoration: none; font-size: 1em; font-weight: 500;
-            padding: 8px 12px; border-radius: 5px;
+        .top-nav ul li a { /* Using styles from index.html */
+            color: #f8f9fa; 
+            text-decoration: none; font-size: 1rem; font-weight: 500;
+            padding: 0.5rem 0.75rem; border-radius: 5px;
             transition: background-color 0.2s ease, color 0.2s ease;
         }
         .top-nav ul li a:hover, .top-nav ul li a.active {
             background-color: var(--primary-color); color: white;
         }
-        .top-nav .user-status {
-            color: #e0eafc; font-size: 0.95em; font-weight: 500; display: flex; align-items: center;
+        .top-nav .user-status { /* For "Welcome User" or Login/Signup links */
+            color: #e0eafc;
+            font-size: 0.95em;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 1rem; /* Added gap for spacing between welcome and logout */
         }
-         .top-nav .user-status a {
-            color: #f0f7ff; text-decoration: none; margin-left: 15px; padding: 6px 10px;
-            border-radius: 5px; border: 1px solid transparent;
-            transition: background-color 0.2s ease, border-color 0.2s ease;
-        }
-        .top-nav .user-status a:hover {
-             background-color: var(--primary-hover-color); color: white;
-        }
-         .top-nav .user-status .logout-button {
-            border: 1px solid #f0f7ff;
+         .top-nav .user-status .logout-button { /* Standardized to look like a button/link */
+            color: #f8f9fa;
+            text-decoration: none;
+            font-size: 1rem; /* Match nav link size */
+            font-weight: 500;
+            padding: 0.5rem 0.75rem;
+            border-radius: 5px;
+            border: 1px solid #f8f9fa; /* Visible border for logout */
+            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
         }
         .top-nav .user-status .logout-button:hover {
-            background-color: #dc3545; /* Red for logout */
+            background-color: #dc3545; /* Red for logout hover */
             border-color: #dc3545;
+            color: white;
         }
 
 
@@ -82,7 +88,7 @@
             background-color: #fff;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            width: calc(100% - 60px); /* Account for padding */
+            width: calc(100% - 60px); 
             flex-grow: 1;
         }
         .content-wrapper h1, .content-wrapper h2 {
@@ -131,7 +137,7 @@
         .set-card .set-meta {
             font-size: 0.85em;
             color: var(--text-light);
-            margin-top: auto; /* Pushes to bottom */
+            margin-top: auto; 
         }
         .create-new-set-btn {
             background-color: var(--primary-color);
@@ -150,20 +156,27 @@
         .create-new-set-btn:hover {
             background-color: var(--primary-hover-color);
         }
+         @media (max-width: 768px) { /* Copied from index.html for nav responsiveness */
+            .top-nav-inner { flex-direction: column; gap: 0.5rem; padding: 0.5rem 1rem;}
+            .top-nav ul { gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.5rem;}
+            .top-nav .user-status { margin-top: 0.5rem; justify-content: center;}
+        }
     </style>
 </head>
 <body>
     <nav class="top-nav">
         <div class="top-nav-inner">
-            <div class="nav-logo"><a href="index.html">FlashcardPRO</a></div>
+            <div class="nav-logo"><a href="index.html">CramCraft</a></div>
             <ul>
-                <li><a href="index.html">Home (Create)</a></li>
+                <li><a href="index.html">Create</a></li>
                 <li><a href="user_dashboard.html" class="active">Dashboard</a></li>
                 <li><a href="search_page.html">Search</a></li>
+                <li><a href="about.html">About</a></li>
             </ul>
             <div class="user-status">
                 <span>Welcome, DemoUser!</span>
-                <a href="index.html" class="logout-button">Logout</a> </div>
+                <a href="index.html" class="logout-button">Logout</a> 
+            </div>
         </div>
     </nav>
 
