@@ -1,279 +1,1108 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CramCraft</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --primary-color: #007bff;        /* Electric Blue */
-      --primary-hover-color: #0056b3;
-      --accent-color: #6f42c1;         /* Deep Purple */
-      --bg-light: #f7f9fc;
-      --container-bg: #ffffff;
-      --input-bg: #fdfdfd;
-      --text-dark: #2c3e50;
-      --text-light: #555;
-      --shadow-color: rgba(0, 0, 0, 0.08);
-      --success-color: #28a745;
-      --warning-color: #ffc107;
-      --danger-color: #dc3545;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CramCraft - Create & Print Flashcards</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --primary-color: #007bff;        /* Electric Blue */
+            --primary-hover-color: #0056b3;
+            --accent-color: #6f42c1;         /* Deep Purple */
+            --bg-light: #f7f9fc;
+            --container-bg: #ffffff;
+            --input-bg: #fdfdfd; /* Used for input areas within flashcard maker */
+            --text-dark: #2c3e50;
+            --text-light: #555;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --card-bg-color: #f0f7ff; /* Lighter blue for flashcards display */
+            --card-border-color: #a3c9f0; /* Slightly darker blue for flashcard borders */
+        }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: var(--bg-light);
-      color: var(--text-dark);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6; /* Added from print.html for consistency */
+        }
 
-    header {
-      position: relative;
-      padding: 1rem 2rem;
-      background-color: var(--container-bg);
-      box-shadow: 0 2px 6px var(--shadow-color);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+        header {
+            position: relative;
+            padding: 1rem 2rem;
+            background-color: var(--container-bg);
+            box-shadow: 0 2px 6px var(--shadow-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001; /* Ensure header is above message boxes */
+        }
 
-    .auth-buttons {
-      position: absolute;
-      top: 1rem;
-      right: 2rem;
-      display: flex;
-      gap: 1rem;
-    }
+        .auth-buttons {
+            position: absolute;
+            top: 1rem;
+            right: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
 
-    .btn {
-      background-color: var(--primary-color);
-      color: #fff;
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 6px;
-      font-size: 0.95rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      text-decoration: none;
-      display: inline-block;
-    }
+        .btn { /* General button style from index(1) */
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
 
-    .btn:hover {
-      background-color: var(--primary-hover-color);
-    }
+        .btn:hover {
+            background-color: var(--primary-hover-color);
+        }
 
-    .site-title {
-      font-size: 2rem;
-      font-weight: 600;
-      color: var(--accent-color);
-    }
+        .site-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--accent-color);
+        }
 
-    main {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem 1rem;
-      max-width: 900px;
-      margin: 0 auto 2rem auto;
-      text-align: center;
-    }
+        main { /* For landing page content */
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+            max-width: 900px;
+            margin: 0 auto 2rem auto;
+            text-align: center;
+        }
 
-    .logo-center {
-      height: 500px;
-      width: 500px;
-      object-fit: cover;
-      border-radius: 50%;
-      margin-bottom: 1rem;
-      box-shadow: 0 4px 10px var(--shadow-color);
-    }
+        .logo-center { /* From index(1).html */
+            height: 500px;
+            width: 500px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 10px var(--shadow-color);
+        }
 
-    h1 {
-      font-size: 3rem;
-      margin-bottom: 0.5rem;
-      color: var(--accent-color);
-    }
+        main h1 { /* Landing page h1 */
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent-color);
+        }
 
-    p.lead {
-      font-size: 1.2rem;
-      color: var(--text-light);
-      margin-bottom: 2rem;
-      max-width: 600px;
-    }
+        p.lead {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
 
-    .cta-print-button-container {
-        margin-bottom: 2.5rem;
-    }
+        .cta-print-button-container {
+            margin-bottom: 2.5rem;
+        }
 
-    .btn-large-accent {
-        background-color: var(--accent-color);
-        color: #fff;
-        padding: 0.75rem 1.5rem;
-        font-size: 1.1rem;
-        font-weight: 600;
-        border-radius: 8px;
-        transition: background-color 0.3s ease;
-    }
+        .btn-large-accent { /* For the "Create & Print" button */
+            background-color: var(--accent-color);
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        .btn-large-accent:hover {
+            background-color: #5a359a;
+        }
 
-    .btn-large-accent:hover {
-        background-color: #5a359a;
-    }
+        section.features {
+            background: var(--container-bg);
+            padding: 2rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            margin-bottom: 3rem;
+            width: 100%;
+        }
 
-    section.features {
-      background: var(--container-bg);
-      padding: 2rem 1.5rem;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px var(--shadow-color);
-      margin-bottom: 3rem;
-      width: 100%;
-    }
+        section.features h2 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            font-weight: 600;
+            font-size: 2rem;
+        }
 
-    section.features h2 {
-      color: var(--accent-color);
-      margin-bottom: 1rem;
-      font-weight: 600;
-      font-size: 2rem;
-    }
+        section.features ul {
+            list-style-type: disc;
+            /* margin-left: 1.5rem; */ /* Adjusted for better centering */
+            color: var(--text-dark);
+            font-size: 1.1rem;
+            text-align: left;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 20px; /* Ensures bullets are visible */
+        }
 
-    section.features ul {
-      list-style-type: disc;
-      margin-left: 1.5rem;
-      color: var(--text-dark);
-      font-size: 1.1rem;
-      text-align: left;
-      max-width: 700px;
-      margin-left: auto;
-      margin-right: auto;
-    }
+        section.features ul li {
+            margin-bottom: 0.7rem;
+            line-height: 1.4;
+        }
 
-    section.features ul li {
-      margin-bottom: 0.7rem;
-      line-height: 1.4;
-    }
+        section.tutorial {
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto 3rem auto; /* Added bottom margin */
+            text-align: center;
+        }
 
-    /* Tutorial Video Section */
-    section.tutorial {
-      width: 100%;
-      max-width: 700px; /* Container for the video section */
-      margin: 0 auto;
-      text-align: center;
-    }
+        section.tutorial h2 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            font-weight: 600;
+            font-size: 2rem;
+        }
 
-    section.tutorial h2 {
-      color: var(--accent-color);
-      margin-bottom: 1rem;
-      font-weight: 600;
-      font-size: 2rem;
-    }
+        .tutorial-video-embed-container {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            border-radius: 10px;
+            box-shadow: 0 4px 10px var(--shadow-color);
+            background-color: #000;
+        }
 
-    /* Responsive iframe container */
-    .tutorial-video-embed-container {
-      position: relative;
-      overflow: hidden;
-      width: 100%; /* Will take the width of its parent, section.tutorial */
-      /* Aspect ratio: (height / width) * 100%. (887 / 499 * 100) = 177.75% */
-      padding-top: 177.75%; 
-      border-radius: 10px;
-      box-shadow: 0 4px 10px var(--shadow-color);
-      background-color: #000; /* Optional: background for the area before iframe loads */
-    }
+        .tutorial-video-embed-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
 
-    .tutorial-video-embed-container iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: 0; /* Ensures no border from the iframe itself */
-    }
+        /* Styles for Flashcard Maker section (adapted from print.html) */
+        .flashcard-maker-container {
+            display: flex; /* Keeps it hidden initially */
+            flex-direction: column;
+            align-items: center; /* Center the .container-fc within */
+            padding: 2rem 1rem; /* Similar to main's padding */
+            width: 100%;
+            background-color: var(--bg-light); /* Match body background */
+        }
 
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 2rem;
-      }
+        .container-fc { /* Renamed from .container to avoid conflict */
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background-color: var(--container-bg); /* White background from index(1) */
+            padding: 25px 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px var(--shadow-color);
+            max-width: 750px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 1rem; /* Space from top if shown */
+        }
 
-      .logo-center {
-        height: 300px; /* Adjusted for smaller screens */
-        width: 300px;  /* Adjusted for smaller screens */
-      }
+        .logo-container-fc { /* For the logo inside flashcard maker */
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .logo-container-fc img {
+            max-width: 150px;
+            height: auto;
+            border-radius: 8px;
+        }
+        /* Reusing .logo-center from main page for the flashcard maker section's logo */
+        .flashcard-maker-container .logo-center-small {
+            height: 100px; /* Smaller logo for this section */
+            width: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 10px var(--shadow-color);
+        }
 
-      p.lead {
-        margin-bottom: 1.5rem;
-      }
 
-      .cta-print-button-container {
-        margin-bottom: 2rem;
-      }
+        .container-fc h1 { /* Flashcard maker title */
+            text-align: center;
+            color: var(--accent-color); /* Match theme */
+            margin-bottom: 25px;
+            font-weight: 600;
+            font-size: 2.2em; /* From print.html */
+        }
 
-      .btn-large-accent {
-        padding: 0.6rem 1.2rem;
-        font-size: 1rem;
-      }
+        .container-fc h2 { /* Subheadings in flashcard maker */
+            color: var(--primary-color); /* Match theme */
+            margin-top: 0;
+            margin-bottom: 18px;
+            font-weight: 500;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
 
-      section.features h2,
-      section.tutorial h2 {
-        font-size: 1.5rem;
-      }
-    }
-  </style>
+        .input-area { /* From print.html, using theme variables */
+            background-color: var(--input-bg);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #e7e7e7;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .input-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 12px;
+        }
+
+        .input-row input,
+        .input-area textarea { /* Specific to .input-area textarea */
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 15px;
+            font-family: 'Poppins', sans-serif; /* Ensure font consistency */
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .input-area textarea {
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .input-row input:focus,
+        .input-area textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+            outline: none;
+        }
+
+        /* Buttons within flashcard maker */
+        .container-fc button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 18px; /* Slightly adjusted for consistency */
+            border-radius: 25px; /* Pill shape */
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            margin-right: 8px;
+            margin-top: 8px;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease, box-shadow 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .container-fc button:hover {
+            background-color: var(--primary-hover-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .container-fc button:active {
+            transform: translateY(0px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .container-fc button:disabled {
+            background-color: #b0bec5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .container-fc #show-bulk-input, .container-fc #show-manual-input, .container-fc #back-to-input, .container-fc #back-to-landing {
+            background-color: #6c757d; /* Secondary button color consistent with print.html */
+        }
+        .container-fc #show-bulk-input:hover, .container-fc #show-manual-input:hover, .container-fc #back-to-input:hover, .container-fc #back-to-landing:hover {
+            background-color: #5a6268;
+        }
+        .container-fc #print-cards {
+            background-color: var(--success-color);
+        }
+        .container-fc #print-cards:hover {
+            background-color: #1e7e34; /* Darker success */
+        }
+
+        .display-area { /* From print.html, styles are fine */
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: var(--container-bg); /* Match theme */
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 3px 10px var(--shadow-color);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .flashcard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-auto-rows: minmax(130px, auto);
+            /* height: auto; */ /* Removed fixed min-height for more flexibility */
+            min-height: 400px; /* Adjusted from 685px */
+            grid-gap: 20px;
+        }
+
+        .card-item {
+            border: 1px solid var(--card-border-color);
+            background-color: var(--card-bg-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 15px;
+            font-size: 14px;
+            border-radius: 8px;
+            box-shadow: 0 3px 7px rgba(0,0,0,0.07);
+            word-wrap: break-word;
+            min-height: 120px;
+            overflow-wrap: break-word;
+            white-space: pre-wrap;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card-item:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+        }
+        .card-item .label {
+            font-weight: 600;
+            font-size: 11px;
+            color: var(--primary-color); /* Match theme */
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .controls {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #page-info {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 17px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .message-box { /* From print.html, ensure z-index is appropriate */
+            position: fixed;
+            top: 80px; /* Below a potentially sticky header */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--warning-color);
+            color: var(--text-dark);
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000; /* Below header */
+            display: none;
+            font-size: 16px;
+            font-weight: 500;
+            animation: fadeInOut 3s ease-in-out;
+        }
+        .message-box.success { background-color: var(--success-color); color: white; }
+        .message-box.error { background-color: var(--danger-color); color: white; }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            10%, 90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        .print-page-title { /* For print only */
+            display: none;
+        }
+
+        .input-instructions { /* From print.html, styles are fine */
+            font-size: 0.95em;
+            color: var(--text-light);
+            margin-top: 20px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #eee;
+        }
+        .input-instructions p { margin-bottom: 8px; }
+        .input-instructions code {
+            background-color: #e0e0e0;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            color: #333;
+        }
+        .input-instructions hr {
+            border: 0;
+            height: 1px;
+            background-color: #ddd;
+            margin: 15px 0;
+        }
+
+        .delimiter-group { /* From print.html, styles are fine */
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+        .delimiter-group-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            font-size: 1.05em;
+        }
+        .delimiter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 15px;
+            align-items: center;
+        }
+        .delimiter-options label {
+            margin-right: 10px;
+            font-size: 0.98em;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+        }
+        .delimiter-options input[type="radio"] {
+            margin-right: 6px;
+            accent-color: var(--primary-color); /* Match theme */
+        }
+        .delimiter-options input[type="text"] {
+            padding: 8px 10px;
+            font-size: 0.95em;
+            margin-left: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-family: 'Poppins', sans-serif;
+            background-color: white;
+        }
+        #custom-term-def-delimiter-input { width: 50px; text-align: center; }
+        #custom-card-delimiter-input { width: 100px; }
+
+
+        @media (max-width: 600px) { /* From index(1).html, for landing page responsiveness */
+            main h1 { font-size: 2rem; }
+            .logo-center { height: 300px; width: 300px; }
+            p.lead { margin-bottom: 1.5rem; }
+            .cta-print-button-container { margin-bottom: 2rem; }
+            .btn-large-accent { padding: 0.6rem 1.2rem; font-size: 1rem; }
+            section.features h2, section.tutorial h2 { font-size: 1.5rem; }
+
+            .container-fc h1 { font-size: 1.8em; } /* Adjust flashcard maker title for mobile */
+            .input-row { flex-direction: column; gap: 10px; } /* Stack inputs on small screens */
+            .input-row input { width: 100%; }
+        }
+
+        @media print { /* From print.html, largely unchanged */
+            html, body {
+                height: auto;
+                background-color: #fff !important;
+                font-family: Arial, sans-serif;
+                font-size: 10pt;
+                color: #000 !important;
+                padding:0; margin:0; /* Reset body padding/margin for print */
+            }
+            header, .cta-print-button-container, section.features, section.tutorial, #back-to-landing-container /* Hide non-flashcard elements */ {
+                display: none !important;
+            }
+            main { /* Hide main landing content */
+                display: none !important;
+            }
+             .flashcard-maker-container { /* Ensure this is visible */
+                display: block !important;
+                padding: 0; margin: 0;
+                background-color: #fff !important;
+            }
+
+            .container-fc {
+                box-shadow: none;
+                padding: 0;
+                margin: 0 auto; /* Centering the content block */
+                width: 98%;
+                max-width: 7.8in; /* Standard print width */
+                gap: 2.5mm;
+                border-radius: 0;
+                background-color: #fff !important;
+            }
+            .container-fc h1, .logo-container-fc, .flashcard-maker-container .logo-center-small { /* Hide flashcard maker title and its logo for print */
+                display: none !important;
+            }
+            .input-area, .controls:not(#print-controls-in-print-mode), #page-info, .message-box, #add-row, #start-flashcards, #back-to-input, #prev-page, #next-page, #print-cards, #parse-bulk-data, #show-manual-input, #show-bulk-input, #back-to-landing {
+                display: none !important; /* Hide all interactive UI for flashcard maker */
+            }
+             .display-area { /* Ensure display area is visible and clean for print */
+                border: none;
+                padding: 0;
+                margin: 0;
+                width: 100%;
+                box-shadow: none;
+                background-color: #fff !important;
+            }
+            @page {
+                size: letter;
+                margin: 0.3in;
+            }
+            .print-page-title {
+                display: block !important;
+                text-align: center;
+                font-size: 9pt;
+                margin-bottom: 2mm;
+                font-weight: bold;
+                color: #000;
+            }
+            .flashcard-grid {
+                page-break-after: always;
+                grid-template-columns: repeat(2, 1fr) !important;
+                grid-gap: 2.5mm !important;
+                height: auto;
+                min-height: 0;
+                background-color: #fff !important;
+                grid-auto-rows: 1fr;
+                border: none;
+            }
+            .card-item {
+                border: 0.8pt solid #333 !important;
+                font-size: 8pt !important;
+                min-height: 1.7in !important;
+                background-color: #fdfdfd !important;
+                padding: 2mm !important;
+                page-break-inside: avoid !important;
+                box-shadow: none !important;
+                white-space: pre-wrap !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
+                overflow: hidden !important;
+                border-radius: 4px !important;
+                color: #000 !important;
+            }
+            .card-item .label {
+                font-size: 7pt !important;
+                color: #000 !important;
+                font-weight: bold !important;
+                margin-bottom: 1.5mm !important;
+                text-transform: uppercase;
+            }
+        }
+    </style>
 </head>
 <body>
 
-  <header>
-    <div class="auth-buttons">
-      <button class="btn" onclick="window.location.href='login.html'">Login</button>
-      <button class="btn" onclick="window.location.href='signup.html'">Signup</button>
+    <header>
+        <div class="auth-buttons">
+            <button class="btn" onclick="alert('Login functionality to be implemented.')">Login</button>
+            <button class="btn" onclick="alert('Signup functionality to be implemented.')">Signup</button>
+        </div>
+        <div class="site-title">CramCraft</div>
+    </header>
+
+    <main id="landing-page-content">
+        <img src="Cramcraft.png" alt="CramCraft Logo" class="logo-center" />
+        <h1>Welcome to CramCraft</h1>
+        <p class="lead">Your magical flashcard companion for smarter studying and better memory retention.</p>
+
+        <div class="cta-print-button-container">
+            <button class="btn btn-large-accent" id="show-flashcard-maker-btn">Create & Print Your Flashcards</button>
+        </div>
+
+        <section class="features">
+            <h2>Why Choose CramCraft?</h2>
+            <ul>
+                <li>Personalized dashboard to manage your flashcard sets</li>
+                <li>Manually add or remove cards, or bulk import from Quizlet</li>
+                <li>Digital flashcards with smooth flip animation</li>
+                <li>Print double-sided or export your flashcards as PDFs</li>
+                <li>Interactive quiz mode to test your knowledge</li>
+                <li>Search and discover flashcards created by others</li>
+                <li>Dark and light mode toggle for comfortable studying</li>
+                <li>Optimized layout for mobile devices</li>
+            </ul>
+        </section>
+
+        <section class="tutorial">
+            <h2>How to Use CramCraft</h2>
+            <div class="tutorial-video-embed-container">
+                <iframe
+                    src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="CramCraft Tutorial Video"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </section>
+    </main>
+
+    <div class="flashcard-maker-container hidden" id="flashcard-maker-section">
+        <div class="container-fc">
+            <div class="logo-container-fc">
+                 <img src="Cramcraft.png" alt="CramCraft Mini Logo" class="logo-center-small">
+            </div>
+            <h1>Flashcard Maker</h1>
+
+            <div id="back-to-landing-container" style="text-align: center; margin-bottom: 15px;">
+                 <button id="back-to-landing" class="btn">← Back to CramCraft Home</button>
+            </div>
+
+
+            <div class="input-area" id="manual-input-area">
+                <h2>Enter Terms and Definitions Manually</h2>
+                <div id="term-def-inputs">
+                    <div class="input-row">
+                        <input type="text" placeholder="Term 1" class="term">
+                        <input type="text" placeholder="Definition 1" class="definition">
+                    </div>
+                </div>
+                <button id="add-row">Add Another Term/Definition</button>
+                <button id="start-flashcards">Generate Flashcards from Manual Input</button>
+                <button id="show-bulk-input">Switch to Bulk Input</button>
+            </div>
+
+            <div class="input-area hidden" id="bulk-input-area">
+                <h2>Enter Bulk Flashcard Data</h2>
+                <div class="delimiter-group">
+                    <p class="delimiter-group-title"><strong>1. Separate Term and Definition with:</strong></p>
+                    <div class="delimiter-options" id="term-def-separator-options">
+                        <label><input type="radio" name="termDefDelimiter" value="tab" checked> Tab</label>
+                        <label><input type="radio" name="termDefDelimiter" value="comma"> Comma (,)</label>
+                        <label><input type="radio" name="termDefDelimiter" value="tilde"> Tilde (~)</label>
+                        <label>
+                            <input type="radio" name="termDefDelimiter" value="customTermDef"> Custom:
+                            <input type="text" id="custom-term-def-delimiter-input" maxlength="1" class="hidden">
+                        </label>
+                    </div>
+                </div>
+                <div class="delimiter-group">
+                    <p class="delimiter-group-title"><strong>2. Separate Cards (Rows) with:</strong></p>
+                    <div class="delimiter-options" id="card-separator-options">
+                        <label><input type="radio" name="cardDelimiter" value="newline" checked> New Line</label>
+                        <label><input type="radio" name="cardDelimiter" value="semicolon"> Semicolon (;)</label>
+                        <label>
+                            <input type="radio" name="cardDelimiter" value="customCard"> Custom:
+                            <input type="text" id="custom-card-delimiter-input" class="hidden" placeholder="e.g. ---">
+                        </label>
+                    </div>
+                </div>
+                <div class="input-instructions">
+                    <p>Paste your flashcard data below using your chosen separators.</p>
+                    <p>A <strong>Term</strong> can span multiple lines (if "New Line" is NOT your card separator and your term/def separator is not also a newline).</p>
+                    <p>The <strong>Definition</strong> is typically the part after the <i>last</i> instance of your term/definition separator on a line (or within a card block if using "New Line" as card separator).</p>
+                    <hr>
+                    <p><strong>Example 1 (Tab for Term/Def, New Line for Cards):</strong></p>
+                    <p><code>Term A&lt;TAB&gt;Definition A</code><br><code>Term B&lt;TAB&gt;Definition B</code></p>
+                    <p><strong>Example 2 (Comma for Term/Def, Semicolon for Cards):</strong></p>
+                    <p><code>Capital of France,Paris;What is 2+2?,4</code></p>
+                    <p><strong>Example 3 (Custom '|' for Term/Def, Custom '---' for Cards):</strong></p>
+                    <p><code>Question 1|Answer 1---Question 2|Answer 2</code></p>
+                </div>
+                <textarea id="bulk-data-input" rows="10" placeholder="Example (Tab between term/def, New Line between cards):&#10;Term1\tDefinition1&#10;Term2\tDefinition2..."></textarea>
+                <button id="parse-bulk-data">Parse Bulk Data & Generate Flashcards</button>
+                <button id="show-manual-input">Switch to Manual Row Input</button>
+            </div>
+
+            <div class="display-area hidden" id="flashcard-display">
+                <div id="page-info"></div>
+                <div id="cards-container"></div>
+                <div class="controls">
+                    <button id="prev-page">Previous Page</button>
+                    <button id="next-page">Next Page</button>
+                    <button id="print-cards">Print Flashcards</button>
+                    <button id="back-to-input">Back to Input Methods</button>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="site-title">CramCraft</div>
-  </header>
 
-  <main>
-    <img src="Cramcraft.png" alt="CramCraft Logo" class="logo-center" />
-    <h1>Welcome to CramCraft</h1>
-    <p class="lead">Your magical flashcard companion for smarter studying and better memory retention.</p>
+    <div class="message-box" id="custom-alert"></div>
 
-    <div class="cta-print-button-container">
-        <button class="btn btn-large-accent" onclick="window.location.href='print.html'">Create & Print Your Flashcards</button>
-    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Page Swapping Logic ---
+            const landingPageContent = document.getElementById('landing-page-content');
+            const flashcardMakerSection = document.getElementById('flashcard-maker-section');
+            const showFlashcardMakerBtn = document.getElementById('show-flashcard-maker-btn');
+            const backToLandingBtn = document.getElementById('back-to-landing');
 
-    <section class="features">
-      <h2>Why Choose CramCraft?</h2>
-      <ul>
-        <li>Personalized dashboard to manage your flashcard sets</li>
-        <li>Manually add or remove cards, or bulk import from Quizlet</li>
-        <li>Digital flashcards with smooth flip animation</li>
-        <li>Print double-sided or export your flashcards as PDFs</li>
-        <li>Interactive quiz mode to test your knowledge</li>
-        <li>Search and discover flashcards created by others</li>
-        <li>Dark and light mode toggle for comfortable studying</li>
-        <li>Optimized layout for mobile devices</li>
-      </ul>
-    </section>
+            if (showFlashcardMakerBtn) {
+                showFlashcardMakerBtn.addEventListener('click', function() {
+                    landingPageContent.classList.add('hidden');
+                    flashcardMakerSection.classList.remove('hidden');
+                    flashcardMakerSection.style.display = 'flex'; // Ensure it's flex for centering
+                });
+            }
+            if (backToLandingBtn) {
+                backToLandingBtn.addEventListener('click', function() {
+                    flashcardMakerSection.classList.add('hidden');
+                    flashcardMakerSection.style.display = 'none';
+                    landingPageContent.classList.remove('hidden');
+                     // Also hide display area if it was open
+                    document.getElementById('flashcard-display').classList.add('hidden');
+                    document.getElementById('manual-input-area').classList.remove('hidden'); // Show manual input by default
+                    document.getElementById('bulk-input-area').classList.add('hidden');
+                });
+            }
 
-    <section class="tutorial">
-      <h2>How to Use CramCraft</h2>
-      <div class="tutorial-video-embed-container">
-        <iframe 
-            src="https://www.youtube.com/embed/Np4swmKgRIA" 
-            title="FASTEST way to print DOUBLE-SIDED Flashcards" 
-            frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-            referrerpolicy="strict-origin-when-cross-origin" 
-            allowfullscreen>
-        </iframe>
-      </div>
-    </section>
-  </main>
 
+            // --- Flashcard Maker JS (from print.html, slightly adapted) ---
+            const addRowBtn = document.getElementById('add-row');
+            const startManualBtn = document.getElementById('start-flashcards');
+            const termDefInputs = document.getElementById('term-def-inputs');
+            const displayArea = document.getElementById('flashcard-display');
+            const cardsContainer = document.getElementById('cards-container');
+            const pageInfo = document.getElementById('page-info');
+            const prevBtn = document.getElementById('prev-page');
+            const nextBtn = document.getElementById('next-page');
+            const printBtn = document.getElementById('print-cards');
+            const backBtn = document.getElementById('back-to-input'); // Renamed to "Back to Input Methods"
+
+            const manualInputArea = document.getElementById('manual-input-area');
+            const bulkInputArea = document.getElementById('bulk-input-area');
+            const showBulkInputBtn = document.getElementById('show-bulk-input');
+            const showManualInputBtn = document.getElementById('show-manual-input');
+            const bulkDataInput = document.getElementById('bulk-data-input');
+            const parseBulkDataBtn = document.getElementById('parse-bulk-data');
+
+            const termDefDelimiterRadios = document.querySelectorAll('input[name="termDefDelimiter"]');
+            const customTermDefDelimiterInput = document.getElementById('custom-term-def-delimiter-input');
+            const cardDelimiterRadios = document.querySelectorAll('input[name="cardDelimiter"]');
+            const customCardDelimiterInput = document.getElementById('custom-card-delimiter-input');
+
+            const customAlertBox = document.getElementById('custom-alert');
+            const controlsDiv = document.querySelector('.container-fc .controls'); // Scoped to flashcard maker
+
+            let rowCount = 1;
+            let flashcardData = [];
+            let currentPage = 0;
+            let totalPages = 0;
+            const CARDS_PER_PAGE = 10;
+
+            function showMessage(message, type = 'warning') {
+                customAlertBox.textContent = message;
+                customAlertBox.className = 'message-box'; // Reset classes
+                if (type === 'success') customAlertBox.classList.add('success');
+                else if (type === 'error') customAlertBox.classList.add('error');
+                else customAlertBox.classList.add('warning');
+                customAlertBox.style.display = 'block';
+                if (customAlertBox.animationTimeout) clearTimeout(customAlertBox.animationTimeout);
+                customAlertBox.animationTimeout = setTimeout(() => {
+                    customAlertBox.style.display = 'none';
+                }, 3000);
+            }
+
+            function isOptionLine(line) { return /^\s*[a-zA-Z]\.\s/.test(line.trim()); }
+
+            termDefDelimiterRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    customTermDefDelimiterInput.classList.toggle('hidden', this.value !== 'customTermDef');
+                    if (this.value === 'customTermDef') customTermDefDelimiterInput.focus();
+                });
+            });
+
+            cardDelimiterRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    customCardDelimiterInput.classList.toggle('hidden', this.value !== 'customCard');
+                    if (this.value === 'customCard') customCardDelimiterInput.focus();
+                });
+            });
+
+            showBulkInputBtn.addEventListener('click', () => {
+                manualInputArea.classList.add('hidden');
+                bulkInputArea.classList.remove('hidden');
+                displayArea.classList.add('hidden'); // Hide display area when switching input
+            });
+
+            showManualInputBtn.addEventListener('click', () => {
+                bulkInputArea.classList.add('hidden');
+                manualInputArea.classList.remove('hidden');
+                displayArea.classList.add('hidden'); // Hide display area
+            });
+
+            addRowBtn.addEventListener('click', () => {
+                rowCount++;
+                const newRow = document.createElement('div');
+                newRow.className = 'input-row';
+                newRow.innerHTML = `<input type="text" placeholder="Term ${rowCount}" class="term"><input type="text" placeholder="Definition ${rowCount}" class="definition">`;
+                termDefInputs.appendChild(newRow);
+            });
+
+            function collectManualFlashcards() {
+                flashcardData = [];
+                const termInputs = manualInputArea.querySelectorAll('.term');
+                const defInputs = manualInputArea.querySelectorAll('.definition');
+                for (let i = 0; i < termInputs.length; i++) {
+                    const term = termInputs[i].value.trim();
+                    const definition = defInputs[i].value.trim();
+                    if (term || definition) {
+                        flashcardData.push({
+                            term: term || `(No Term Provided ${flashcardData.length + 1})`,
+                            definition: definition || `(No Definition Provided ${flashcardData.length + 1})`
+                        });
+                    }
+                }
+                if (flashcardData.length === 0) {
+                    showMessage('Please enter at least one term or definition.', 'error');
+                    return false;
+                }
+                return true;
+            }
+
+            function parseBulkFlashcards() {
+                flashcardData = [];
+                const bulkText = bulkDataInput.value;
+                if (!bulkText.trim()) {
+                    showMessage('Please enter some data in the bulk input field.', 'error');
+                    return false;
+                }
+
+                let termDefSeparator;
+                const selectedTermDefDOption = document.querySelector('input[name="termDefDelimiter"]:checked').value;
+                if (selectedTermDefDOption === 'tab') termDefSeparator = '\t';
+                else if (selectedTermDefDOption === 'comma') termDefSeparator = ',';
+                else if (selectedTermDefDOption === 'tilde') termDefSeparator = '~';
+                else if (selectedTermDefDOption === 'customTermDef') {
+                    termDefSeparator = customTermDefDelimiterInput.value;
+                    if (termDefSeparator.length !== 1) {
+                        showMessage('Custom Term/Definition separator must be a single character.', 'error');
+                        customTermDefDelimiterInput.focus(); return false;
+                    }
+                } else { showMessage('Invalid Term/Definition separator.', 'error'); return false; }
+
+                let cardStrings = [];
+                const selectedCardDOption = document.querySelector('input[name="cardDelimiter"]:checked').value;
+                if (selectedCardDOption === 'newline') {
+                    const allLines = bulkText.split('\n');
+                    let currentCardBlockLines = [];
+                    for (let i = 0; i < allLines.length; i++) {
+                        const currentLine = allLines[i]; const trimmedCurrentLine = currentLine.trim();
+                        if (trimmedCurrentLine === "" && currentCardBlockLines.length === 0) continue;
+                        let isNewCardBoundary = false;
+                        if (currentCardBlockLines.length > 0) {
+                            if (trimmedCurrentLine === "") isNewCardBoundary = true;
+                            else if (!isOptionLine(currentLine) && !isOptionLine(currentCardBlockLines[currentCardBlockLines.length-1])) {
+                                const prevLine = allLines[i-1]?.trim();
+                                if(prevLine !== "" && !isOptionLine(currentLine)) isNewCardBoundary = true;
+                            }
+                        }
+                        if (isNewCardBoundary && currentCardBlockLines.length > 0) {
+                            cardStrings.push(currentCardBlockLines.join('\n')); currentCardBlockLines = [];
+                        }
+                        if(trimmedCurrentLine !== "") currentCardBlockLines.push(currentLine);
+                        else if (currentCardBlockLines.length > 0) { // Handle empty line as separator
+                            cardStrings.push(currentCardBlockLines.join('\n')); currentCardBlockLines = [];
+                        }
+                    }
+                    if (currentCardBlockLines.length > 0) cardStrings.push(currentCardBlockLines.join('\n'));
+                } else if (selectedCardDOption === 'semicolon') cardStrings = bulkText.split(';');
+                else if (selectedCardDOption === 'customCard') {
+                    const customCardSep = customCardDelimiterInput.value;
+                    if (!customCardSep) { showMessage('Custom card separator is empty.', 'error'); customCardDelimiterInput.focus(); return false; }
+                    cardStrings = bulkText.split(customCardSep);
+                } else { showMessage('Invalid card separator.', 'error'); return false; }
+
+                cardStrings.forEach(cardStr => {
+                    const trimmedCardStr = cardStr.trim(); if (!trimmedCardStr) return;
+                    let term = '', definition = '';
+                    const lastDelimiterIndex = trimmedCardStr.lastIndexOf(termDefSeparator);
+                    if (lastDelimiterIndex !== -1) {
+                        term = trimmedCardStr.substring(0, lastDelimiterIndex).trim();
+                        definition = trimmedCardStr.substring(lastDelimiterIndex + termDefSeparator.length).trim();
+                    } else {
+                        term = trimmedCardStr; definition = `(No definition: '${termDefSeparator}' not found)`;
+                    }
+                    if (term || definition !== `(No definition: '${termDefSeparator}' not found)`) {
+                        flashcardData.push({ term: term || `(No Term ${flashcardData.length + 1})`, definition: definition || `(No Definition ${flashcardData.length + 1})` });
+                    }
+                });
+
+                if (flashcardData.length === 0) {
+                    showMessage('No valid flashcards parsed. Check data and separators.', 'error');
+                    return false;
+                }
+                return true;
+            }
+
+            function proceedToFlashcardDisplay() {
+                if (flashcardData.length > 0) {
+                    while (flashcardData.length % CARDS_PER_PAGE !== 0 && flashcardData.length < 500) { // Sanity limit
+                        flashcardData.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` });
+                    }
+                } else { showMessage('No data to display.', 'error'); return; }
+
+                manualInputArea.classList.add('hidden');
+                bulkInputArea.classList.add('hidden');
+                displayArea.classList.remove('hidden');
+
+                currentPage = 0;
+                totalPages = Math.ceil(flashcardData.filter(c => c.term !== '(Empty Slot)').length / CARDS_PER_PAGE) * 2;
+                 if (flashcardData.filter(c => c.term !== '(Empty Slot)').length === 0) totalPages = 0;
+
+
+                updateDisplay();
+                const actualCards = flashcardData.filter(c => c.term !== '(Empty Slot)').length;
+                if (actualCards > 0) showMessage(`Generated ${actualCards} flashcards!`, 'success');
+                else if (flashcardData.length > 0 && actualCards === 0) showMessage('Generated empty slots. Please check your input.', 'warning');
+                else showMessage('No flashcards were generated.', 'error');
+
+            }
+            startManualBtn.addEventListener('click', () => {
+                if (collectManualFlashcards()) proceedToFlashcardDisplay();
+            });
+            parseBulkDataBtn.addEventListener('click', () => {
+                if (parseBulkFlashcards()) proceedToFlashcardDisplay();
+            });
+
+
+            function updateDisplay() {
+                cardsContainer.innerHTML = '';
+                const actualCardCount = flashcardData.filter(c => c.term !== `(Empty Slot)`).length;
+                 totalPages = actualCardCount > 0 ? Math.ceil(actualCardCount / CARDS_PER_PAGE) * 2 : 0;
+                 // If we padded with empty slots, totalPages for display purposes should be based on original data + padding.
+                 // For navigation, it's easier if totalPages includes pages for empty slots if they exist on last page.
+                 // Recalculate totalPages based on flashcardData.length (which includes padding)
+                 totalPages = (flashcardData.length / CARDS_PER_PAGE) * 2;
+
+
+                if (totalPages === 0 || actualCardCount === 0) {
+                    pageInfo.textContent = 'No flashcards to display.';
+                    if (controlsDiv) controlsDiv.classList.add('hidden');
+                    prevBtn.disabled = true; nextBtn.disabled = true; printBtn.disabled = true;
+                    return;
+                }
+                if (controlsDiv) controlsDiv.classList.remove('hidden');
+
+
+                const isTermPage = currentPage % 2 === 0;
+                const setIndex = Math.floor(currentPage / 2);
+                const startIdx = setIndex * CARDS_PER_PAGE;
+
+                pageInfo.textContent = `Page ${currentPage + 1} of ${totalPages} - ${isTermPage ? 'Terms' : 'Definitions'} (Card Set ${setIndex + 1})`;
+                pageInfo.classList.remove('hidden');
+
+                const grid = document.createElement('div');
+                grid.className = 'flashcard-grid';
+                for (let i = 0; i < CARDS_PER_PAGE; i++) {
+                    const itemIndex = startIdx + i;
+                    if (itemIndex >= flashcardData.length) break;
+                    const card = document.createElement('div');
+                    card.className = 'card-item';
+                    const itemToDisplay = flashcardData[itemIndex];
+                    const displayIndex = flashcardData.findIndex(fd => fd === itemToDisplay) + 1; // Get original index for label
+                    const labelText = isTermPage ? `TERM ${displayIndex}` : `DEFINITION ${displayIndex}`;
+                    const contentText = isTermPage ? itemToDisplay.term : itemToDisplay.definition;
+                    card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`;
+                    grid.appendChild(card);
+                }
+                cardsContainer.appendChild(grid);
+                prevBtn.disabled = currentPage === 0;
+                nextBtn.disabled = currentPage >= totalPages - 1; // Changed to >=
+                printBtn.disabled = false;
+            }
+
+            nextBtn.addEventListener('click', () => { if (currentPage < totalPages - 1) { currentPage++; updateDisplay(); } });
+            prevBtn.addEventListener('click', () => { if (currentPage > 0) { currentPage--; updateDisplay(); } });
+
+            printBtn.addEventListener('click', () => {
+                const actualCardsForPrint = flashcardData.filter(c => c.term !== '(Empty Slot)');
+                if (actualCardsForPrint.length === 0) {
+                    showMessage('No actual flashcards to print.', 'error'); return;
+                }
+
+                // Temporarily use only actual cards for print layout
+                const dataToPrint = [...actualCardsForPrint];
+                while (dataToPrint.length % CARDS_PER_PAGE !== 0) {
+                    dataToPrint.push({ term: `(Empty Slot)`, definition: `(Empty Slot)`});
+                }
+                const printTotalPages = (dataToPrint.length / CARDS_PER_PAGE) * 2;
+
+
+                const originalPageInfoClass = pageInfo.className;
+                const originalControlsClass = controlsDiv ? controlsDiv.className : '';
+                pageInfo.classList.add('hidden');
+                if (controlsDiv) controlsDiv.classList.add('hidden');
+                cardsContainer.innerHTML = ''; // Clear for print content
+
+                for (let i = 0; i < printTotalPages; i++) {
+                    const isTermPageForPrint = i % 2 === 0;
+                    const setIndexForPrint = Math.floor(i / 2);
+                    const startIdxForPrint = setIndexForPrint * CARDS_PER_PAGE;
+                    const printPageTitleElement = document.createElement('h3');
+                    printPageTitleElement.className = 'print-page-title';
+                    printPageTitleElement.textContent = `Page ${i + 1} / ${printTotalPages} - ${isTermPageForPrint ? 'Terms' : 'Definitions'} (Set ${setIndexForPrint + 1})`;
+                    cardsContainer.appendChild(printPageTitleElement);
+                    const grid = document.createElement('div');
+                    grid.className = 'flashcard-grid';
+
+                    for (let j = 0; j < CARDS_PER_PAGE; j++) {
+                        let indexToFetchDataFrom = startIdxForPrint + j;
+                        if (indexToFetchDataFrom >= dataToPrint.length) break;
+
+                        if (!isTermPageForPrint) { // Definition page duplex alignment
+                            const numColumns = 2; const col = j % numColumns;
+                            if (col === 0) { if (indexToFetchDataFrom + 1 < dataToPrint.length && (j+1) < CARDS_PER_PAGE) indexToFetchDataFrom = startIdxForPrint + j + 1; }
+                            else { if (indexToFetchDataFrom - 1 >= startIdxForPrint) indexToFetchDataFrom = startIdxForPrint + j - 1; }
+                        }
+                        const itemToDisplay = dataToPrint[indexToFetchDataFrom];
+                        const card = document.createElement('div');
+                        card.className = 'card-item';
+                         // Find original index for consistent numbering, even with (Empty Slot)
+                        let originalItemIndex = -1;
+                        if (itemToDisplay.term !== '(Empty Slot)') {
+                           originalItemIndex = flashcardData.findIndex(fd => fd.term === itemToDisplay.term && fd.definition === itemToDisplay.definition) + 1;
+                        } else {
+                           originalItemIndex = indexToFetchDataFrom + 1; // Fallback for empty slots
+                        }
+
+                        const labelText = isTermPageForPrint ? `TERM ${originalItemIndex}` : `DEFINITION ${originalItemIndex}`;
+                        const contentText = isTermPageForPrint ? itemToDisplay.term : itemToDisplay.definition;
+                        card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`;
+                        grid.appendChild(card);
+                    }
+                    cardsContainer.appendChild(grid);
+                }
+                window.print();
+                cardsContainer.innerHTML = ''; // Clear after print
+                pageInfo.className = originalPageInfoClass;
+                if (controlsDiv) controlsDiv.className = originalControlsClass;
+                if (!displayArea.classList.contains('hidden')) updateDisplay(); // Restore view
+            });
+
+            backBtn.addEventListener('click', () => { // "Back to Input Methods"
+                displayArea.classList.add('hidden');
+                manualInputArea.classList.remove('hidden'); // Default to manual
+                bulkInputArea.classList.add('hidden');
+                pageInfo.classList.add('hidden');
+                if (controlsDiv) controlsDiv.classList.add('hidden');
+                 // Do not reset flashcardData here, allow user to go back and forth
+            });
+        });
+    </script>
 </body>
 </html>
