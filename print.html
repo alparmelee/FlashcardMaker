@@ -3,16 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CramCraft</title>
+    <title>Flashcard Program</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-color: #007bff; /* Main theme color */
             --primary-hover-color: #0056b3;
-            --secondary-color: #6c757d; /* For secondary buttons */
-            --secondary-hover-color: #5a6268;
-            --accent-color: #6f42c1; /* Deep Purple from original CramCraft */
-            --accent-hover-color: #5a359a;
             --card-bg-color: #f0f7ff; /* Lighter blue for cards */
             --card-border-color: #a3c9f0; /* Slightly darker blue for card borders */
             --text-dark: #2c3e50; /* Darker text for better readability */
@@ -31,97 +27,54 @@
         }
         body {
             font-family: 'Poppins', Arial, sans-serif;
-            margin: 0;
-            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+            padding: 25px;
+            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); /* Gradient background */
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
             min-height: 100%;
             box-sizing: border-box;
             color: var(--text-dark);
             line-height: 1.6;
         }
-
-        /* Header & Navigation */
-        header.app-header {
-            background-color: var(--container-bg);
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 6px var(--shadow-color);
+        .container {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .app-header .logo {
-            font-size: 1.8rem;
-            font-weight: 600;
-            color: var(--accent-color);
-            text-decoration: none;
-        }
-        .app-header nav a, .app-header .auth-info span {
-            margin-left: 1.5rem;
-            text-decoration: none;
-            color: var(--primary-color);
-            font-weight: 500;
-            cursor: pointer;
-        }
-        .app-header nav a:hover, .app-header .auth-info span:hover {
-            color: var(--primary-hover-color);
-            text-decoration: underline;
-        }
-        .app-header .auth-info .username {
-            color: var(--text-dark);
-            font-weight: 600;
-        }
-        .app-header .auth-info button {
-            margin-left: 1rem;
-            background-color: var(--secondary-color);
-        }
-         .app-header .auth-info button:hover {
-            background-color: var(--secondary-hover-color);
-         }
-
-
-        .main-container {
-            flex-grow: 1;
-            padding: 25px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .content-wrapper {
+            flex-direction: column;
+            gap: 20px;
             background-color: var(--container-bg);
-            padding: 25px 30px;
-            border-radius: 12px;
+            padding: 25px 30px; /* Increased padding */
+            border-radius: 12px; /* More rounded corners */
             box-shadow: 0 5px 15px var(--shadow-color);
-            max-width: 900px; /* Wider for dashboard etc. */
+            max-width: 750px; /* Slightly wider */
             width: 100%;
             box-sizing: border-box;
         }
 
-        /* General Section Styling */
-        .app-section {
-            display: none; /* Hidden by default, shown by JS */
-        }
-        .app-section.active {
-            display: block;
-        }
-
-        h1, h2 {
+        .logo-container { /* For the logo */
             text-align: center;
-            color: var(--accent-color);
-            margin-bottom: 25px;
-            font-weight: 600;
+            margin-bottom: 10px;
         }
-        h1 { font-size: 2.2em; }
-        h2 { font-size: 1.8em; color: var(--primary-color); border-bottom: 1px solid #eee; padding-bottom: 8px; margin-top:0;}
-        h3 { font-size: 1.4em; color: var(--text-dark); margin-top: 20px; margin-bottom: 10px;}
+        .logo-container img {
+            max-width: 150px; /* Adjust as needed */
+            height: auto;
+            border-radius: 8px; /* Optional: if your logo benefits from rounded corners */
+        }
 
-        /* Input Area (reused from Flashcard Maker) */
+        h1 {
+            text-align: center;
+            color: var(--text-dark);
+            margin-bottom: 25px;
+            font-weight: 600; /* Bolder title */
+            font-size: 2.2em; /* Larger title */
+        }
+        h2 {
+            color: var(--primary-color); /* Use primary color for subheadings */
+            margin-top: 0;
+            margin-bottom: 18px;
+            font-weight: 500;
+            border-bottom: 1px solid #eee; /* Subtle separator */
+            padding-bottom: 8px;
+        }
         .input-area {
             background-color: var(--input-bg);
             padding: 25px;
@@ -132,16 +85,16 @@
         }
         .input-row {
             display: flex;
-            gap: 15px;
+            gap: 15px; /* Increased gap */
             margin-bottom: 12px;
         }
         .input-row input,
         textarea {
             flex: 1;
-            padding: 12px 15px;
-            border: 1px solid #ced4da;
-            border-radius: 6px;
-            font-size: 15px;
+            padding: 12px 15px; /* Increased padding */
+            border: 1px solid #ced4da; /* Softer border */
+            border-radius: 6px; /* More rounded */
+            font-size: 15px; /* Slightly larger font */
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
         textarea {
@@ -150,63 +103,60 @@
             margin-bottom: 15px;
             line-height: 1.5;
         }
+
         .input-row input:focus,
         textarea:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25); /* Bootstrap-like focus */
             outline: none;
         }
 
-        /* Buttons (general styling from Flashcard Maker) */
-        button, .button-link {
+        button {
             background-color: var(--primary-color);
-            color: white !important; /* Ensure text is white */
+            color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 25px; /* Pill-shaped */
+            padding: 12px 20px; /* Enhanced padding */
+            border-radius: 25px; /* Pill-shaped buttons */
             cursor: pointer;
-            font-size: 15px;
-            font-weight: 500;
+            font-size: 15px; /* Adjusted font size */
+            font-weight: 500; /* Slightly bolder text */
             margin-right: 8px;
             margin-top: 8px;
-            transition: background-color 0.2s ease-in-out, transform 0.1s ease, box-shadow 0.2s ease;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease, box-shadow 0.2s ease; /* Added transform and shadow */
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-decoration: none; /* For .button-link */
-            display: inline-block; /* For .button-link */
+            text-transform: uppercase; /* Uppercase button text */
+            letter-spacing: 0.5px; /* Slight letter spacing */
         }
-        button:hover, .button-link:hover {
+        button:hover {
             background-color: var(--primary-hover-color);
-            transform: translateY(-2px);
+            transform: translateY(-2px); /* Slight lift on hover */
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
-        button:active, .button-link:active {
-            transform: translateY(0px);
+        button:active {
+            transform: translateY(0px); /* Pressed effect */
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         button:disabled {
-            background-color: #b0bec5;
+            background-color: #b0bec5; /* Softer disabled color */
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
         /* Specific button variations */
-        #show-bulk-input, #show-manual-input, #back-to-input, .secondary-action-btn {
-            background-color: var(--secondary-color); /* Secondary button color */
+        #show-bulk-input, #show-manual-input, #back-to-input {
+            background-color: #6c757d; /* Secondary button color */
         }
-        #show-bulk-input:hover, #show-manual-input:hover, #back-to-input:hover, .secondary-action-btn:hover {
-            background-color: var(--secondary-hover-color);
+        #show-bulk-input:hover, #show-manual-input:hover, #back-to-input:hover {
+            background-color: #5a6268;
         }
-        #print-cards, .success-action-btn {
-            background-color: var(--success-color); /* Green for print/success */
+        #print-cards {
+            background-color: var(--success-color); /* Green for print */
         }
-        #print-cards:hover, .success-action-btn:hover {
+        #print-cards:hover {
             background-color: #1e7e34;
         }
 
 
-        /* Flashcard Display Area (reused) */
         .display-area {
             border: 1px solid #e0e0e0;
             border-radius: 10px;
@@ -215,17 +165,17 @@
             display: flex;
             flex-direction: column;
             box-shadow: 0 3px 10px var(--shadow-color);
-            margin-top: 20px;
         }
-        .hidden { display: none !important; }
-
+        .hidden {
+            display: none !important;
+        }
         .flashcard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive columns */
             grid-auto-rows: minmax(130px, auto);
             height: auto;
-            min-height: 300px; /* Adjusted */
-            grid-gap: 20px;
+            min-height: 685px; /* Keep if specific height is needed, or adjust */
+            grid-gap: 20px; /* Increased gap */
         }
         .card-item {
             border: 1px solid var(--card-border-color);
@@ -235,44 +185,43 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 15px;
-            font-size: 14px;
-            border-radius: 8px;
+            padding: 15px; /* Increased padding */
+            font-size: 14px; /* Adjusted font size */
+            border-radius: 8px; /* More rounded */
             box-shadow: 0 3px 7px rgba(0,0,0,0.07);
             word-wrap: break-word;
             min-height: 120px;
             overflow-wrap: break-word;
             white-space: pre-wrap;
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Added hover transition */
         }
         .card-item:hover {
-            transform: translateY(-5px) scale(1.02);
+            transform: translateY(-5px) scale(1.02); /* Lift and slightly scale on hover */
             box-shadow: 0 6px 12px rgba(0,0,0,0.1);
         }
         .card-item .label {
-            font-weight: 600;
-            font-size: 11px;
-            color: var(--primary-color);
+            font-weight: 600; /* Bolder label */
+            font-size: 11px; /* Slightly larger label */
+            color: var(--primary-color); /* Use primary color */
             margin-bottom: 8px;
-            text-transform: uppercase;
+            text-transform: uppercase; /* Uppercase label */
             letter-spacing: 0.5px;
         }
         .controls {
             margin-top: 20px;
             text-align: center;
         }
-        #page-info, .page-info-display { /* Added class for reuse */
+        #page-info {
             text-align: center;
             margin-bottom: 15px;
-            font-size: 17px;
+            font-size: 17px; /* Larger page info */
             color: var(--text-light);
             font-weight: 500;
         }
 
-        /* Message Box (reused) */
         .message-box {
             position: fixed;
-            top: 80px; /* Adjusted for sticky header */
+            top: 20px;
             left: 50%;
             transform: translateX(-50%);
             background-color: var(--warning-color);
@@ -280,974 +229,664 @@
             padding: 15px 25px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            z-index: 1001; /* Above header */
+            z-index: 1000;
             display: none;
             font-size: 16px;
             font-weight: 500;
-            animation: fadeInOut 3s ease-in-out;
+            animation: fadeInOut 3s ease-in-out; /* Fade in/out animation */
         }
         .message-box.success { background-color: var(--success-color); color: white; }
         .message-box.error { background-color: var(--danger-color); color: white; }
+
+
         @keyframes fadeInOut {
             0%, 100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
             10%, 90% { opacity: 1; transform: translateX(-50%) translateY(0); }
         }
 
-        /* Delimiter and Instructions Styling (reused) */
+
+        .print-page-title {
+            display: none;
+        }
         .input-instructions {
-            font-size: 0.95em; color: var(--text-light); margin-top: 20px; margin-bottom: 15px;
-            background-color: #f9f9f9; padding: 15px; border-radius: 6px; border: 1px solid #eee;
-        }
-        .input-instructions p { margin-bottom: 8px; }
-        .input-instructions code {
-            background-color: #e0e0e0; padding: 3px 6px; border-radius: 4px;
-            font-family: 'Courier New', Courier, monospace; color: #333;
-        }
-        .input-instructions hr { border: 0; height: 1px; background-color: #ddd; margin: 15px 0; }
-        .delimiter-group {
-            margin-bottom: 20px; padding: 15px; background-color: #f8f9fa;
-            border-radius: 8px; border: 1px solid #eee;
-        }
-        .delimiter-group-title { font-weight: 600; color: var(--text-dark); margin-bottom: 10px; font-size: 1.05em; }
-        .delimiter-options { display: flex; flex-wrap: wrap; gap: 10px 15px; align-items: center; }
-        .delimiter-options label { margin-right: 10px; font-size: 0.98em; cursor: pointer; display: inline-flex; align-items: center; }
-        .delimiter-options input[type="radio"] { margin-right: 6px; accent-color: var(--primary-color); }
-        .delimiter-options input[type="text"] { padding: 8px 10px; font-size: 0.95em; margin-left: 5px; border-radius: 4px; border: 1px solid #ccc; background-color: white; }
-        #custom-term-def-delimiter-input { width: 50px; text-align: center; }
-        #custom-card-delimiter-input { width: 100px; }
-
-        /* Dashboard Specific Styles */
-        .dashboard-set-list, .search-results-list {
-            list-style: none;
-            padding: 0;
-        }
-        .dashboard-set-item, .search-result-item {
-            background-color: #f9f9f9;
-            border: 1px solid #eee;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: background-color 0.3s ease;
-        }
-        .dashboard-set-item:hover, .search-result-item:hover {
-            background-color: #f0f0f0;
-        }
-        .dashboard-set-item h3, .search-result-item h3 {
-            margin: 0;
-            font-size: 1.2em;
-            color: var(--accent-color);
-        }
-        .search-result-item .owner-info {
-            font-size: 0.9em;
+            font-size: 0.95em; /* Slightly larger */
             color: var(--text-light);
-        }
-
-        /* Search Area */
-        .search-bar-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .search-bar-container input[type="search"] {
-            flex-grow: 1;
-            padding: 12px 15px;
-            border: 1px solid #ced4da;
-            border-radius: 6px;
-            font-size: 16px;
-        }
-        .search-bar-container input[type="search"]:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-            outline: none;
-        }
-        
-        /* Login/Signup form styling */
-        .auth-form {
-            max-width: 400px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: var(--input-bg);
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .auth-form label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-        .auth-form input[type="text"],
-        .auth-form input[type="password"],
-        .auth-form input[type="email"] {
-            width: 100%;
-            padding: 10px;
+            margin-top: 20px; /* Space above instructions */
             margin-bottom: 15px;
-            border: 1px solid #ccc;
+            background-color: #f9f9f9; /* Light background for instructions */
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #eee;
+        }
+        .input-instructions p {
+            margin-bottom: 8px;
+        }
+        .input-instructions code {
+            background-color: #e0e0e0; /* Darker code background */
+            padding: 3px 6px;
             border-radius: 4px;
-            box-sizing: border-box;
+            font-family: 'Courier New', Courier, monospace; /* Classic monospace */
+            color: #333;
         }
-        .auth-form button {
-            width: 100%;
-            padding: 12px;
+        .input-instructions hr {
+            border: 0;
+            height: 1px;
+            background-color: #ddd;
+            margin: 15px 0;
         }
-        .auth-form p {
+
+        .delimiter-group {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+        .delimiter-group-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            font-size: 1.05em;
+        }
+        .delimiter-options {
+            display: flex;
+            flex-wrap: wrap; /* Allow options to wrap on smaller screens */
+            gap: 10px 15px; /* Row and column gap */
+            align-items: center;
+        }
+        .delimiter-options label {
+            margin-right: 10px; /* Reduced margin as gap handles spacing */
+            font-size: 0.98em;
+            cursor: pointer;
+            display: inline-flex; /* Align radio and text nicely */
+            align-items: center;
+        }
+        .delimiter-options input[type="radio"] {
+            margin-right: 6px;
+            accent-color: var(--primary-color); /* Style radio button */
+        }
+        .delimiter-options input[type="text"] { /* Style for custom delimiter inputs */
+            padding: 8px 10px;
+            font-size: 0.95em;
+            margin-left: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            background-color: white;
+        }
+        #custom-term-def-delimiter-input {
+            width: 50px;
             text-align: center;
-            margin-top: 15px;
         }
-        .auth-form p a {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .auth-form p a:hover {
-            text-decoration: underline;
+        #custom-card-delimiter-input {
+            width: 100px; /* Wider for multi-character potential */
         }
 
 
-        /* Print Specific Styles (reused and adapted) */
-        .print-page-title { display: none; }
         @media print {
             html, body {
-                height: auto; background-color: #fff !important; font-family: Arial, sans-serif;
-                font-size: 10pt; color: #000 !important; padding: 0; margin: 0;
-                max-width: 100%; display: block;
+                height: auto;
+                background-color: #fff !important; /* Ensure white background */
+                font-family: Arial, sans-serif; /* Standard print font */
+                font-size: 10pt; /* Adjust base font size for print */
+                color: #000 !important; /* Ensure black text */
             }
-            .app-header, .main-container > *:not(.content-wrapper), .content-wrapper > *:not(#print-content-area) {
-                display: none !important; /* Hide everything except print area */
+            body {
+                padding: 0;
+                margin: 0;
+                max-width: 100%;
+                display: block;
             }
-            .content-wrapper {
-                box-shadow: none; padding: 0; margin: 0 auto; width: 98%;
-                max-width: 7.8in; border-radius: 0;
+            .container {
+                box-shadow: none;
+                padding: 0;
+                margin: 0 auto;
+                width: 98%; /* Slightly more width for content */
+                max-width: 7.8in;
+                gap: 2.5mm; /* Reduced gap */
+                border-radius: 0;
             }
-            #print-content-area { display: block !important; }
-            
-            .input-area, .controls, .page-info-display, .message-box,
-            #add-row, #start-flashcards, #back-to-input, #prev-page, #next-page, #print-cards-btn,
-            #parse-bulk-data, #show-manual-input, #show-bulk-input,
-            .dashboard-set-actions button:not(#print-set-btn-dummy), /* Hide all dashboard buttons except a potential print one if we make it specific */
-            .search-bar-container, .search-results-list button,
-            .auth-form, .app-header nav, .app-header .auth-info { /* Hide nav and auth info in print */
+            h1, .logo-container { /* Hide logo and main title for print */
                 display: none !important;
             }
-
-            .display-area { /* Used within #print-content-area */
-                border: none; padding: 0; margin: 0; width: 100%; box-shadow: none;
+            .input-area, .controls, #page-info, .message-box, #add-row, #start-flashcards, #back-to-input, #prev-page, #next-page, #print-cards, #parse-bulk-data, #show-manual-input, #show-bulk-input {
+                display: none !important;
             }
-            @page { size: letter; margin: 0.3in; }
+            .display-area {
+                border: none;
+                padding: 0;
+                margin: 0;
+                width: 100%;
+                box-shadow: none;
+            }
+            @page {
+                size: letter;
+                margin: 0.3in; /* Slightly more margin */
+            }
             .print-page-title {
-                display: block !important; text-align: center; font-size: 9pt;
-                margin-bottom: 2mm; font-weight: bold; color: #000;
+                display: block !important;
+                text-align: center;
+                font-size: 9pt;
+                margin-bottom: 2mm;
+                font-weight: bold;
+                color: #000;
             }
             .flashcard-grid {
-                page-break-after: always; grid-template-columns: repeat(2, 1fr) !important;
-                grid-gap: 2.5mm !important; height: auto; min-height: 0;
-                background-color: #fff !important; grid-auto-rows: 1fr; border: none;
+                page-break-after: always;
+                grid-template-columns: repeat(2, 1fr) !important; /* Strict 2 columns */
+                grid-gap: 2.5mm !important; /* Strict gap */
+                height: auto;
+                min-height: 0;
+                background-color: #fff !important;
+                grid-auto-rows: 1fr; /* Equal height rows */
+                border: none; /* No border around the grid itself */
             }
             .card-item {
-                border: 0.8pt solid #333 !important; font-size: 8pt !important;
-                min-height: 1.7in !important; background-color: #fdfdfd !important;
-                padding: 2mm !important; page-break-inside: avoid !important;
-                box-shadow: none !important; white-space: pre-wrap !important;
-                display: flex !important; flex-direction: column !important;
-                justify-content: center !important; align-items: center !important;
-                overflow: hidden !important; border-radius: 4px !important; color: #000 !important;
+                border: 0.8pt solid #333 !important; /* Thinner solid border */
+                font-size: 8pt !important;
+                min-height: 1.7in !important; /* Adjust based on content and preference */
+                background-color: #fdfdfd !important; /* Very light grey */
+                padding: 2mm !important; /* Reduced padding */
+                page-break-inside: avoid !important;
+                box-shadow: none !important;
+                white-space: pre-wrap !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
+                align-items: center !important;
+                overflow: hidden !important;
+                border-radius: 4px !important; /* Slight radius for printed cards */
+                color: #000 !important;
             }
             .card-item .label {
-                font-size: 7pt !important; color: #000 !important; font-weight: bold !important;
-                margin-bottom: 1.5mm !important; text-transform: uppercase;
+                font-size: 7pt !important;
+                color: #000 !important;
+                font-weight: bold !important;
+                margin-bottom: 1.5mm !important;
+                text-transform: uppercase;
             }
         }
     </style>
 </head>
 <body>
-    <header class="app-header">
-        <a href="#" class="logo" id="logo-link">CramCraft</a>
-        <nav>
-            <a href="#" id="nav-dashboard">Dashboard</a>
-            <a href="#" id="nav-add-cards">Add Flashcards</a>
-            <a href="#" id="nav-search">Search Public Sets</a>
-        </nav>
-        <div class="auth-info">
-            </div>
-    </header>
+    <div class="container">
+        <div class="logo-container">
+            <img src="logo.png" alt="Flashcard Maker Logo">
+        </div>
+        <h1>Flashcard Maker</h1>
 
-    <div class="main-container">
-        <div class="content-wrapper">
-            <section id="dashboard-section" class="app-section">
-                <h2>My Dashboard</h2>
-                <p id="dashboard-welcome"></p>
-                <h3>My Flashcard Sets:</h3>
-                <ul id="dashboard-set-list" class="dashboard-set-list">
-                    </ul>
-                <button id="goto-add-cards-from-dashboard" class="success-action-btn">Create New Set</button>
-                 <div id="dashboard-selected-set-display" class="display-area hidden">
-                    <h3 id="dashboard-selected-set-title"></h3>
-                    <div class="page-info-display" id="dashboard-page-info"></div>
-                    <div id="dashboard-cards-container"></div>
-                    <div class="controls">
-                        <button id="dashboard-prev-page">Previous</button>
-                        <button id="dashboard-next-page">Next</button>
-                        <button id="dashboard-print-set">Print This Set</button>
-                        <button id="dashboard-close-set-view" class="secondary-action-btn">Close Set View</button>
-                    </div>
-                </div>
-            </section>
-
-            <section id="add-cards-section" class="app-section">
-                <h1>Create New Flashcard Set</h1>
-                <div class="input-area" id="set-title-area">
-                     <label for="new-set-title" style="font-weight:500; margin-bottom:5px; display:block;">Set Title:</label>
-                     <input type="text" id="new-set-title" placeholder="Enter title for your new set (e.g., Biology Chapter 5)" style="width:100%; box-sizing: border-box; margin-bottom:15px;">
-                </div>
-
-                <div class="input-area" id="manual-input-area">
-                    <h2>Enter Terms and Definitions Manually</h2>
-                    <div id="term-def-inputs">
-                        <div class="input-row">
-                            <input type="text" placeholder="Term 1" class="term">
-                            <input type="text" placeholder="Definition 1" class="definition">
-                        </div>
-                    </div>
-                    <button id="add-row">Add Another Term/Definition</button>
-                    <button id="save-manual-cards" class="success-action-btn">Save This Set</button>
-                    <button id="show-bulk-input">Switch to Bulk Input</button>
-                </div>
-
-                <div class="input-area hidden" id="bulk-input-area">
-                    <h2>Enter Bulk Flashcard Data</h2>
-                    <div class="delimiter-group">
-                        <p class="delimiter-group-title"><strong>1. Separate Term and Definition with:</strong></p>
-                        <div class="delimiter-options" id="term-def-separator-options">
-                            <label><input type="radio" name="termDefDelimiter" value="tab" checked> Tab</label>
-                            <label><input type="radio" name="termDefDelimiter" value="comma"> Comma (,)</label>
-                            <label><input type="radio" name="termDefDelimiter" value="tilde"> Tilde (~)</label>
-                            <label>
-                                <input type="radio" name="termDefDelimiter" value="customTermDef"> Custom:
-                                <input type="text" id="custom-term-def-delimiter-input" maxlength="1" class="hidden">
-                            </label>
-                        </div>
-                    </div>
-                    <div class="delimiter-group">
-                        <p class="delimiter-group-title"><strong>2. Separate Cards (Rows) with:</strong></p>
-                        <div class="delimiter-options" id="card-separator-options">
-                            <label><input type="radio" name="cardDelimiter" value="newline" checked> New Line</label>
-                            <label><input type="radio" name="cardDelimiter" value="semicolon"> Semicolon (;)</label>
-                            <label>
-                                <input type="radio" name="cardDelimiter" value="customCard"> Custom:
-                                <input type="text" id="custom-card-delimiter-input" class="hidden" placeholder="e.g. ---">
-                            </label>
-                        </div>
-                    </div>
-                    <div class="input-instructions">
-                        <p>Paste your flashcard data below using your chosen separators.</p>
-                         <p>A <strong>Term</strong> can span multiple lines (if "New Line" is NOT your card separator and your term/def separator is not also a newline).</p>
-                            <p>The <strong>Definition</strong> is typically the part after the <i>last</i> instance of your term/definition separator on a line (or within a card block if using "New Line" as card separator).</p>
-                        <hr>
-                        <p><strong>Example 1 (Tab for Term/Def, New Line for Cards):</strong></p>
-                        <p><code>Term A&lt;TAB&gt;Definition A</code><br><code>Term B&lt;TAB&gt;Definition B</code></p>
-                    </div>
-                    <textarea id="bulk-data-input" rows="10" placeholder="Example (Tab between term/def, New Line between cards):&#10;Term1\tDefinition1&#10;Term2\tDefinition2"></textarea>
-                    <button id="save-bulk-cards" class="success-action-btn">Parse & Save This Set</button>
-                    <button id="show-manual-input">Switch to Manual Row Input</button>
-                </div>
-                 <div class="display-area hidden" id="flashcard-creation-preview-area">
-                    <div class="page-info-display" id="creation-page-info"></div>
-                    <div id="creation-cards-container"></div>
-                    <div class="controls">
-                        <button id="creation-prev-page">Previous</button>
-                        <button id="creation-next-page">Next</button>
-                        <button id="creation-print-cards">Print This New Set</button>
-                        <button id="creation-back-to-editing" class="secondary-action-btn">Back to Editing</button>
-                    </div>
-                </div>
-            </section>
-
-            <section id="search-section" class="app-section">
-                <h2>Search Public Flashcard Sets</h2>
-                <div class="search-bar-container">
-                    <input type="search" id="search-input" placeholder="Search by title, topic, or owner...">
-                    <button id="search-button">Search</button>
-                </div>
-                <h3>Search Results:</h3>
-                <ul id="search-results-list" class="search-results-list">
-                    </ul>
-                 <div id="search-selected-set-display" class="display-area hidden">
-                    <h3 id="search-selected-set-title"></h3>
-                    <div class="page-info-display" id="search-page-info"></div>
-                    <div id="search-cards-container"></div>
-                    <div class="controls">
-                        <button id="search-prev-page">Previous</button>
-                        <button id="search-next-page">Next</button>
-                        <button id="search-print-set">Print This Set</button>
-                        <button id="search-close-set-view" class="secondary-action-btn">Close Set View</button>
-                    </div>
-                </div>
-            </section>
-
-            <section id="login-section" class="app-section">
-                <h2>Login to CramCraft</h2>
-                <form class="auth-form" id="login-form-dummy">
-                    <label for="login-email">Email:</label>
-                    <input type="email" id="login-email" value="dummy@example.com" readonly>
-                    <label for="login-password">Password:</label>
-                    <input type="password" id="login-password" value="password" readonly>
-                    <button type="submit">Login (Simulated)</button>
-                    <p>Don't have an account? <a href="#" id="goto-signup-from-login">Sign Up</a></p>
-                </form>
-            </section>
-
-            <section id="signup-section" class="app-section">
-                <h2>Create CramCraft Account</h2>
-                <form class="auth-form" id="signup-form-dummy">
-                    <label for="signup-username">Username:</label>
-                    <input type="text" id="signup-username" placeholder="Choose a username">
-                    <label for="signup-email">Email:</label>
-                    <input type="email" id="signup-email" placeholder="Enter your email">
-                    <label for="signup-password">Password:</label>
-                    <input type="password" id="signup-password" placeholder="Create a password">
-                    <button type="submit">Sign Up (Simulated)</button>
-                    <p>Already have an account? <a href="#" id="goto-login-from-signup">Login</a></p>
-                </form>
-            </section>
-            
-            <div id="print-content-area" class="hidden"></div>
-
-        </div> </div> <div class="message-box" id="custom-alert"></div>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // --- App State & Dummy Data ---
-        let loggedInUser = null;
-        let currentAppView = 'dashboard'; // Default view
-        const CARDS_PER_PAGE = 10; // From original flashcard maker
-
-        let dummyUserData = {
-            username: 'dummyUser123',
-            email: 'dummy@example.com',
-            flashcardSets: [
-                { id: 'set1', title: 'Spanish Vocab Basics', cards: [{term: 'Hola', definition: 'Hello'}, {term: 'Adiós', definition: 'Goodbye'}, {term: 'Por favor', definition: 'Please'}, {term: 'Gracias', definition: 'Thank you'}]},
-                { id: 'set2', title: 'Math Formulas', cards: [{term: 'a²+b²', definition: 'c² (Pythagorean Theorem)'}, {term: 'E', definition: 'mc² (Mass-energy equivalence)'}, {term: 'Area of Circle', definition: 'πr²'}]},
-                { id: 'set3', title: 'Capitals of Europe', cards: [{term: 'France', definition: 'Paris'}, {term: 'Germany', definition: 'Berlin'}, {term: 'UK', definition: 'London'}, {term: 'Spain', definition: 'Madrid'}]}
-            ]
-        };
-
-        const publicFlashcardSets = [
-            { id: 'pubSet1', title: 'Biology 101 - Cells', owner: 'ScienceGal', cards: [{term: 'Mitochondria', definition: 'Powerhouse of the cell'}, {term: 'Nucleus', definition: 'Contains DNA, controls cell activities'}, {term: 'Ribosome', definition: 'Synthesizes proteins'}]},
-            { id: 'pubSet2', title: 'World History Highlights', owner: 'HistoryBuff', cards: [{term: 'Roman Empire Fall', definition: '476 AD'}, {term: 'WWII Start', definition: '1939'}, {term: 'Moon Landing', definition: '1969'}]},
-            { id: 'pubSet3', title: 'Basic Chemistry Terms', owner: 'ChemMaster', cards: [{term: 'Atom', definition: 'Smallest unit of matter'}, {term: 'Molecule', definition: 'Group of atoms bonded together'}, {term: 'H₂O', definition: 'Water'}]}
-        ];
-        
-        // --- DOM Elements ---
-        const authInfoDiv = document.querySelector('.auth-info');
-        const navDashboard = document.getElementById('nav-dashboard');
-        const navAddCards = document.getElementById('nav-add-cards');
-        const navSearch = document.getElementById('nav-search');
-        const logoLink = document.getElementById('logo-link');
-
-        const sections = document.querySelectorAll('.app-section');
-        const dashboardSection = document.getElementById('dashboard-section');
-        const addCardsSection = document.getElementById('add-cards-section');
-        const searchSection = document.getElementById('search-section');
-        const loginSection = document.getElementById('login-section');
-        const signupSection = document.getElementById('signup-section');
-
-        const dashboardWelcome = document.getElementById('dashboard-welcome');
-        const dashboardSetList = document.getElementById('dashboard-set-list');
-        const gotoAddCardsBtn = document.getElementById('goto-add-cards-from-dashboard');
-
-        // Add Cards section elements (many from original app)
-        const newSetTitleInput = document.getElementById('new-set-title');
-        const manualInputArea = document.getElementById('manual-input-area');
-        const bulkInputArea = document.getElementById('bulk-input-area');
-        const termDefInputs = document.getElementById('term-def-inputs');
-        const addRowBtn = document.getElementById('add-row');
-        const saveManualCardsBtn = document.getElementById('save-manual-cards');
-        const showBulkInputBtn = document.getElementById('show-bulk-input');
-        
-        const bulkDataInput = document.getElementById('bulk-data-input');
-        const saveBulkCardsBtn = document.getElementById('save-bulk-cards');
-        const showManualInputBtn = document.getElementById('show-manual-input');
-        const termDefDelimiterRadios = document.querySelectorAll('input[name="termDefDelimiter"]');
-        const customTermDefDelimiterInput = document.getElementById('custom-term-def-delimiter-input');
-        const cardDelimiterRadios = document.querySelectorAll('input[name="cardDelimiter"]');
-        const customCardDelimiterInput = document.getElementById('custom-card-delimiter-input');
-        let manualInputRowCount = 1; // Specific to manual input form
-
-        // Flashcard creation preview (adapted from original)
-        const flashcardCreationPreviewArea = document.getElementById('flashcard-creation-preview-area');
-        const creationCardsContainer = document.getElementById('creation-cards-container');
-        const creationPageInfo = document.getElementById('creation-page-info');
-        const creationPrevBtn = document.getElementById('creation-prev-page');
-        const creationNextBtn = document.getElementById('creation-next-page');
-        const creationPrintBtn = document.getElementById('creation-print-cards');
-        const creationBackToEditingBtn = document.getElementById('creation-back-to-editing');
-        let tempCreatedFlashcards = []; // Holds cards before saving to a set
-        let tempCurrentPage = 0;
-        let tempTotalPages = 0;
-
-
-        // Search section elements
-        const searchInput = document.getElementById('search-input');
-        const searchButton = document.getElementById('search-button');
-        const searchResultsList = document.getElementById('search-results-list');
-
-        // Login/Signup form elements
-        const loginForm = document.getElementById('login-form-dummy');
-        const signupForm = document.getElementById('signup-form-dummy');
-        const gotoSignupLink = document.getElementById('goto-signup-from-login');
-        const gotoLoginLink = document.getElementById('goto-login-from-signup');
-
-        const customAlertBox = document.getElementById('custom-alert');
-        const printContentArea = document.getElementById('print-content-area');
-
-        // For displaying selected sets (dashboard and search)
-        const dashboardSelectedSetDisplay = document.getElementById('dashboard-selected-set-display');
-        const dashboardSelectedSetTitle = document.getElementById('dashboard-selected-set-title');
-        const dashboardPageInfo = document.getElementById('dashboard-page-info');
-        const dashboardCardsContainer = document.getElementById('dashboard-cards-container');
-        const dashboardPrevBtn = document.getElementById('dashboard-prev-page');
-        const dashboardNextBtn = document.getElementById('dashboard-next-page');
-        const dashboardPrintSetBtn = document.getElementById('dashboard-print-set');
-        const dashboardCloseSetViewBtn = document.getElementById('dashboard-close-set-view');
-
-        const searchSelectedSetDisplay = document.getElementById('search-selected-set-display');
-        const searchSelectedSetTitle = document.getElementById('search-selected-set-title');
-        const searchPageInfo = document.getElementById('search-page-info');
-        const searchCardsContainer = document.getElementById('search-cards-container');
-        const searchPrevBtn = document.getElementById('search-prev-page');
-        const searchNextBtn = document.getElementById('search-next-page');
-        const searchPrintSetBtn = document.getElementById('search-print-set');
-        const searchCloseSetViewBtn = document.getElementById('search-close-set-view');
-
-        let activeSetForDisplay = null; // Holds the set (and its cards) currently being viewed/paginated
-        let activeDisplayContext = null; // 'dashboard' or 'search' to know which elements to update
-
-        // --- Utility Functions ---
-        function showMessage(message, type = 'warning') {
-            customAlertBox.textContent = message;
-            customAlertBox.className = 'message-box'; // Reset classes
-            if (type === 'success') customAlertBox.classList.add('success');
-            else if (type === 'error') customAlertBox.classList.add('error');
-            else customAlertBox.classList.add('warning');
-            customAlertBox.style.display = 'block';
-            if (customAlertBox.animationTimeout) clearTimeout(customAlertBox.animationTimeout);
-            customAlertBox.animationTimeout = setTimeout(() => { customAlertBox.style.display = 'none'; }, 3000);
-        }
-
-        function switchView(viewId) {
-            sections.forEach(section => section.classList.remove('active'));
-            const activeSection = document.getElementById(viewId + '-section');
-            if (activeSection) {
-                activeSection.classList.add('active');
-                currentAppView = viewId;
-                 // If switching away from a set view, close it
-                if (viewId !== 'dashboard' || !dashboardSelectedSetDisplay.classList.contains('hidden')) {
-                    dashboardSelectedSetDisplay.classList.add('hidden');
-                }
-                if (viewId !== 'search' || !searchSelectedSetDisplay.classList.contains('hidden')) {
-                    searchSelectedSetDisplay.classList.add('hidden');
-                }
-            } else {
-                console.error("View not found: " + viewId);
-                // Fallback to dashboard if view is invalid
-                document.getElementById('dashboard-section').classList.add('active');
-                currentAppView = 'dashboard';
-            }
-            // Reset add cards form when navigating to it
-            if (viewId === 'add-cards') {
-                resetAddCardsForm();
-            }
-        }
-
-        // --- Authentication Simulation ---
-        function updateAuthUI() {
-            if (loggedInUser) {
-                authInfoDiv.innerHTML = `
-                    <span class="username">Welcome, ${loggedInUser.username}!</span>
-                    <button id="logout-btn">Logout</button>
-                `;
-                document.getElementById('logout-btn').addEventListener('click', handleLogout);
-                navDashboard.style.display = 'inline';
-                navAddCards.style.display = 'inline';
-                navSearch.style.display = 'inline';
-            } else {
-                authInfoDiv.innerHTML = `
-                    <a href="#" id="nav-login">Login</a>
-                    <a href="#" id="nav-signup">Sign Up</a>
-                `;
-                document.getElementById('nav-login').addEventListener('click', () => switchView('login'));
-                document.getElementById('nav-signup').addEventListener('click', () => switchView('signup'));
-                navDashboard.style.display = 'none'; // Hide protected links
-                navAddCards.style.display = 'none';
-                // navSearch can be public or protected, let's make it protected for now
-                navSearch.style.display = 'none';
-            }
-        }
-
-        function handleLogin(e) { // Dummy login
-            if(e) e.preventDefault();
-            loggedInUser = { username: dummyUserData.username, email: dummyUserData.email }; // Simulate login
-            updateAuthUI();
-            renderDashboard();
-            switchView('dashboard');
-            showMessage(`Logged in as ${loggedInUser.username}!`, 'success');
-        }
-
-        function handleLogout() {
-            const username = loggedInUser ? loggedInUser.username : 'User';
-            loggedInUser = null;
-            updateAuthUI();
-            switchView('login'); // Or a public landing page if you had one
-            showMessage(`${username} logged out successfully.`, 'success');
-        }
-        
-        function handleSignup(e) {
-            if(e) e.preventDefault();
-            // In a real app, you'd collect data and register the user
-            showMessage('Signup simulation successful! Please login.', 'success');
-            switchView('login');
-        }
-
-
-        // --- Navigation Event Listeners ---
-        navDashboard.addEventListener('click', (e) => { e.preventDefault(); if(loggedInUser) switchView('dashboard');});
-        navAddCards.addEventListener('click', (e) => { e.preventDefault(); if(loggedInUser) switchView('add-cards'); });
-        navSearch.addEventListener('click', (e) => { e.preventDefault(); if(loggedInUser) switchView('search'); });
-        logoLink.addEventListener('click', (e) => { e.preventDefault(); if(loggedInUser) switchView('dashboard'); else switchView('login');});
-        gotoAddCardsBtn.addEventListener('click', () => switchView('add-cards'));
-        gotoSignupLink.addEventListener('click', (e) => { e.preventDefault(); switchView('signup'); });
-        gotoLoginLink.addEventListener('click', (e) => { e.preventDefault(); switchView('login'); });
-        if(loginForm) loginForm.addEventListener('submit', handleLogin);
-        if(signupForm) signupForm.addEventListener('submit', handleSignup);
-
-        // --- Dashboard Logic ---
-        function renderDashboard() {
-            if (!loggedInUser) return;
-            dashboardWelcome.textContent = `Here you can manage your flashcard sets, ${loggedInUser.username}.`;
-            dashboardSetList.innerHTML = ''; // Clear previous list
-
-            if (dummyUserData.flashcardSets.length === 0) {
-                dashboardSetList.innerHTML = '<li>You have no flashcard sets yet. Create one!</li>';
-                return;
-            }
-
-            dummyUserData.flashcardSets.forEach(set => {
-                const listItem = document.createElement('li');
-                listItem.className = 'dashboard-set-item';
-                listItem.innerHTML = `
-                    <h3>${set.title} (${set.cards.length} cards)</h3>
-                    <div class="dashboard-set-actions">
-                        <button class="view-set-btn" data-setid="${set.id}">View Cards</button>
-                        <button class="delete-set-btn" data-setid="${set.id}" style="background-color:var(--danger-color);">Delete</button>
-                    </div>
-                `;
-                dashboardSetList.appendChild(listItem);
-            });
-
-            // Add event listeners for new buttons
-            document.querySelectorAll('.view-set-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const setId = this.dataset.setid;
-                    const setToView = dummyUserData.flashcardSets.find(s => s.id === setId);
-                    if (setToView) {
-                        displaySetCards(setToView, 'dashboard');
-                    }
-                });
-            });
-            document.querySelectorAll('.delete-set-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const setId = this.dataset.setid;
-                    // Simulate deletion
-                    dummyUserData.flashcardSets = dummyUserData.flashcardSets.filter(s => s.id !== setId);
-                    renderDashboard(); // Re-render the list
-                    showMessage(`Set successfully deleted (simulated).`, 'success');
-                });
-            });
-        }
-        
-        // --- Add Flashcards Logic (Adapted from original) ---
-        function resetAddCardsForm() {
-            newSetTitleInput.value = '';
-            termDefInputs.innerHTML = `
+        <div class="input-area" id="manual-input-area">
+            <h2>Enter Terms and Definitions Manually</h2>
+            <div id="term-def-inputs">
                 <div class="input-row">
                     <input type="text" placeholder="Term 1" class="term">
                     <input type="text" placeholder="Definition 1" class="definition">
-                </div>`;
-            manualInputRowCount = 1;
-            bulkDataInput.value = '';
-            // Hide preview area if it was shown
-            flashcardCreationPreviewArea.classList.add('hidden');
-            tempCreatedFlashcards = []; // Clear temp cards
-        }
+                </div>
+            </div>
+            <button id="add-row">Add Another Term/Definition</button>
+            <button id="start-flashcards">Generate Flashcards from Manual Input</button>
+            <button id="show-bulk-input">Switch to Bulk Input</button>
+        </div>
 
-        addRowBtn.addEventListener('click', function() {
-            manualInputRowCount++;
-            const newRow = document.createElement('div');
-            newRow.className = 'input-row';
-            newRow.innerHTML = `
-                <input type="text" placeholder="Term ${manualInputRowCount}" class="term">
-                <input type="text" placeholder="Definition ${manualInputRowCount}" class="definition">
-            `;
-            termDefInputs.appendChild(newRow);
-        });
+        <div class="input-area hidden" id="bulk-input-area">
+            <h2>Enter Bulk Flashcard Data</h2>
 
-        showBulkInputBtn.addEventListener('click', function() {
-            manualInputArea.classList.add('hidden');
-            bulkInputArea.classList.remove('hidden');
-        });
-        showManualInputBtn.addEventListener('click', function() {
-            bulkInputArea.classList.add('hidden');
-            manualInputArea.classList.remove('hidden');
-        });
+            <div class="delimiter-group">
+                <p class="delimiter-group-title"><strong>1. Separate Term and Definition with:</strong></p>
+                <div class="delimiter-options" id="term-def-separator-options">
+                    <label><input type="radio" name="termDefDelimiter" value="tab" checked> Tab</label>
+                    <label><input type="radio" name="termDefDelimiter" value="comma"> Comma (,)</label>
+                    <label><input type="radio" name="termDefDelimiter" value="tilde"> Tilde (~)</label>
+                    <label>
+                        <input type="radio" name="termDefDelimiter" value="customTermDef"> Custom:
+                        <input type="text" id="custom-term-def-delimiter-input" maxlength="1" class="hidden">
+                    </label>
+                </div>
+            </div>
 
-        termDefDelimiterRadios.forEach(radio => {
-            radio.addEventListener('change', function() {
-                customTermDefDelimiterInput.classList.toggle('hidden', this.value !== 'customTermDef');
-                if (this.value === 'customTermDef') customTermDefDelimiterInput.focus();
-            });
-        });
-        cardDelimiterRadios.forEach(radio => {
-            radio.addEventListener('change', function() {
-                customCardDelimiterInput.classList.toggle('hidden', this.value !== 'customCard');
-                if (this.value === 'customCard') customCardDelimiterInput.focus();
-            });
-        });
-        
-        function collectManualCards() {
-            const cards = [];
-            const termInputs = manualInputArea.querySelectorAll('.term');
-            const defInputs = manualInputArea.querySelectorAll('.definition');
-            for (let i = 0; i < termInputs.length; i++) {
-                const term = termInputs[i].value.trim();
-                const definition = defInputs[i].value.trim();
-                if (term || definition) {
-                    cards.push({
-                        term: term || `(No Term Provided ${cards.length + 1})`,
-                        definition: definition || `(No Definition Provided ${cards.length + 1})`
-                    });
+            <div class="delimiter-group">
+                <p class="delimiter-group-title"><strong>2. Separate Cards (Rows) with:</strong></p>
+                <div class="delimiter-options" id="card-separator-options">
+                    <label><input type="radio" name="cardDelimiter" value="newline" checked> New Line</label>
+                    <label><input type="radio" name="cardDelimiter" value="semicolon"> Semicolon (;)</label>
+                    <label>
+                        <input type="radio" name="cardDelimiter" value="customCard"> Custom:
+                        <input type="text" id="custom-card-delimiter-input" class="hidden" placeholder="e.g. ---">
+                    </label>
+                </div>
+            </div>
+
+            <div class="input-instructions">
+                <p>Paste your flashcard data below using your chosen separators.</p>
+                <p>A <strong>Term</strong> can span multiple lines (if "New Line" is NOT your card separator and your term/def separator is not also a newline).</p>
+                 <p>The <strong>Definition</strong> is typically the part after the <i>last</i> instance of your term/definition separator on a line (or within a card block if using "New Line" as card separator).</p>
+                <hr>
+                <p><strong>Example 1 (Tab for Term/Def, New Line for Cards):</strong></p>
+                <p><code>Term A&lt;TAB&gt;Definition A</code><br><code>Term B&lt;TAB&gt;Definition B</code></p>
+                <p><strong>Example 2 (Comma for Term/Def, Semicolon for Cards):</strong></p>
+                <p><code>Capital of France,Paris;What is 2+2?,4</code></p>
+                 <p><strong>Example 3 (Custom '|' for Term/Def, Custom '---' for Cards):</strong></p>
+                <p><code>Question 1|Answer 1---Question 2|Answer 2</code></p>
+            </div>
+            <textarea id="bulk-data-input" rows="15" placeholder="Example (Tab between term/def, New Line between cards):&#10;Term1\tDefinition1&#10;Term2\tDefinition2&#10;&#10;Example (Comma between term/def, Semicolon between cards):&#10;Question A,Answer A;Question B,Answer B"></textarea>
+            <button id="parse-bulk-data">Parse Bulk Data & Generate Flashcards</button>
+            <button id="show-manual-input">Switch to Manual Row Input</button>
+        </div>
+
+        <div class="display-area hidden" id="flashcard-display">
+            <div id="page-info"></div>
+            <div id="cards-container">
+                </div>
+            <div class="controls">
+                <button id="prev-page">Previous Page</button>
+                <button id="next-page">Next Page</button>
+                <button id="print-cards">Print Flashcards</button>
+                <button id="back-to-input">Back to Input</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="message-box" id="custom-alert"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const addRowBtn = document.getElementById('add-row');
+            const startManualBtn = document.getElementById('start-flashcards');
+            const termDefInputs = document.getElementById('term-def-inputs');
+            const displayArea = document.getElementById('flashcard-display');
+            const cardsContainer = document.getElementById('cards-container');
+            const pageInfo = document.getElementById('page-info');
+            const prevBtn = document.getElementById('prev-page');
+            const nextBtn = document.getElementById('next-page');
+            const printBtn = document.getElementById('print-cards');
+            const backBtn = document.getElementById('back-to-input');
+
+            const manualInputArea = document.getElementById('manual-input-area');
+            const bulkInputArea = document.getElementById('bulk-input-area');
+            const showBulkInputBtn = document.getElementById('show-bulk-input');
+            const showManualInputBtn = document.getElementById('show-manual-input');
+            const bulkDataInput = document.getElementById('bulk-data-input');
+            const parseBulkDataBtn = document.getElementById('parse-bulk-data');
+
+            // Term/Definition Separator Elements
+            const termDefDelimiterRadios = document.querySelectorAll('input[name="termDefDelimiter"]');
+            const customTermDefDelimiterInput = document.getElementById('custom-term-def-delimiter-input');
+
+            // Card (Row) Separator Elements
+            const cardDelimiterRadios = document.querySelectorAll('input[name="cardDelimiter"]');
+            const customCardDelimiterInput = document.getElementById('custom-card-delimiter-input');
+
+
+            const customAlertBox = document.getElementById('custom-alert');
+            const controlsDiv = document.querySelector('.controls');
+
+            let rowCount = 1;
+            let flashcardData = [];
+            let currentPage = 0;
+            let totalPages = 0;
+            const CARDS_PER_PAGE = 10;
+
+            // --- Utility Functions ---
+            function showMessage(message, type = 'warning') {
+                customAlertBox.textContent = message;
+                customAlertBox.className = 'message-box'; // Reset classes
+                if (type === 'success') {
+                    customAlertBox.classList.add('success');
+                } else if (type === 'error') {
+                    customAlertBox.classList.add('error');
+                } else { // 'warning' or default
+                    customAlertBox.classList.add('warning');
                 }
-            }
-            return cards;
-        }
-
-        function parseBulkCards() {
-            const cards = [];
-            const bulkText = bulkDataInput.value;
-            if (!bulkText.trim()) return cards;
-
-            const selectedTermDefDelimiterOption = document.querySelector('input[name="termDefDelimiter"]:checked').value;
-            let termDefSeparator;
-            if (selectedTermDefDelimiterOption === 'tab') termDefSeparator = '\t';
-            else if (selectedTermDefDelimiterOption === 'comma') termDefSeparator = ',';
-            else if (selectedTermDefDelimiterOption === 'tilde') termDefSeparator = '~';
-            else if (selectedTermDefDelimiterOption === 'customTermDef') {
-                termDefSeparator = customTermDefDelimiterInput.value;
-                if (termDefSeparator.length !== 1) {
-                    showMessage('Custom Term/Definition separator must be a single character.', 'error');
-                    return null; // Indicate error
+                customAlertBox.style.display = 'block';
+                if (customAlertBox.animationTimeout) {
+                    clearTimeout(customAlertBox.animationTimeout);
                 }
-            } else { showMessage('Invalid Term/Definition separator.', 'error'); return null; }
-
-            const selectedCardDelimiterOption = document.querySelector('input[name="cardDelimiter"]:checked').value;
-            let cardStrings = [];
-            if (selectedCardDelimiterOption === 'newline') {
-                 // Simplified newline handling: split by one or more newlines, then filter empty.
-                cardStrings = bulkText.split(/\n+/).filter(s => s.trim() !== '');
-            } else if (selectedCardDelimiterOption === 'semicolon') {
-                cardStrings = bulkText.split(';');
-            } else if (selectedCardDelimiterOption === 'customCard') {
-                const customCardSep = customCardDelimiterInput.value;
-                if (!customCardSep) { showMessage('Please enter a custom card separator.', 'error'); return null; }
-                cardStrings = bulkText.split(customCardSep);
-            } else { showMessage('Invalid card separator.', 'error'); return null; }
-
-            cardStrings.forEach((cardStr) => {
-                const trimmedCardStr = cardStr.trim();
-                if (!trimmedCardStr) return;
-                let term = '', definition = '';
-                const lastDelimiterIndex = trimmedCardStr.lastIndexOf(termDefSeparator);
-                if (lastDelimiterIndex !== -1) {
-                    term = trimmedCardStr.substring(0, lastDelimiterIndex).trim();
-                    definition = trimmedCardStr.substring(lastDelimiterIndex + termDefSeparator.length).trim();
-                } else {
-                    term = trimmedCardStr;
-                    definition = `(No definition found with separator)`;
-                }
-                if (term || definition !== `(No definition found with separator)`) {
-                    cards.push({
-                        term: term || `(No Term Provided ${cards.length + 1})`,
-                        definition: definition || `(No Definition Provided ${cards.length + 1})`
-                    });
-                }
-            });
-            return cards;
-        }
-
-        function handleSaveSet(cardData) {
-            const setTitle = newSetTitleInput.value.trim();
-            if (!setTitle) {
-                showMessage('Please enter a title for your flashcard set.', 'error');
-                newSetTitleInput.focus();
-                return;
-            }
-            if (!cardData || cardData.length === 0) {
-                showMessage('Please add at least one flashcard.', 'error');
-                return;
+                customAlertBox.animationTimeout = setTimeout(() => {
+                    customAlertBox.style.display = 'none';
+                }, 3000);
             }
 
-            const newSet = {
-                id: 'set' + (dummyUserData.flashcardSets.length + 1) + Date.now(), // Simple unique ID
-                title: setTitle,
-                cards: cardData
-            };
-            dummyUserData.flashcardSets.push(newSet);
-            showMessage(`Set "${setTitle}" saved successfully with ${cardData.length} cards! (Simulated)`, 'success');
-            renderDashboard(); // Update dashboard list
-            switchView('dashboard'); // Go to dashboard
-            resetAddCardsForm();
-        }
-
-        saveManualCardsBtn.addEventListener('click', function() {
-            const cards = collectManualCards();
-            if(cards.length > 0) handleSaveSet(cards);
-            else showMessage('No cards entered for manual input.', 'error');
-        });
-        saveBulkCardsBtn.addEventListener('click', function() {
-            const cards = parseBulkCards();
-            if (cards === null) return; // Error handled in parseBulkCards
-            if(cards.length > 0) handleSaveSet(cards);
-            else showMessage('No valid flashcards could be parsed from bulk input.', 'error');
-        });
-
-
-        // --- Search Logic ---
-        function renderSearchResults(results) {
-            searchResultsList.innerHTML = '';
-            if (results.length === 0) {
-                searchResultsList.innerHTML = '<li>No public sets found matching your query.</li>';
-                return;
+            function isOptionLine(line) { // Used for "New Line" card separation if terms are multi-line
+                return /^\s*[a-zA-Z]\.\s/.test(line.trim());
             }
-            results.forEach(set => {
-                const listItem = document.createElement('li');
-                listItem.className = 'search-result-item';
-                listItem.innerHTML = `
-                    <div>
-                        <h3>${set.title} (${set.cards.length} cards)</h3>
-                        <span class="owner-info">By: ${set.owner}</span>
-                    </div>
-                    <button class="view-public-set-btn" data-setid="${set.id}">View Cards</button>
-                `;
-                searchResultsList.appendChild(listItem);
-            });
-             document.querySelectorAll('.view-public-set-btn').forEach(button => {
-                button.addEventListener('click', function() {
-                    const setId = this.dataset.setid;
-                    const setToView = publicFlashcardSets.find(s => s.id === setId); // Search in public sets
-                    if (setToView) {
-                        displaySetCards(setToView, 'search');
+
+            // --- Show/hide custom delimiter input fields ---
+            termDefDelimiterRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'customTermDef') {
+                        customTermDefDelimiterInput.classList.remove('hidden');
+                        customTermDefDelimiterInput.focus();
+                    } else {
+                        customTermDefDelimiterInput.classList.add('hidden');
                     }
                 });
             });
-        }
 
-        searchButton.addEventListener('click', function() {
-            const query = searchInput.value.trim().toLowerCase();
-            if (!query) {
-                renderSearchResults(publicFlashcardSets); // Show all if query is empty
-                return;
-            }
-            const filteredResults = publicFlashcardSets.filter(set => 
-                set.title.toLowerCase().includes(query) || 
-                set.owner.toLowerCase().includes(query)
-            );
-            renderSearchResults(filteredResults);
-            if(filteredResults.length === 0) showMessage('No results found for your search query.', 'warning');
-        });
+            cardDelimiterRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'customCard') {
+                        customCardDelimiterInput.classList.remove('hidden');
+                        customCardDelimiterInput.focus();
+                    } else {
+                        customCardDelimiterInput.classList.add('hidden');
+                    }
+                });
+            });
 
 
-        // --- Generic Set Card Display and Pagination Logic (for dashboard and search) ---
-        function displaySetCards(set, context) { // context is 'dashboard' or 'search'
-            activeSetForDisplay = JSON.parse(JSON.stringify(set)); // Deep copy to avoid issues with padding
-            activeDisplayContext = context;
-            tempCurrentPage = 0; // Reset page for the new set
+            // --- Input Mode Switching ---
+            showBulkInputBtn.addEventListener('click', function() {
+                manualInputArea.classList.add('hidden');
+                bulkInputArea.classList.remove('hidden');
+            });
 
-            // Pad with empty slots for consistent pages
-            if (activeSetForDisplay.cards.length > 0) {
-                while (activeSetForDisplay.cards.length % CARDS_PER_PAGE !== 0) {
-                    activeSetForDisplay.cards.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` });
+            showManualInputBtn.addEventListener('click', function() {
+                bulkInputArea.classList.add('hidden');
+                manualInputArea.classList.remove('hidden');
+            });
+
+            // --- Manual Input Logic (remains the same) ---
+            addRowBtn.addEventListener('click', function() {
+                rowCount++;
+                const newRow = document.createElement('div');
+                newRow.className = 'input-row';
+                newRow.innerHTML = `
+                    <input type="text" placeholder="Term ${rowCount}" class="term">
+                    <input type="text" placeholder="Definition ${rowCount}" class="definition">
+                `;
+                termDefInputs.appendChild(newRow);
+            });
+
+            startManualBtn.addEventListener('click', function() {
+                flashcardData = [];
+                const termInputs = manualInputArea.querySelectorAll('.term');
+                const defInputs = manualInputArea.querySelectorAll('.definition');
+
+                for (let i = 0; i < termInputs.length; i++) {
+                    const term = termInputs[i].value.trim();
+                    const definition = defInputs[i].value.trim();
+
+                    if (term || definition) {
+                        flashcardData.push({
+                            term: term || `(No Term Provided ${flashcardData.length + 1})`,
+                            definition: definition || `(No Definition Provided ${flashcardData.length + 1})`
+                        });
+                    }
                 }
+
+                if (flashcardData.length === 0) {
+                    showMessage('Please enter at least one term or definition.', 'error');
+                    return;
+                }
+                proceedToFlashcardDisplay();
+            });
+
+            // --- Bulk Input Logic (NEW - with multiple separators) ---
+            parseBulkDataBtn.addEventListener('click', function() {
+                flashcardData = [];
+                const bulkText = bulkDataInput.value;
+                if (!bulkText.trim()) {
+                    showMessage('Please enter some data in the bulk input field.', 'error');
+                    return;
+                }
+
+                // 1. Get Term/Definition Separator
+                const selectedTermDefDelimiterOption = document.querySelector('input[name="termDefDelimiter"]:checked').value;
+                let termDefSeparator;
+                if (selectedTermDefDelimiterOption === 'tab') {
+                    termDefSeparator = '\t';
+                } else if (selectedTermDefDelimiterOption === 'comma') {
+                    termDefSeparator = ',';
+                } else if (selectedTermDefDelimiterOption === 'tilde') {
+                    termDefSeparator = '~';
+                } else if (selectedTermDefDelimiterOption === 'customTermDef') {
+                    termDefSeparator = customTermDefDelimiterInput.value;
+                    if (termDefSeparator.length !== 1) {
+                        showMessage('Custom Term/Definition separator must be a single character.', 'error');
+                        customTermDefDelimiterInput.focus();
+                        return;
+                    }
+                } else {
+                    showMessage('Invalid Term/Definition separator selected.', 'error');
+                    return;
+                }
+
+                // 2. Get Card (Row) Separator
+                const selectedCardDelimiterOption = document.querySelector('input[name="cardDelimiter"]:checked').value;
+                let cardStrings = [];
+
+                if (selectedCardDelimiterOption === 'newline') {
+                    // Special handling for "New Line" separation, similar to old logic but more explicit
+                    const allLines = bulkText.split('\n');
+                    let currentCardBlockLines = [];
+                    for (let i = 0; i < allLines.length; i++) {
+                        const currentLine = allLines[i];
+                        const trimmedCurrentLine = currentLine.trim();
+
+                        if (trimmedCurrentLine === "" && currentCardBlockLines.length === 0) {
+                            continue; // Skip leading empty lines for a new block
+                        }
+                        // A new card starts if the line is not a continuation (like a. b.) AND we have lines in the current block
+                        // OR if it's an empty line signifying a break (unless previous line was also empty)
+                        let isNewCardBoundary = false;
+                        if (currentCardBlockLines.length > 0) {
+                            if (trimmedCurrentLine === "") { // Empty line is a boundary
+                                isNewCardBoundary = true;
+                            } else if (!isOptionLine(currentLine) && !isOptionLine(currentCardBlockLines[currentCardBlockLines.length-1])) {
+                                // If current line isn't an option, and previous wasn't either, it might be a new card,
+                                // especially if the previous block didn't just end with the term/def separator.
+                                // This part is tricky. For simplicity, we'll rely on explicit empty lines or other separators more.
+                                // For "New Line" mode, the most reliable way is to treat each non-empty line as potentially starting a new card
+                                // UNLESS it's clearly a continuation (like an option).
+                                // Let's refine: a block ends when a new non-option, non-empty line appears *or* an empty line appears.
+                                const prevLine = allLines[i-1]?.trim();
+                                if(prevLine !== "" && !isOptionLine(currentLine)){ // New non-option line starts a new card block
+                                     isNewCardBoundary = true;
+                                }
+                            }
+                        }
+
+
+                        if (isNewCardBoundary && currentCardBlockLines.length > 0) {
+                            cardStrings.push(currentCardBlockLines.join('\n'));
+                            currentCardBlockLines = [];
+                        }
+                        if(trimmedCurrentLine !== "") { // only add non-empty lines to current block.
+                            currentCardBlockLines.push(currentLine);
+                        }
+                    }
+                    if (currentCardBlockLines.length > 0) { // Add the last block
+                        cardStrings.push(currentCardBlockLines.join('\n'));
+                    }
+                } else if (selectedCardDelimiterOption === 'semicolon') {
+                    cardStrings = bulkText.split(';');
+                } else if (selectedCardDelimiterOption === 'customCard') {
+                    const customCardSep = customCardDelimiterInput.value;
+                    if (!customCardSep) {
+                        showMessage('Please enter a custom card separator.', 'error');
+                        customCardDelimiterInput.focus();
+                        return;
+                    }
+                    cardStrings = bulkText.split(customCardSep);
+                } else {
+                    showMessage('Invalid card separator selected.', 'error');
+                    return;
+                }
+
+                // 3. Process Each Card String
+                cardStrings.forEach((cardStr, index) => {
+                    const trimmedCardStr = cardStr.trim();
+                    if (!trimmedCardStr) return; // Skip empty strings resulting from split
+
+                    let term = '';
+                    let definition = '';
+                    const lastDelimiterIndex = trimmedCardStr.lastIndexOf(termDefSeparator);
+
+                    if (lastDelimiterIndex !== -1) {
+                        term = trimmedCardStr.substring(0, lastDelimiterIndex).trim();
+                        definition = trimmedCardStr.substring(lastDelimiterIndex + termDefSeparator.length).trim();
+                    } else {
+                        // If no term/def separator, assume the whole string is the term
+                        term = trimmedCardStr;
+                        definition = `(No definition found with separator)`;
+                    }
+
+                    if (term || definition !== `(No definition found with separator)`) {
+                         flashcardData.push({
+                            term: term || `(No Term Provided ${flashcardData.length + 1})`,
+                            definition: definition || `(No Definition Provided ${flashcardData.length + 1})`
+                        });
+                    }
+                });
+
+
+                if (flashcardData.length === 0) {
+                    showMessage('No valid flashcards could be parsed. Please check your data and separator settings.', 'error');
+                    return;
+                }
+                proceedToFlashcardDisplay();
+            });
+
+
+            // --- Common Flashcard Processing and Display Logic (remains largely the same) ---
+            function proceedToFlashcardDisplay() {
+                if (flashcardData.length > 0) {
+                    while (flashcardData.length % CARDS_PER_PAGE !== 0) {
+                        const idx = flashcardData.length + 1; // To make numbers 1-based for display
+                        flashcardData.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` });
+                    }
+                } else {
+                    showMessage('No data to display.', 'error');
+                    return;
+                }
+
+                manualInputArea.classList.add('hidden');
+                bulkInputArea.classList.add('hidden');
+                displayArea.classList.remove('hidden');
+
+                currentPage = 0;
+                totalPages = (flashcardData.length / CARDS_PER_PAGE) * 2;
+                updateDisplay();
+                const actualCards = flashcardData.filter(c => c.term !== '(Empty Slot)').length;
+                showMessage(`Generated ${actualCards} flashcards!`, 'success');
             }
-            tempTotalPages = activeSetForDisplay.cards.length > 0 ? (activeSetForDisplay.cards.length / CARDS_PER_PAGE) * 2 : 0;
-            
-            let displayArea, setTitleElem, pageInfoElem, cardsContainerElem, prevBtn, nextBtn, printBtn, closeBtn;
 
-            if (context === 'dashboard') {
-                displayArea = dashboardSelectedSetDisplay;
-                setTitleElem = dashboardSelectedSetTitle;
-                pageInfoElem = dashboardPageInfo;
-                cardsContainerElem = dashboardCardsContainer;
-                prevBtn = dashboardPrevBtn;
-                nextBtn = dashboardNextBtn;
-                printBtn = dashboardPrintSetBtn;
-                closeBtn = dashboardCloseSetViewBtn;
-            } else { // context === 'search'
-                displayArea = searchSelectedSetDisplay;
-                setTitleElem = searchSelectedSetTitle;
-                pageInfoElem = searchPageInfo;
-                cardsContainerElem = searchCardsContainer;
-                prevBtn = searchPrevBtn;
-                nextBtn = searchNextBtn;
-                printBtn = searchPrintSetBtn;
-                closeBtn = searchCloseSetViewBtn;
-            }
-            
-            setTitleElem.textContent = `Viewing Set: ${set.title}`;
-            displayArea.classList.remove('hidden');
-            updatePaginatedDisplay(pageInfoElem, cardsContainerElem, prevBtn, nextBtn);
-        }
+            function updateDisplay() {
+                cardsContainer.innerHTML = '';
+                const isTermPage = currentPage % 2 === 0;
+                const setIndex = Math.floor(currentPage / 2);
+                const startIdx = setIndex * CARDS_PER_PAGE;
 
-        function updatePaginatedDisplay(pageInfoElem, cardsContainerElem, prevBtn, nextBtn) {
-            cardsContainerElem.innerHTML = '';
-            if (!activeSetForDisplay || tempTotalPages === 0) {
-                pageInfoElem.textContent = 'No cards in this set.';
-                prevBtn.disabled = true;
-                nextBtn.disabled = true;
-                return;
-            }
+                if (totalPages === 0) {
+                    pageInfo.textContent = 'No flashcards to display.';
+                    controlsDiv.classList.add('hidden');
+                    return;
+                }
 
-            const isTermPage = tempCurrentPage % 2 === 0;
-            const setIndex = Math.floor(tempCurrentPage / 2);
-            const startIdx = setIndex * CARDS_PER_PAGE;
+                pageInfo.textContent = `Page ${currentPage + 1} of ${totalPages} - ${isTermPage ? 'Terms' : 'Definitions'} (Card Set ${setIndex + 1})`;
+                pageInfo.classList.remove('hidden');
+                controlsDiv.classList.remove('hidden');
 
-            pageInfoElem.textContent = `Page ${tempCurrentPage + 1} of ${tempTotalPages} - ${isTermPage ? 'Terms' : 'Definitions'} (Card Set ${setIndex + 1})`;
-            
-            const grid = document.createElement('div');
-            grid.className = 'flashcard-grid';
-
-            for (let i = 0; i < CARDS_PER_PAGE; i++) {
-                const itemIndex = startIdx + i;
-                if (itemIndex >= activeSetForDisplay.cards.length) break;
-
-                const card = document.createElement('div');
-                card.className = 'card-item';
-                const itemToDisplay = activeSetForDisplay.cards[itemIndex];
-                const labelText = isTermPage ? `TERM ${itemIndex + 1}` : `DEFINITION ${itemIndex + 1}`;
-                const contentText = isTermPage ? itemToDisplay.term : itemToDisplay.definition;
-                card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`;
-                grid.appendChild(card);
-            }
-            cardsContainerElem.appendChild(grid);
-            prevBtn.disabled = tempCurrentPage === 0;
-            nextBtn.disabled = tempCurrentPage >= tempTotalPages - 1; // tempTotalPages can be 0
-        }
-
-        // Event listeners for dashboard pagination/print/close
-        dashboardPrevBtn.addEventListener('click', () => {
-            if (tempCurrentPage > 0) { tempCurrentPage--; updatePaginatedDisplay(dashboardPageInfo, dashboardCardsContainer, dashboardPrevBtn, dashboardNextBtn); }
-        });
-        dashboardNextBtn.addEventListener('click', () => {
-            if (tempCurrentPage < tempTotalPages - 1) { tempCurrentPage++; updatePaginatedDisplay(dashboardPageInfo, dashboardCardsContainer, dashboardPrevBtn, dashboardNextBtn); }
-        });
-        dashboardPrintSetBtn.addEventListener('click', () => {
-            if (activeSetForDisplay && activeSetForDisplay.cards.length > 0) {
-                prepareAndPrint(activeSetForDisplay.cards.filter(c => c.term !== '(Empty Slot)')); // Print only real cards
-            } else { showMessage('No cards to print in this set.', 'error'); }
-        });
-        dashboardCloseSetViewBtn.addEventListener('click', () => {
-            dashboardSelectedSetDisplay.classList.add('hidden');
-            activeSetForDisplay = null;
-        });
-
-        // Event listeners for search pagination/print/close
-        searchPrevBtn.addEventListener('click', () => {
-            if (tempCurrentPage > 0) { tempCurrentPage--; updatePaginatedDisplay(searchPageInfo, searchCardsContainer, searchPrevBtn, searchNextBtn); }
-        });
-        searchNextBtn.addEventListener('click', () => {
-            if (tempCurrentPage < tempTotalPages - 1) { tempCurrentPage++; updatePaginatedDisplay(searchPageInfo, searchCardsContainer, searchPrevBtn, searchNextBtn); }
-        });
-        searchPrintSetBtn.addEventListener('click', () => {
-             if (activeSetForDisplay && activeSetForDisplay.cards.length > 0) {
-                prepareAndPrint(activeSetForDisplay.cards.filter(c => c.term !== '(Empty Slot)'));
-            } else { showMessage('No cards to print in this set.', 'error'); }
-        });
-        searchCloseSetViewBtn.addEventListener('click', () => {
-            searchSelectedSetDisplay.classList.add('hidden');
-            activeSetForDisplay = null;
-        });
-
-        // --- Print Logic (Adapted from original) ---
-        function prepareAndPrint(cardsToPrint) {
-            if (!cardsToPrint || cardsToPrint.length === 0) {
-                showMessage('No flashcards to print.', 'error');
-                return;
-            }
-            // Make a copy and pad for printing
-            let printableFlashcardData = JSON.parse(JSON.stringify(cardsToPrint));
-            while (printableFlashcardData.length % CARDS_PER_PAGE !== 0) {
-                 printableFlashcardData.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` });
-            }
-            const printTotalPages = (printableFlashcardData.length / CARDS_PER_PAGE) * 2;
-
-            printContentArea.innerHTML = ''; // Clear previous print content
-
-            for (let i = 0; i < printTotalPages; i++) {
-                const isTermPageForPrint = i % 2 === 0;
-                const setIndexForPrint = Math.floor(i / 2);
-                const startIdxForPrint = setIndexForPrint * CARDS_PER_PAGE;
-                
-                const printPageTitleElement = document.createElement('h3');
-                printPageTitleElement.className = 'print-page-title';
-                printPageTitleElement.textContent = `Page ${i + 1} / ${printTotalPages} - ${isTermPageForPrint ? 'Terms' : 'Definitions'} (Set ${setIndexForPrint + 1})`;
-                printContentArea.appendChild(printPageTitleElement);
-                
                 const grid = document.createElement('div');
                 grid.className = 'flashcard-grid';
 
-                for (let j = 0; j < CARDS_PER_PAGE; j++) {
-                    let indexToFetchDataFrom = startIdxForPrint + j;
-                    if (indexToFetchDataFrom >= printableFlashcardData.length) break;
+                for (let i = 0; i < CARDS_PER_PAGE; i++) {
+                    const itemIndex = startIdx + i;
+                    if (itemIndex >= flashcardData.length) break;
 
-                    if (!isTermPageForPrint) { // For definition pages, swap for double-sided printing
-                        const numColumns = 2; // Assuming 2 columns for print
-                        const col = j % numColumns;
-                        if (col === 0) { // First in pair
-                            if (indexToFetchDataFrom + 1 < startIdxForPrint + CARDS_PER_PAGE && indexToFetchDataFrom + 1 < printableFlashcardData.length) {
-                                indexToFetchDataFrom = startIdxForPrint + j + 1;
-                            }
-                        } else { // Second in pair
-                            if (indexToFetchDataFrom - 1 >= startIdxForPrint) {
-                                indexToFetchDataFrom = startIdxForPrint + j - 1;
-                            }
-                        }
-                    }
-                    
-                    const itemToDisplay = printableFlashcardData[indexToFetchDataFrom];
                     const card = document.createElement('div');
                     card.className = 'card-item';
-                    const labelText = isTermPageForPrint ? `TERM ${indexToFetchDataFrom + 1}` : `DEFINITION ${indexToFetchDataFrom + 1}`;
-                    const contentText = isTermPageForPrint ? itemToDisplay.term : itemToDisplay.definition;
+                    const itemToDisplay = flashcardData[itemIndex];
+                    const labelText = isTermPage ? `TERM ${itemIndex + 1}` : `DEFINITION ${itemIndex + 1}`;
+                    const contentText = isTermPage ? itemToDisplay.term : itemToDisplay.definition;
                     card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`;
                     grid.appendChild(card);
                 }
-                printContentArea.appendChild(grid);
+                cardsContainer.appendChild(grid);
+                prevBtn.disabled = currentPage === 0;
+                nextBtn.disabled = currentPage === totalPages - 1;
             }
-            window.print();
-            printContentArea.innerHTML = ''; // Clean up after print
-        }
 
-        // --- Initialization ---
-        function initializeApp() {
-            // Simulate user being logged in by default
-            handleLogin(); // This will set loggedInUser, update UI, render dashboard, and switch view
-            // If you want to start on a login page, comment out handleLogin() and call:
-            // updateAuthUI();
-            // switchView('login');
-        }
+            // --- Navigation and Print Controls (remains the same) ---
+            nextBtn.addEventListener('click', function() {
+                if (currentPage < totalPages - 1) {
+                    currentPage++;
+                    updateDisplay();
+                }
+            });
 
-        initializeApp();
-    });
+            prevBtn.addEventListener('click', function() {
+                if (currentPage > 0) {
+                    currentPage--;
+                    updateDisplay();
+                }
+            });
+
+            printBtn.addEventListener('click', function() {
+                if (flashcardData.length === 0 || totalPages === 0) {
+                    showMessage('No flashcards to print.', 'error');
+                    return;
+                }
+                const originalPageInfoClass = pageInfo.className;
+                const originalControlsClass = controlsDiv.className;
+                pageInfo.classList.add('hidden');
+                controlsDiv.classList.add('hidden');
+                cardsContainer.innerHTML = '';
+
+                for (let i = 0; i < totalPages; i++) {
+                    const isTermPageForPrint = i % 2 === 0;
+                    const setIndexForPrint = Math.floor(i / 2);
+                    const startIdxForPrint = setIndexForPrint * CARDS_PER_PAGE;
+                    const printPageTitleElement = document.createElement('h3');
+                    printPageTitleElement.className = 'print-page-title';
+                    printPageTitleElement.textContent = `Page ${i + 1} / ${totalPages} - ${isTermPageForPrint ? 'Terms' : 'Definitions'} (Set ${setIndexForPrint + 1})`;
+                    cardsContainer.appendChild(printPageTitleElement);
+                    const grid = document.createElement('div');
+                    grid.className = 'flashcard-grid';
+
+                    for (let j = 0; j < CARDS_PER_PAGE; j++) {
+                        let indexToFetchDataFrom = startIdxForPrint + j;
+                        if (indexToFetchDataFrom >= flashcardData.length) break;
+                        if (!isTermPageForPrint) {
+                            const numColumns = 2;
+                            const col = j % numColumns;
+                            if (col === 0) {
+                                if (indexToFetchDataFrom + 1 < startIdxForPrint + CARDS_PER_PAGE && indexToFetchDataFrom + 1 < flashcardData.length) {
+                                    indexToFetchDataFrom = startIdxForPrint + j + 1;
+                                }
+                            } else {
+                                if (indexToFetchDataFrom - 1 >= startIdxForPrint) {
+                                    indexToFetchDataFrom = startIdxForPrint + j - 1;
+                                }
+                            }
+                        }
+                        const itemToDisplay = flashcardData[indexToFetchDataFrom];
+                        const card = document.createElement('div');
+                        card.className = 'card-item';
+                        const labelText = isTermPageForPrint ? `TERM ${indexToFetchDataFrom + 1}` : `DEFINITION ${indexToFetchDataFrom + 1}`;
+                        const contentText = isTermPageForPrint ? itemToDisplay.term : itemToDisplay.definition;
+                        card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`;
+                        grid.appendChild(card);
+                    }
+                    cardsContainer.appendChild(grid);
+                }
+                window.print();
+                cardsContainer.innerHTML = '';
+                pageInfo.className = originalPageInfoClass;
+                controlsDiv.className = originalControlsClass;
+                if (!displayArea.classList.contains('hidden')) {
+                    updateDisplay();
+                }
+            });
+
+            backBtn.addEventListener('click', function() {
+                displayArea.classList.add('hidden');
+                manualInputArea.classList.remove('hidden');
+                bulkInputArea.classList.add('hidden');
+                pageInfo.classList.add('hidden');
+                controlsDiv.classList.add('hidden');
+            });
+        });
     </script>
 </body>
 </html>
