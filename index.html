@@ -7,9 +7,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --primary-color: #007bff;         /* Electric Blue */
+      --primary-color: #007bff;        /* Electric Blue */
       --primary-hover-color: #0056b3;
-      --accent-color: #6f42c1;          /* Deep Purple */
+      --accent-color: #6f42c1;         /* Deep Purple */
       --bg-light: #f7f9fc;
       --container-bg: #ffffff;
       --input-bg: #fdfdfd;
@@ -64,6 +64,8 @@
       font-weight: 500;
       cursor: pointer;
       transition: background-color 0.3s ease;
+      text-decoration: none; /* Added for link styling if used as <a> */
+      display: inline-block; /* Added for link styling if used as <a> */
     }
 
     .btn:hover {
@@ -88,10 +90,10 @@
     }
 
     .logo-center {
-      height: 500px;          /* increased size */
-      width: 500px;           /* square for circle */
-      object-fit: cover;      /* crop nicely */
-      border-radius: 50%;     /* circle shape */
+      height: 500px;        /* increased size */
+      width: 500px;         /* square for circle */
+      object-fit: cover;    /* crop nicely */
+      border-radius: 50%;   /* circle shape */
       margin-bottom: 1rem;
       box-shadow: 0 4px 10px var(--shadow-color); /* subtle shadow */
     }
@@ -105,9 +107,29 @@
     p.lead {
       font-size: 1.2rem;
       color: var(--text-light);
-      margin-bottom: 2rem;
+      margin-bottom: 2rem; /* Adjusted margin to make space for the new button */
       max-width: 600px;
     }
+
+    /* Style for the new "Create & Print" button container */
+    .cta-print-button-container {
+        margin-bottom: 2.5rem; /* Added margin below the button */
+    }
+
+    .btn-large-accent { /* New class for a more prominent button */
+        background-color: var(--accent-color);
+        color: #fff;
+        padding: 0.75rem 1.5rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-large-accent:hover {
+        background-color: #5a359a; /* A slightly darker shade of accent for hover */
+    }
+
 
     /* Feature Highlights Section */
     section.features {
@@ -169,6 +191,24 @@
         font-size: 2rem;
       }
 
+      .logo-center {
+        height: 300px;
+        width: 300px;
+      }
+
+      p.lead {
+        margin-bottom: 1.5rem;
+      }
+
+      .cta-print-button-container {
+        margin-bottom: 2rem;
+      }
+
+      .btn-large-accent {
+        padding: 0.6rem 1.2rem;
+        font-size: 1rem;
+      }
+
       section.features h2,
       section.tutorial h2 {
         font-size: 1.5rem;
@@ -190,6 +230,10 @@
     <img src="Cramcraft.png" alt="CramCraft Logo" class="logo-center" />
     <h1>Welcome to CramCraft</h1>
     <p class="lead">Your magical flashcard companion for smarter studying and better memory retention.</p>
+
+    <div class="cta-print-button-container">
+        <button class="btn btn-large-accent" onclick="window.location.href='print.html'">Create & Print Your Flashcards</button>
+    </div>
 
     <section class="features">
       <h2>Why Choose CramCraft?</h2>
