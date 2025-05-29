@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flashcard Program</title>
+    <title>Flashcard Program - Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -20,6 +20,7 @@
             --success-color: #28a745;
             --warning-color: #ffc107;
             --danger-color: #dc3545;
+            --nav-bg-color: #2c3e50; /* For nav bar */
         }
 
         html {
@@ -27,52 +28,144 @@
         }
         body {
             font-family: 'Poppins', Arial, sans-serif;
-            padding: 25px;
-            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); /* Gradient background */
+            padding: 0; /* Removed padding: 25px; */
+            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
             display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100%;
+            flex-direction: column; /* For nav on top, then content */
+            align-items: center; /* Center .container horizontally */
+            min-height: 100vh; /* Use vh for full viewport height */
             box-sizing: border-box;
             color: var(--text-dark);
             line-height: 1.6;
+            margin: 0; /* Ensure no default body margin */
         }
+
+        /* Navigation Bar Styles */
+        .top-nav {
+            background-color: var(--nav-bg-color);
+            padding: 12px 0px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+            margin-bottom: 25px; /* Space between nav and main container */
+            box-sizing: border-box;
+            position: sticky; /* Make nav sticky */
+            top: 0;
+            z-index: 1001; /* Ensure it's above other content like message-box */
+        }
+        .top-nav-inner {
+            width: 100%;
+            max-width: 1200px; /* Content width limit */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+        .top-nav .nav-logo a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.6em;
+            font-weight: 700;
+        }
+        .top-nav .nav-logo img {
+            height: 30px;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        .top-nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+        .top-nav ul li {
+            margin-left: 25px;
+        }
+        .top-nav ul li a {
+            color: #f0f7ff;
+            text-decoration: none;
+            font-size: 1em;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .top-nav ul li a:hover, .top-nav ul li a.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .top-nav .user-status { /* For "Welcome User" or Login/Signup links */
+            color: #e0eafc;
+            font-size: 0.95em;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+        .top-nav .user-status a { /* Style links within user-status if any */
+            color: #f0f7ff;
+            text-decoration: none;
+            margin-left: 15px;
+            padding: 6px 10px;
+            border-radius: 5px;
+            border: 1px solid transparent;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .top-nav .user-status a:hover {
+             background-color: var(--primary-hover-color);
+             color: white;
+        }
+         .top-nav .user-status .signup-button { /* Special style for signup button */
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        .top-nav .user-status .signup-button:hover {
+            background-color: var(--primary-hover-color);
+            border-color: var(--primary-hover-color);
+        }
+
+
         .container {
             display: flex;
             flex-direction: column;
             gap: 20px;
             background-color: var(--container-bg);
-            padding: 25px 30px; /* Increased padding */
-            border-radius: 12px; /* More rounded corners */
+            padding: 25px 30px;
+            border-radius: 12px;
             box-shadow: 0 5px 15px var(--shadow-color);
-            max-width: 750px; /* Slightly wider */
-            width: 100%;
+            max-width: 750px; /* Original width */
+            width: 100%; /* Responsive */
             box-sizing: border-box;
+            /* margin-top: 25px; If nav is not sticky, this ensures space */
         }
 
-        .logo-container { /* For the logo */
+        .logo-container {
             text-align: center;
             margin-bottom: 10px;
         }
         .logo-container img {
-            max-width: 150px; /* Adjust as needed */
+            max-width: 150px;
             height: auto;
-            border-radius: 8px; /* Optional: if your logo benefits from rounded corners */
+            border-radius: 8px;
         }
 
         h1 {
             text-align: center;
             color: var(--text-dark);
             margin-bottom: 25px;
-            font-weight: 600; /* Bolder title */
-            font-size: 2.2em; /* Larger title */
+            font-weight: 600;
+            font-size: 2.2em;
         }
         h2 {
-            color: var(--primary-color); /* Use primary color for subheadings */
+            color: var(--primary-color);
             margin-top: 0;
             margin-bottom: 18px;
             font-weight: 500;
-            border-bottom: 1px solid #eee; /* Subtle separator */
+            border-bottom: 1px solid #eee;
             padding-bottom: 8px;
         }
         .input-area {
@@ -85,16 +178,16 @@
         }
         .input-row {
             display: flex;
-            gap: 15px; /* Increased gap */
+            gap: 15px;
             margin-bottom: 12px;
         }
         .input-row input,
         textarea {
             flex: 1;
-            padding: 12px 15px; /* Increased padding */
-            border: 1px solid #ced4da; /* Softer border */
-            border-radius: 6px; /* More rounded */
-            font-size: 15px; /* Slightly larger font */
+            padding: 12px 15px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 15px;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
         textarea {
@@ -107,7 +200,7 @@
         .input-row input:focus,
         textarea:focus {
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25); /* Bootstrap-like focus */
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
             outline: none;
         }
 
@@ -115,42 +208,41 @@
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 12px 20px; /* Enhanced padding */
-            border-radius: 25px; /* Pill-shaped buttons */
+            padding: 12px 20px;
+            border-radius: 25px;
             cursor: pointer;
-            font-size: 15px; /* Adjusted font size */
-            font-weight: 500; /* Slightly bolder text */
+            font-size: 15px;
+            font-weight: 500;
             margin-right: 8px;
             margin-top: 8px;
-            transition: background-color 0.2s ease-in-out, transform 0.1s ease, box-shadow 0.2s ease; /* Added transform and shadow */
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease, box-shadow 0.2s ease;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            text-transform: uppercase; /* Uppercase button text */
-            letter-spacing: 0.5px; /* Slight letter spacing */
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         button:hover {
             background-color: var(--primary-hover-color);
-            transform: translateY(-2px); /* Slight lift on hover */
+            transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
         button:active {
-            transform: translateY(0px); /* Pressed effect */
+            transform: translateY(0px);
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         button:disabled {
-            background-color: #b0bec5; /* Softer disabled color */
+            background-color: #b0bec5;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
-        /* Specific button variations */
         #show-bulk-input, #show-manual-input, #back-to-input {
-            background-color: #6c757d; /* Secondary button color */
+            background-color: #6c757d;
         }
         #show-bulk-input:hover, #show-manual-input:hover, #back-to-input:hover {
             background-color: #5a6268;
         }
         #print-cards {
-            background-color: var(--success-color); /* Green for print */
+            background-color: var(--success-color);
         }
         #print-cards:hover {
             background-color: #1e7e34;
@@ -171,11 +263,11 @@
         }
         .flashcard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive columns */
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             grid-auto-rows: minmax(130px, auto);
             height: auto;
-            min-height: 685px; /* Keep if specific height is needed, or adjust */
-            grid-gap: 20px; /* Increased gap */
+            min-height: 685px;
+            grid-gap: 20px;
         }
         .card-item {
             border: 1px solid var(--card-border-color);
@@ -185,26 +277,26 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 15px; /* Increased padding */
-            font-size: 14px; /* Adjusted font size */
-            border-radius: 8px; /* More rounded */
+            padding: 15px;
+            font-size: 14px;
+            border-radius: 8px;
             box-shadow: 0 3px 7px rgba(0,0,0,0.07);
             word-wrap: break-word;
             min-height: 120px;
             overflow-wrap: break-word;
             white-space: pre-wrap;
-            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Added hover transition */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
         .card-item:hover {
-            transform: translateY(-5px) scale(1.02); /* Lift and slightly scale on hover */
+            transform: translateY(-5px) scale(1.02);
             box-shadow: 0 6px 12px rgba(0,0,0,0.1);
         }
         .card-item .label {
-            font-weight: 600; /* Bolder label */
-            font-size: 11px; /* Slightly larger label */
-            color: var(--primary-color); /* Use primary color */
+            font-weight: 600;
+            font-size: 11px;
+            color: var(--primary-color);
             margin-bottom: 8px;
-            text-transform: uppercase; /* Uppercase label */
+            text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         .controls {
@@ -214,14 +306,14 @@
         #page-info {
             text-align: center;
             margin-bottom: 15px;
-            font-size: 17px; /* Larger page info */
+            font-size: 17px;
             color: var(--text-light);
             font-weight: 500;
         }
 
         .message-box {
             position: fixed;
-            top: 20px;
+            top: 80px; /* Adjusted to be below sticky nav */
             left: 50%;
             transform: translateX(-50%);
             background-color: var(--warning-color);
@@ -229,11 +321,11 @@
             padding: 15px 25px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            z-index: 1000;
+            z-index: 1000; /* Below nav */
             display: none;
             font-size: 16px;
             font-weight: 500;
-            animation: fadeInOut 3s ease-in-out; /* Fade in/out animation */
+            animation: fadeInOut 3s ease-in-out;
         }
         .message-box.success { background-color: var(--success-color); color: white; }
         .message-box.error { background-color: var(--danger-color); color: white; }
@@ -249,11 +341,11 @@
             display: none;
         }
         .input-instructions {
-            font-size: 0.95em; /* Slightly larger */
+            font-size: 0.95em;
             color: var(--text-light);
-            margin-top: 20px; /* Space above instructions */
+            margin-top: 20px;
             margin-bottom: 15px;
-            background-color: #f9f9f9; /* Light background for instructions */
+            background-color: #f9f9f9;
             padding: 15px;
             border-radius: 6px;
             border: 1px solid #eee;
@@ -262,10 +354,10 @@
             margin-bottom: 8px;
         }
         .input-instructions code {
-            background-color: #e0e0e0; /* Darker code background */
+            background-color: #e0e0e0;
             padding: 3px 6px;
             border-radius: 4px;
-            font-family: 'Courier New', Courier, monospace; /* Classic monospace */
+            font-family: 'Courier New', Courier, monospace;
             color: #333;
         }
         .input-instructions hr {
@@ -290,22 +382,22 @@
         }
         .delimiter-options {
             display: flex;
-            flex-wrap: wrap; /* Allow options to wrap on smaller screens */
-            gap: 10px 15px; /* Row and column gap */
+            flex-wrap: wrap;
+            gap: 10px 15px;
             align-items: center;
         }
         .delimiter-options label {
-            margin-right: 10px; /* Reduced margin as gap handles spacing */
+            margin-right: 10px;
             font-size: 0.98em;
             cursor: pointer;
-            display: inline-flex; /* Align radio and text nicely */
+            display: inline-flex;
             align-items: center;
         }
         .delimiter-options input[type="radio"] {
             margin-right: 6px;
-            accent-color: var(--primary-color); /* Style radio button */
+            accent-color: var(--primary-color);
         }
-        .delimiter-options input[type="text"] { /* Style for custom delimiter inputs */
+        .delimiter-options input[type="text"] {
             padding: 8px 10px;
             font-size: 0.95em;
             margin-left: 5px;
@@ -318,17 +410,17 @@
             text-align: center;
         }
         #custom-card-delimiter-input {
-            width: 100px; /* Wider for multi-character potential */
+            width: 100px;
         }
 
 
         @media print {
             html, body {
                 height: auto;
-                background-color: #fff !important; /* Ensure white background */
-                font-family: Arial, sans-serif; /* Standard print font */
-                font-size: 10pt; /* Adjust base font size for print */
-                color: #000 !important; /* Ensure black text */
+                background-color: #fff !important;
+                font-family: Arial, sans-serif;
+                font-size: 10pt;
+                color: #000 !important;
             }
             body {
                 padding: 0;
@@ -336,16 +428,20 @@
                 max-width: 100%;
                 display: block;
             }
+            .top-nav { /* Hide nav bar in print */
+                display: none !important;
+            }
             .container {
                 box-shadow: none;
                 padding: 0;
                 margin: 0 auto;
-                width: 98%; /* Slightly more width for content */
+                width: 98%;
                 max-width: 7.8in;
-                gap: 2.5mm; /* Reduced gap */
+                gap: 2.5mm;
                 border-radius: 0;
+                margin-top: 0; /* Remove top margin in print */
             }
-            h1, .logo-container { /* Hide logo and main title for print */
+            h1, .logo-container {
                 display: none !important;
             }
             .input-area, .controls, #page-info, .message-box, #add-row, #start-flashcards, #back-to-input, #prev-page, #next-page, #print-cards, #parse-bulk-data, #show-manual-input, #show-bulk-input {
@@ -360,7 +456,7 @@
             }
             @page {
                 size: letter;
-                margin: 0.3in; /* Slightly more margin */
+                margin: 0.3in;
             }
             .print-page-title {
                 display: block !important;
@@ -372,20 +468,20 @@
             }
             .flashcard-grid {
                 page-break-after: always;
-                grid-template-columns: repeat(2, 1fr) !important; /* Strict 2 columns */
-                grid-gap: 2.5mm !important; /* Strict gap */
+                grid-template-columns: repeat(2, 1fr) !important;
+                grid-gap: 2.5mm !important;
                 height: auto;
                 min-height: 0;
                 background-color: #fff !important;
-                grid-auto-rows: 1fr; /* Equal height rows */
-                border: none; /* No border around the grid itself */
+                grid-auto-rows: 1fr;
+                border: none;
             }
             .card-item {
-                border: 0.8pt solid #333 !important; /* Thinner solid border */
+                border: 0.8pt solid #333 !important;
                 font-size: 8pt !important;
-                min-height: 1.7in !important; /* Adjust based on content and preference */
-                background-color: #fdfdfd !important; /* Very light grey */
-                padding: 2mm !important; /* Reduced padding */
+                min-height: 1.7in !important;
+                background-color: #fdfdfd !important;
+                padding: 2mm !important;
                 page-break-inside: avoid !important;
                 box-shadow: none !important;
                 white-space: pre-wrap !important;
@@ -394,7 +490,7 @@
                 justify-content: center !important;
                 align-items: center !important;
                 overflow: hidden !important;
-                border-radius: 4px !important; /* Slight radius for printed cards */
+                border-radius: 4px !important;
                 color: #000 !important;
             }
             .card-item .label {
@@ -408,10 +504,28 @@
     </style>
 </head>
 <body>
+    <nav class="top-nav">
+        <div class="top-nav-inner">
+            <div class="nav-logo">
+                 <a href="index.html">
+                    FlashcardPRO
+                </a>
+            </div>
+            <ul>
+                <li><a href="index.html" class="active">Home (Create)</a></li>
+                <li><a href="user_dashboard.html">Dashboard</a></li>
+                <li><a href="search_page.html">Search</a></li>
+            </ul>
+            <div class="user-status">
+                <a href="login.html">Login</a>
+                <a href="signup.html" class="signup-button">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+
     <div class="container">
         <div class="logo-container">
-            <img src="logo.png" alt="Flashcard Maker Logo">
-        </div>
+            <img src="logo.png" alt="Flashcard Maker Logo"> </div>
         <h1>Flashcard Maker</h1>
 
         <div class="input-area" id="manual-input-area">
@@ -585,7 +699,7 @@
                 manualInputArea.classList.remove('hidden');
             });
 
-            // --- Manual Input Logic (remains the same) ---
+            // --- Manual Input Logic ---
             addRowBtn.addEventListener('click', function() {
                 rowCount++;
                 const newRow = document.createElement('div');
@@ -621,7 +735,7 @@
                 proceedToFlashcardDisplay();
             });
 
-            // --- Bulk Input Logic (NEW - with multiple separators) ---
+            // --- Bulk Input Logic ---
             parseBulkDataBtn.addEventListener('click', function() {
                 flashcardData = [];
                 const bulkText = bulkDataInput.value;
@@ -656,7 +770,6 @@
                 let cardStrings = [];
 
                 if (selectedCardDelimiterOption === 'newline') {
-                    // Special handling for "New Line" separation, similar to old logic but more explicit
                     const allLines = bulkText.split('\n');
                     let currentCardBlockLines = [];
                     for (let i = 0; i < allLines.length; i++) {
@@ -664,40 +777,58 @@
                         const trimmedCurrentLine = currentLine.trim();
 
                         if (trimmedCurrentLine === "" && currentCardBlockLines.length === 0) {
-                            continue; // Skip leading empty lines for a new block
+                            continue; 
                         }
-                        // A new card starts if the line is not a continuation (like a. b.) AND we have lines in the current block
-                        // OR if it's an empty line signifying a break (unless previous line was also empty)
+                        
                         let isNewCardBoundary = false;
                         if (currentCardBlockLines.length > 0) {
-                            if (trimmedCurrentLine === "") { // Empty line is a boundary
+                            if (trimmedCurrentLine === "") { 
                                 isNewCardBoundary = true;
-                            } else if (!isOptionLine(currentLine) && !isOptionLine(currentCardBlockLines[currentCardBlockLines.length-1])) {
-                                // If current line isn't an option, and previous wasn't either, it might be a new card,
-                                // especially if the previous block didn't just end with the term/def separator.
-                                // This part is tricky. For simplicity, we'll rely on explicit empty lines or other separators more.
-                                // For "New Line" mode, the most reliable way is to treat each non-empty line as potentially starting a new card
-                                // UNLESS it's clearly a continuation (like an option).
-                                // Let's refine: a block ends when a new non-option, non-empty line appears *or* an empty line appears.
-                                const prevLine = allLines[i-1]?.trim();
-                                if(prevLine !== "" && !isOptionLine(currentLine)){ // New non-option line starts a new card block
-                                     isNewCardBoundary = true;
+                            } else {
+                                const prevLineIsEmpty = (i > 0 && allLines[i-1].trim() === "");
+                                const currentLineIsNotOption = !isOptionLine(currentLine);
+                                // A new card begins if the previous line was NOT empty, AND this line is not an option.
+                                // OR if the previous line WAS empty, this non-empty line starts a new card.
+                                if (prevLineIsEmpty && trimmedCurrentLine !== "") {
+                                   isNewCardBoundary = true; // Started new card after empty line
+                                } else if (!prevLineIsEmpty && currentLineIsNotOption && !isOptionLine(currentCardBlockLines[currentCardBlockLines.length-1])) {
+                                   // Heuristic: if neither current nor previous in block is an option, and no empty line, consider new card.
+                                   // This is tricky; the termDefSeparator check below is more robust for lines within a block.
+                                   // A simpler rule: if a line contains the termDefSeparator and isn't an option, it might be a new card starter if not after an option.
+                                   // For now, rely on explicit empty lines or non-newline card separators for clearer multi-line term/def grouping.
+                                   // The definition of a "card" when using newline as a card separator usually implies each non-empty line or grouped lines ending with an empty line is a card.
+                                   // Let's refine: if the current line is not an option, and the previous line (if part of current block) was also not an option,
+                                   // and the previous line didn't seem to be just the term part of a term/def pair, it's a new card.
+                                   // This still feels fragile. Let's simplify: A new card block starts after an empty line, or if current line does not look like a continuation.
+                                   // The logic below that *joins* lines implies we are trying to build multi-line terms/defs *before* splitting by termDefSeparator.
+
+                                   // Revised simpler approach for 'newline' card separator:
+                                   // Each non-empty line is a potential start of a new card.
+                                   // If a line is empty, it definitely separates cards.
+                                   // If we already have lines in currentCardBlock, and a new non-empty line arrives, it's a new card.
+                                    if (trimmedCurrentLine !== "" && currentCardBlockLines.length > 0 && allLines[i-1]?.trim() !== "") {
+                                        isNewCardBoundary = true;
+                                    }
                                 }
                             }
                         }
-
-
+                        
                         if (isNewCardBoundary && currentCardBlockLines.length > 0) {
                             cardStrings.push(currentCardBlockLines.join('\n'));
                             currentCardBlockLines = [];
                         }
-                        if(trimmedCurrentLine !== "") { // only add non-empty lines to current block.
-                            currentCardBlockLines.push(currentLine);
+
+                        if(trimmedCurrentLine !== "") { 
+                            currentCardBlockLines.push(currentLine); // Add original line to preserve internal spacing if any
+                        } else if (currentCardBlockLines.length > 0) { // An empty line, and we have content for a card
+                            cardStrings.push(currentCardBlockLines.join('\n'));
+                            currentCardBlockLines = [];
                         }
                     }
-                    if (currentCardBlockLines.length > 0) { // Add the last block
+                    if (currentCardBlockLines.length > 0) { 
                         cardStrings.push(currentCardBlockLines.join('\n'));
                     }
+
                 } else if (selectedCardDelimiterOption === 'semicolon') {
                     cardStrings = bulkText.split(';');
                 } else if (selectedCardDelimiterOption === 'customCard') {
@@ -714,24 +845,28 @@
                 }
 
                 // 3. Process Each Card String
-                cardStrings.forEach((cardStr, index) => {
-                    const trimmedCardStr = cardStr.trim();
-                    if (!trimmedCardStr) return; // Skip empty strings resulting from split
+                cardStrings.forEach((cardStr) => {
+                    const trimmedCardStr = cardStr.trim(); // Trim individual card string
+                    if (!trimmedCardStr) return; 
 
                     let term = '';
                     let definition = '';
+                    
+                    // Use lastIndexOf for term/def separator to allow separator in term
                     const lastDelimiterIndex = trimmedCardStr.lastIndexOf(termDefSeparator);
 
                     if (lastDelimiterIndex !== -1) {
                         term = trimmedCardStr.substring(0, lastDelimiterIndex).trim();
                         definition = trimmedCardStr.substring(lastDelimiterIndex + termDefSeparator.length).trim();
                     } else {
-                        // If no term/def separator, assume the whole string is the term
+                        // If no term/def separator, assume the whole string is the term (or def if term is empty)
+                        // Based on instruction: "Definition is typically the part after the last instance"
+                        // If separator is not found, it's an edge case. Let's treat it as a term.
                         term = trimmedCardStr;
-                        definition = `(No definition found with separator)`;
+                        definition = `(No definition found with separator: '${termDefSeparator}')`;
                     }
 
-                    if (term || definition !== `(No definition found with separator)`) {
+                    if (term || definition !== `(No definition found with separator: '${termDefSeparator}')`) {
                          flashcardData.push({
                             term: term || `(No Term Provided ${flashcardData.length + 1})`,
                             definition: definition || `(No Definition Provided ${flashcardData.length + 1})`
@@ -748,11 +883,10 @@
             });
 
 
-            // --- Common Flashcard Processing and Display Logic (remains largely the same) ---
+            // --- Common Flashcard Processing and Display Logic ---
             function proceedToFlashcardDisplay() {
                 if (flashcardData.length > 0) {
-                    while (flashcardData.length % CARDS_PER_PAGE !== 0) {
-                        const idx = flashcardData.length + 1; // To make numbers 1-based for display
+                    while (flashcardData.length % CARDS_PER_PAGE !== 0 && flashcardData.length < 500) { // Added a sanity limit
                         flashcardData.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` });
                     }
                 } else {
@@ -765,7 +899,7 @@
                 displayArea.classList.remove('hidden');
 
                 currentPage = 0;
-                totalPages = (flashcardData.length / CARDS_PER_PAGE) * 2;
+                totalPages = (flashcardData.length / CARDS_PER_PAGE) * 2; 
                 updateDisplay();
                 const actualCards = flashcardData.filter(c => c.term !== '(Empty Slot)').length;
                 showMessage(`Generated ${actualCards} flashcards!`, 'success');
@@ -807,7 +941,7 @@
                 nextBtn.disabled = currentPage === totalPages - 1;
             }
 
-            // --- Navigation and Print Controls (remains the same) ---
+            // --- Navigation and Print Controls ---
             nextBtn.addEventListener('click', function() {
                 if (currentPage < totalPages - 1) {
                     currentPage++;
@@ -847,16 +981,33 @@
                     for (let j = 0; j < CARDS_PER_PAGE; j++) {
                         let indexToFetchDataFrom = startIdxForPrint + j;
                         if (indexToFetchDataFrom >= flashcardData.length) break;
-                        if (!isTermPageForPrint) {
-                            const numColumns = 2;
-                            const col = j % numColumns;
-                            if (col === 0) {
-                                if (indexToFetchDataFrom + 1 < startIdxForPrint + CARDS_PER_PAGE && indexToFetchDataFrom + 1 < flashcardData.length) {
-                                    indexToFetchDataFrom = startIdxForPrint + j + 1;
-                                }
-                            } else {
-                                if (indexToFetchDataFrom - 1 >= startIdxForPrint) {
-                                    indexToFetchDataFrom = startIdxForPrint + j - 1;
+                        // Logic for duplex printing alignment (swapping card positions on back page)
+                        if (!isTermPageForPrint) { // If it's a definition page (back of sheet)
+                            const numColumns = 2; // As per print CSS: grid-template-columns: repeat(2, 1fr)
+                            const currentRow = Math.floor(j / numColumns);
+                            const currentCol = j % numColumns;
+                            // Swap logic for a 2-column layout: (0,1) becomes (1,0), (2,3) becomes (3,2) etc.
+                            // This specific re-ordering is for front-to-back alignment if cards are cut.
+                            // A common strategy is to reverse order within a row for the back page, or simply print as is and rely on cutting.
+                            // The provided logic was: (col 0 maps to +1, col 1 maps to -1)
+                            // This assumes cards are side-by-side and you flip along the long edge.
+                            // If card (j) is in col 0 (even), use data for (j+1)
+                            // If card (j) is in col 1 (odd), use data for (j-1)
+                            // This simple swap might be what's intended for two-column layout.
+                            if (numColumns === 2) {
+                                if (currentCol === 0) { // First item in a pair
+                                    if (startIdxForPrint + j + 1 < flashcardData.length && (j+1) < CARDS_PER_PAGE) { // Check bounds
+                                        indexToFetchDataFrom = startIdxForPrint + j + 1;
+                                    } else {
+                                      // If no pair, use current (it's the last card on page) or it's an empty slot
+                                       indexToFetchDataFrom = startIdxForPrint + j;
+                                    }
+                                } else { // Second item in a pair
+                                     if (startIdxForPrint + j - 1 >= startIdxForPrint ) { // Check bounds
+                                        indexToFetchDataFrom = startIdxForPrint + j - 1;
+                                    } else {
+                                        indexToFetchDataFrom = startIdxForPrint + j; // Should not happen if j > 0
+                                    }
                                 }
                             }
                         }
@@ -871,20 +1022,29 @@
                     cardsContainer.appendChild(grid);
                 }
                 window.print();
-                cardsContainer.innerHTML = '';
+                cardsContainer.innerHTML = ''; // Clear after print
                 pageInfo.className = originalPageInfoClass;
                 controlsDiv.className = originalControlsClass;
-                if (!displayArea.classList.contains('hidden')) {
-                    updateDisplay();
+                if (!displayArea.classList.contains('hidden')) { // If display was visible
+                    updateDisplay(); // Restore the view
                 }
             });
 
             backBtn.addEventListener('click', function() {
                 displayArea.classList.add('hidden');
-                manualInputArea.classList.remove('hidden');
+                manualInputArea.classList.remove('hidden'); // Default to manual input
                 bulkInputArea.classList.add('hidden');
                 pageInfo.classList.add('hidden');
                 controlsDiv.classList.add('hidden');
+                // Reset flashcard data and counts
+                flashcardData = [];
+                rowCount = 1; // Reset manual input row count
+                termDefInputs.innerHTML = `
+                    <div class="input-row">
+                        <input type="text" placeholder="Term 1" class="term">
+                        <input type="text" placeholder="Definition 1" class="definition">
+                    </div>`;
+                bulkDataInput.value = ''; // Clear bulk input
             });
         });
     </script>
