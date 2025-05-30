@@ -283,6 +283,13 @@
             .card-item .label { font-size: 7pt !important; color: #000 !important; font-weight: bold !important; margin-bottom: 1.5mm !important; text-transform: uppercase; }
         }
     </style>
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co'; // Database URL
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8'; // API Key
+        const supabase = createClient(supabaseUrl, supabaseKey);
+        window.supabase = supabase;
+    </script>
 </head>
 <body>
 
@@ -686,6 +693,19 @@ Term2\tDefinition2..."></textarea>
                 if (controlsDiv) controlsDiv.classList.add('hidden');
             });
         });
+    </script>
+    <script type="module"> // Test Flashcard
+        async function testInsertFlashcard() {
+            const { data, error } = await window.supabase
+                .from('flashcards')
+                .insert([{ term: "Test Card", definition: "This was added via Supabase." }]);
+            if (error) {
+                console.error('Insert error:', error.message);
+            } else {
+                console.log('Inserted successfully:', data);
+            }
+        }
+        testInsertFlashcard(); // Call on load
     </script>
 </body>
 </html>
