@@ -6,7 +6,60 @@
     <title>Homepage</title>
     <link rel="stylesheet" href="stylesheet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        /* Dark mode CSS variables */
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --nav-bg: #f5f5f5;
+            --nav-text: #000000;
+            --btn-bg: #e0e0e0;
+            --btn-text: #000000;
+        }
 
+        .dark-mode {
+            --bg-color: #121212;
+            --text-color: #e0e0e0;
+            --nav-bg: #1f1f1f;
+            --nav-text: #e0e0e0;
+            --btn-bg: #333333;
+            --btn-text: #e0e0e0;
+        }
+
+        /* Apply variables */
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Adjust nav background and text */
+        nav.top-nav {
+            background-color: var(--nav-bg);
+            color: var(--nav-text);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        nav.top-nav a {
+            color: var(--nav-text);
+        }
+
+        /* Adjust buttons */
+        .btn {
+            background-color: var(--btn-bg);
+            color: var(--btn-text);
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            filter: brightness(0.9);
+        }
+    </style>
 </head>
 <body>
 
@@ -16,7 +69,7 @@
                 <a href="index.html">CramCraft</a>
             </div>
             <ul>
-				<li><a href="home.html">Home</a></li>
+                <li><a href="home.html">Home</a></li>
                 <li><a href="index.html">Create</a></li>
                 <li><a href="user_dashboard.html">Dashboard</a></li>
                 <li><a href="search_page.html">Search</a></li>
@@ -25,6 +78,7 @@
             <div class="auth-buttons">
                 <a href="login.html" class="btn">Login</a>
                 <a href="signup.html" class="btn">Signup</a>
+                <button id="theme-toggle" class="btn" aria-label="Toggle dark/light mode">🌙</button>
             </div>
         </div>
     </nav>
@@ -36,6 +90,30 @@
             <p class="lead">Your magical flashcard companion for smarter studying, faster recall, and efficient learning. Jump in and start crafting your knowledge</p>
         </div>
     </div>
+
+    <script>
+        const toggleButton = document.getElementById('theme-toggle');
+        const body = document.body;
+
+        // Apply saved theme on load
+        if (localStorage.getItem('theme') === 'dark') {
+            body.classList.add('dark-mode');
+            toggleButton.textContent = '☀️'; // sun icon for light mode toggle
+        } else {
+            toggleButton.textContent = '🌙'; // moon icon for dark mode toggle
+        }
+
+        toggleButton.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                toggleButton.textContent = '☀️';
+            } else {
+                localStorage.setItem('theme', 'light');
+                toggleButton.textContent = '🌙';
+            }
+        });
+    </script>
 
 </body>
 </html>
