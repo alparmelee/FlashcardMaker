@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz Mode</title>
+  <link rel="stylesheet" href="stylesheet.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #ffffff;
+      color: #000000;
+      font-family: 'Poppins', sans-serif;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .btn {
+      background-color: #e0e0e0;
+      color: #000000;
+      border: none;
+      padding: 8px 12px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      font-family: 'Poppins', sans-serif;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn:hover {
+      filter: brightness(0.9);
+    }
+
+    .quiz-container {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    #quiz-choices button {
+      display: block;
+      margin: 10px 0;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="quiz-container">
+    <h1>Quiz Mode</h1>
+    <div id="quiz-screen">
+      <h2 id="quiz-question">Loading...</h2>
+      <div id="quiz-choices"></div>
+      <button id="quiz-next" class="btn" style="display:none;">Next</button>
+      <div id="quiz-result" style="display:none;"></div>
+    </div>
+    <button onclick="startQuiz()" class="btn">Start Quiz</button>
+  </div>
+
+  <script src="quiz-data.js"></script>
+  <script src="quiz.js"></script>
+</body>
+</html>
