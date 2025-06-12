@@ -73,7 +73,7 @@
 
             // Check if passwords match
             if (password !== confirmPassword) {
-                messageBox.textContent = 'Passwords do not match!';
+                messageBox.textContent = 'Error: Passwords do not match!';
                 messageBox.className = 'message-box error';
                 messageBox.style.display = 'block';
                 return;
@@ -90,7 +90,14 @@
                 });
 
                 if (error) {
-                    messageBox.textContent = error.message;
+                    // Provide specific error messages
+                    if (error.message.includes('email')) {
+                        messageBox.textContent = 'Error: Invalid email address or email already in use.';
+                    } else if (error.message.includes('password')) {
+                        messageBox.textContent = 'Error: Password does not meet requirements.';
+                    } else {
+                        messageBox.textContent = `Error: ${error.message}`;
+                    }
                     messageBox.className = 'message-box error';
                     messageBox.style.display = 'block';
                 } else {
@@ -143,14 +150,14 @@
         userStatus.style.display = 'flex';
       }
     } else {
-      if (authButtons) authButtons.style.display = 'flex';
-      if (userStatus) userStatus.style.display = 'none';
+    location.href = 'index.html'; // redirect to homelex';
+  }   if (userStatus) userStatus.style.display = 'none';
     }
-  }
+  checkUser();
 
-  async function signOut() {
-    await supabase.auth.signOut();
-    location.href = 'index.html'; // redirect to home
+</script>unction signOut() {
+</body>it supabase.auth.signOut();
+</html>ation.href = 'index.html'; // redirect to home
   }
 
   checkUser();
