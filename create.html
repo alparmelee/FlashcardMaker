@@ -7,13 +7,13 @@
     <link rel="stylesheet" href="stylesheet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
-      <script type="module">
+    <script type="module">
         import { createClient } from '@supabase/supabase-js';
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co'; // Database URL
-        const supabaseKey = supabaseKey = process.env.SUPABASE_KEY; // API Key
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8'; // API Key
         const supabase = createClient(supabaseUrl, supabaseKey);
         window.supabase = supabase;
-      </script>
+    </script>
 </head>
 
 <body>

@@ -57,7 +57,7 @@
                 <button type="submit" class="form-button">Create Account</button>
             </form>
             <p class="form-link">Already have an account? <a href="login.html">Login</a></p>
-            <div id="signup-message" class="message-box"></div>
+            <div id="signup-message" class="message-box" aria-live="polite"></div>
         </div>
     </div>
 
@@ -92,9 +92,9 @@
                 if (error) {
                     // Provide specific error messages
                     if (error.message.includes('email')) {
-                        messageBox.textContent = 'Error: Invalid email address or email already in use.';
+                        messageBox.textContent = 'Error: Please enter a valid email address or use a different email.';
                     } else if (error.message.includes('password')) {
-                        messageBox.textContent = 'Error: Password does not meet requirements.';
+                        messageBox.textContent = 'Error: Password must be at least 8 characters long and include a mix of letters, numbers, and symbols.';
                     } else {
                         messageBox.textContent = `Error: ${error.message}`;
                     }
@@ -112,14 +112,15 @@
                         messageBox.className = 'message-box warning';
                         messageBox.style.display = 'block';
                     } else {
-                        messageBox.textContent = 'Signup successful! Redirecting to your dashboard...';
-                        messageBox.className = 'message-box success';
-                        messageBox.style.display = 'block';
-
-                        // Redirect to the dashboard after a short delay
-                        setTimeout(() => {
-                            window.location.href = 'user_dashboard.html';
-                        }, 2000);
+                        if (data.user.confirmed_at) {
+                            setTimeout(() => {
+                                window.location.href = 'user_dashboard.html';
+                            }, 2000);
+                        } else {
+                            messageBox.textContent = 'Signup successful! Please check your email to confirm your account.';
+                            messageBox.className = 'message-box success';
+                            messageBox.style.display = 'block';
+                        }
                     }
                 }
             } catch (err) {
@@ -155,12 +156,11 @@
     }
   checkUser();
 
-</script>unction signOut() {
-</body>it supabase.auth.signOut();
-</html>ation.href = 'index.html'; // redirect to home
-  }
-
-  checkUser();
+</script>
+function signOut() {
+  supabase.auth.signOut();
+  location.href = 'index.html'; // redirect to home
+}
 
 </script>
 </body>
