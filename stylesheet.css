@@ -706,13 +706,13 @@ body {
 
 .message-box.success {
     background-color: var(--success-color);
-    color: white;
+    color: rgb(31, 150, 84);
     border: 2px solid var(--success-color);
 }
 
 .message-box.error {
     background-color: var(--danger-color);
-    color: white;
+    color: rgb(114, 34, 34);
     border: 2px solid var(--danger-color);
 }
 
