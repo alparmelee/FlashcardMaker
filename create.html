@@ -10,7 +10,7 @@
     <script type="module">
         import { createClient } from '@supabase/supabase-js';
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co'; // Database URL
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8'; // API Key
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjvbuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8'; // API Key
         const supabase = createClient(supabaseUrl, supabaseKey);
         window.supabase = supabase;
     </script>
@@ -25,9 +25,6 @@
             </div>
             <ul>
                 <li><a href="index.html" class="active">Home</a></li>
-                <!-- <li><a href="create.html">Create</a></li> --> 
-                <!-- <li><a href="user_dashboard.html">Dashboard</a></li> -->
-                <!-- <li><a href="search_page.html">Search</a></li> -->
                 <li><a href="about.html">About</a></li>
             </ul>
             <div class="auth-buttons">
@@ -49,6 +46,7 @@
                         <div class="input-row">
                             <input type="text" placeholder="Term 1" class="term">
                             <input type="text" placeholder="Definition 1" class="definition">
+                            <button type="button" class="delete-row-btn">Delete</button>
                         </div>
                     </div>
                     <button id="add-row">Add Another Term/Definition</button>
@@ -154,7 +152,7 @@ Term2\tDefinition2..."></textarea>
             const customAlertBox = document.getElementById('custom-alert');
             const controlsDiv = document.querySelector('#flashcard-maker-section .controls');
 
-            let rowCount = 1;
+            let rowCount = 1; // Start with 1, as there's already one row in HTML
             let flashcardData = [];
             let currentPage = 0;
             let totalPages = 0;
@@ -205,9 +203,33 @@ Term2\tDefinition2..."></textarea>
                 rowCount++;
                 const newRow = document.createElement('div');
                 newRow.className = 'input-row';
-                newRow.innerHTML = `<input type="text" placeholder="Term ${rowCount}" class="term"><input type="text" placeholder="Definition ${rowCount}" class="definition">`;
+                newRow.innerHTML = `<input type="text" placeholder="Term ${rowCount}" class="term"><input type="text" placeholder="Definition ${rowCount}" class="definition"><button type="button" class="delete-row-btn">Delete</button>`;
                 termDefInputs.appendChild(newRow);
             });
+
+            // Event listener for deleting individual rows
+            termDefInputs.addEventListener('click', function(event) {
+                if (event.target.classList.contains('delete-row-btn')) {
+                    const rowToRemove = event.target.closest('.input-row');
+                    if (rowToRemove) {
+                        // Ensure at least one row remains
+                        if (termDefInputs.children.length > 1) {
+                            rowToRemove.remove();
+                            // Re-index placeholders if needed, though not strictly necessary for functionality
+                            let currentInputRows = termDefInputs.querySelectorAll('.input-row');
+                            currentInputRows.forEach((row, index) => {
+                                row.querySelector('.term').placeholder = `Term ${index + 1}`;
+                                row.querySelector('.definition').placeholder = `Definition ${index + 1}`;
+                            });
+                            rowCount = currentInputRows.length; // Update rowCount to reflect actual number of rows
+                            showMessage('Term/Definition deleted.', 'success');
+                        } else {
+                            showMessage('Cannot delete the last term/definition. Please add another first.', 'warning');
+                        }
+                    }
+                }
+            });
+
 
             function collectManualFlashcards() {
                 flashcardData = [];
@@ -435,8 +457,7 @@ Term2\tDefinition2..."></textarea>
         testInsertFlashcard(); // Call on load
     </script>
 
-// Check who is signed in and display user status
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script>
 
   async function checkUser() {
