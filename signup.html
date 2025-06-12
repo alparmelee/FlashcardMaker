@@ -75,6 +75,7 @@
             if (password !== confirmPassword) {
                 messageBox.textContent = 'Passwords do not match!';
                 messageBox.className = 'message-box error';
+                messageBox.style.display = 'block';
                 return;
             }
 
@@ -91,6 +92,7 @@
                 if (error) {
                     messageBox.textContent = error.message;
                     messageBox.className = 'message-box error';
+                    messageBox.style.display = 'block';
                 } else {
                     // Insert user data into the custom `users` table
                     const userId = data.user.id; // Get the user ID from the auth response
@@ -101,14 +103,22 @@
                     if (dbError) {
                         messageBox.textContent = 'Signup successful, but failed to save user data.';
                         messageBox.className = 'message-box warning';
+                        messageBox.style.display = 'block';
                     } else {
-                        messageBox.textContent = 'Signup successful! Please check your email to confirm your account.';
+                        messageBox.textContent = 'Signup successful! Redirecting to your dashboard...';
                         messageBox.className = 'message-box success';
+                        messageBox.style.display = 'block';
+
+                        // Redirect to the dashboard after a short delay
+                        setTimeout(() => {
+                            window.location.href = 'user_dashboard.html';
+                        }, 2000);
                     }
                 }
             } catch (err) {
                 messageBox.textContent = 'An unexpected error occurred. Please try again.';
                 messageBox.className = 'message-box error';
+                messageBox.style.display = 'block';
             }
         });
     </script>
