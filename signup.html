@@ -90,14 +90,8 @@
                 });
 
                 if (error) {
-                    // Provide specific error messages
-                    if (error.message.includes('email')) {
-                        messageBox.textContent = 'Error: Please enter a valid email address or use a different email.';
-                    } else if (error.message.includes('password')) {
-                        messageBox.textContent = 'Error: Password must be at least 8 characters long and include a mix of letters, numbers, and symbols.';
-                    } else {
-                        messageBox.textContent = `Error: ${error.message}`;
-                    }
+                    console.error('Signup Error:', error); // Log the error for debugging
+                    messageBox.textContent = `Error: ${error.message}`;
                     messageBox.className = 'message-box error';
                     messageBox.style.display = 'block';
                 } else {
@@ -156,11 +150,11 @@
     }
   checkUser();
 
-</script>
-function signOut() {
+  function signOut() {
   supabase.auth.signOut();
   location.href = 'index.html'; // redirect to home
 }
+
 
 </script>
 </body>
