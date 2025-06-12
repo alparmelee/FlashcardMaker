@@ -6,16 +6,24 @@
     <link rel="stylesheet" href="stylesheet.css" />
     <title>Search Flashcards - CramCraft</title> <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+      <script type="module">
+        import { createClient } from '@supabase/supabase-js';
+        const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co'; // Database URL
+        const supabaseKey = supabaseKey = process.env.SUPABASE_KEY; // API Key
+        const supabase = createClient(supabaseUrl, supabaseKey);
+        window.supabase = supabase;
+      </script>
+
 </head>
 <body>
     <nav class="top-nav">
         <div class="top-nav-inner">
             <div class="nav-logo"><a href="index.html">CramCraft</a></div>
             <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="create.html">Create</a></li>
-                <li><a href="user_dashboard.html">Dashboard</a></li>
-                <li><a href="search_page.html" class="active">Search</a></li>
+                <li><a href="index.html" class="active">Home</a></li>
+                <!-- <li><a href="create.html">Create</a></li> --> 
+                <!-- <li><a href="user_dashboard.html">Dashboard</a></li> -->
+                <!-- <li><a href="search_page.html">Search</a></li> -->
                 <li><a href="about.html">About</a></li>
             </ul>
             <div class="auth-buttons">
@@ -127,7 +135,6 @@
 // Check who is signed in and display user status
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script>
-  const supabase = supabase.createClient('https://YOUR_PROJECT_ID.supabase.co', 'YOUR_PUBLIC_ANON_KEY');
 
   async function checkUser() {
     const { data: { user } } = await supabase.auth.getUser();

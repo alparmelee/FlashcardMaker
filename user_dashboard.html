@@ -6,6 +6,14 @@
     <title>User Dashboard - CramCraft</title>
     <link rel="stylesheet" href="stylesheet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <script type="module">
+        import { createClient } from '@supabase/supabase-js';
+        const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co'; // Database URL
+        const supabaseKey = process.env.SUPABASE_KEY; // API Key
+        const supabase = createClient(supabaseUrl, supabaseKey);
+        window.supabase = supabase;
+    </script>
     
 </head>
 <body>
@@ -13,23 +21,22 @@
         <div class="top-nav-inner">
             <div class="nav-logo"><a href="index.html">CramCraft</a></div>
             <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="create.html">Create</a></li>
-                <li><a href="user_dashboard.html" class="active">Dashboard</a></li>
-                <li><a href="search_page.html">Search</a></li>
+                <li><a href="index.html" class="active">Home</a></li>
+                <!-- <li><a href="create.html">Create</a></li> --> 
+                <!-- <li><a href="user_dashboard.html">Dashboard</a></li> -->
+                <!-- <li><a href="search_page.html">Search</a></li> -->
                 <li><a href="about.html">About</a></li>
             </ul>
-            <div class="user-status">
+            <div class="user-status" style="display: none;">
                 <span>Welcome, DemoUser!</span>
-                <a href="index.html" class="logout-button">Logout</a> 
+                <a href="#" onclick="signOut()" class="logout-button">Logout</a>
             </div>
         </div>
     </nav>
 
-    <div class="content-wrapper">
+    <div class="content-wrapper" id="dashboard-content" style="display: none;">
         <h1>My Dashboard</h1>
         <p class="user-greeting">Here are your flashcard sets, DemoUser.</p>
-
         <a href="create.html" class="create-new-set-btn">+ Create New Set</a>
 
         <h2>Your Sets</h2>
@@ -62,40 +69,32 @@
         </div>
     </div>
 
- // Check who is signed in and display user status
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script>
-  const supabase = supabase.createClient('https://YOUR_PROJECT_ID.supabase.co', 'YOUR_PUBLIC_ANON_KEY');
+    <script>
+        async function checkUser() {
+            const { data: { user }, error } = await supabase.auth.getUser();
+            const dashboardContent = document.getElementById('dashboard-content');
+            const userStatus = document.querySelector('.user-status');
 
-  async function checkUser() {
-    const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                dashboardContent.style.display = 'block';
+                userStatus.style.display = 'flex';
+                userStatus.innerHTML = `
+                    <span>Welcome, ${user.email}!</span>
+                    <a href="#" onclick="signOut()" class="logout-button">Logout</a>
+                `;
+            } else {
+                dashboardContent.style.display = 'none';
+                userStatus.style.display = 'none';
+                location.href = 'index.html'; // Redirect to homepage if not signed in
+            }
+        }
 
-    const authButtons = document.querySelector('.auth-buttons');
-    const userStatus = document.querySelector('.user-status');
+        async function signOut() {
+            await supabase.auth.signOut();
+            location.href = 'index.html'; // Redirect to homepage
+        }
 
-    if (user) {
-      if (authButtons) authButtons.style.display = 'none';
-      if (userStatus) {
-        userStatus.innerHTML = `
-          <span>Welcome, ${user.email}!</span>
-          <a href="#" onclick="signOut()" class="logout-button">Logout</a>
-        `;
-        userStatus.style.display = 'flex';
-      }
-    } else {
-      if (authButtons) authButtons.style.display = 'flex';
-      if (userStatus) userStatus.style.display = 'none';
-    }
-  }
-
-  async function signOut() {
-    await supabase.auth.signOut();
-    location.href = 'index.html'; // redirect to home
-  }
-
-  checkUser();
-
-</script>   
-
+        checkUser();
+    </script>
 </body>
 </html>
