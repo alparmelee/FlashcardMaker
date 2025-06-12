@@ -11,6 +11,10 @@
     --text-light: #555;
     --shadow-color: rgba(0, 0, 0, 0.08);
     --nav-bg-color: #343a40;
+    --danger-color: #dc3545; /* Red for errors */
+    --success-color: #28a745; /* Green for success */
+    --warning-color: #ffc107; /* Yellow for warnings */
+    --text-dark: #212529; /* Dark text */
 }
 
 * {
@@ -706,13 +710,13 @@ body {
 
 .message-box.success {
     background-color: var(--success-color);
-    color: rgb(31, 150, 84);
+    color: rgb(white);
     border: 2px solid var(--success-color);
 }
 
 .message-box.error {
     background-color: var(--danger-color);
-    color: rgb(114, 34, 34);
+    color: rgb(white);
     border: 2px solid var(--danger-color);
 }
 
