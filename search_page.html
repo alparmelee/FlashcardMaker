@@ -6,16 +6,24 @@
     <link rel="stylesheet" href="stylesheet.css" />
     <title>Search Flashcards - CramCraft</title> <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co'; // Database URL
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8'; // API Key
+        const supabase = createClient(supabaseUrl, supabaseKey);
+        window.supabase = supabase;
+    </script>
+
 </head>
 <body>
     <nav class="top-nav">
         <div class="top-nav-inner">
             <div class="nav-logo"><a href="index.html">CramCraft</a></div>
             <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="create.html">Create</a></li>
-                <li><a href="user_dashboard.html">Dashboard</a></li>
-                <li><a href="search_page.html" class="active">Search</a></li>
+                <li><a href="index.html" class="active">Home</a></li>
+                <!-- <li><a href="create.html">Create</a></li> --> 
+                <!-- <li><a href="user_dashboard.html">Dashboard</a></li> -->
+                <!-- <li><a href="search_page.html">Search</a></li> -->
                 <li><a href="about.html">About</a></li>
             </ul>
             <div class="auth-buttons">
@@ -39,9 +47,9 @@
 
         <div class="sets-grid" id="search-results-grid">
             <div class="set-card">
-                <h3>Organic Chemistry Basics</h3>
-                <p>Fundamental concepts of organic chemistry, including alkanes, alkenes, and alkynes.</p>
-                <p class="set-meta">60 Terms &nbsp;&bull;&nbsp; By: ChemMaster &nbsp;&bull;&nbsp; Rating: 4.5/5</p>
+                <h3><a href="flashcard_set.html">Intro to Biology</a></h3>
+                <p>Introduction to Biology</p>
+                <p class="set-meta">15 Terms &nbsp;&bull;&nbsp; By: DemoUser1 &nbsp;&bull;&nbsp; Rating: 4.5/5</p>
             </div>
             <div class="set-card">
                 <h3>World History: Ancient Civilizations</h3>
@@ -125,9 +133,7 @@
 </script>
 
 // Check who is signed in and display user status
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script>
-  const supabase = supabase.createClient('https://YOUR_PROJECT_ID.supabase.co', 'YOUR_PUBLIC_ANON_KEY');
 
   async function checkUser() {
     const { data: { user } } = await supabase.auth.getUser();
@@ -158,6 +164,3 @@
   checkUser();
 
 </script>
-
-</body>
-</html>
