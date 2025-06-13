@@ -30,9 +30,11 @@ function startQuiz() {
   generateQuizQuestions();
   quizIndex = 0;
   quizScore = 0;
+
   document.getElementById("quiz-result").style.display = "none";
   document.getElementById("quiz-question").style.display = "block";
   document.getElementById("quiz-choices").style.display = "block";
+
   showQuizQuestion();
 }
 
@@ -69,16 +71,6 @@ function handleQuizChoice(button, selected, correct) {
   document.getElementById("quiz-next").style.display = "inline-block";
 }
 
-document.getElementById("quiz-next").onclick = () => {
-  quizIndex++;
-
-  if (quizIndex < quizQuestions.length) {
-    showQuizQuestion();
-  } else {
-    showQuizResults();
-  }
-};
-
 function showQuizResults() {
   document.getElementById("quiz-question").style.display = "none";
   document.getElementById("quiz-choices").style.display = "none";
@@ -89,6 +81,18 @@ function showQuizResults() {
   resultDiv.innerHTML = `
     <h2>Quiz Complete!</h2>
     <p>You scored ${quizScore} out of ${quizQuestions.length}.</p>
-    <button onclick="location.reload()" class="btn">Try Again</button>
+    <button onclick="startQuiz()" class="btn">Try Again</button>
   `;
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const nextBtn = document.getElementById("quiz-next");
+  nextBtn.onclick = () => {
+    quizIndex++;
+    if (quizIndex < quizQuestions.length) {
+      showQuizQuestion();
+    } else {
+      showQuizResults();
+    }
+  };
+});

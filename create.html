@@ -293,8 +293,15 @@ Term2\tDefinition2..."></textarea>
                 return true;
             }
 
+            //Quiz Mode line added
             function proceedToFlashcardDisplay() {
                 if (flashcardData.length > 0) {
+                    const setName = prompt("Enter a name for your flashcard set:");
+                    if (setName) {
+                        const existing = JSON.parse(localStorage.getItem("flashcardGroups") || "{}");
+                        existing[setName] = flashcardData; // flashcardData is your [{term, definition}, ...]
+                        localStorage.setItem("flashcardGroups", JSON.stringify(existing));
+                    }
                     while (flashcardData.length % CARDS_PER_PAGE !== 0 && flashcardData.length < 500) {
                         flashcardData.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` });
                     }
