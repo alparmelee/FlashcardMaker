@@ -11,9 +11,7 @@
       background-color: #ffffff;
       color: #000000;
       font-family: 'Poppins', sans-serif;
-      transition: background-color 0.3s ease, color 0.3s ease;
     }
-
     .btn {
       background-color: #e0e0e0;
       color: #000000;
@@ -21,16 +19,11 @@
       padding: 8px 12px;
       cursor: pointer;
       border-radius: 4px;
-      transition: background-color 0.3s ease, color 0.3s ease;
       font-family: 'Poppins', sans-serif;
       text-decoration: none;
       display: inline-block;
+      margin: 5px;
     }
-
-    .btn:hover {
-      filter: brightness(0.9);
-    }
-
     .quiz-container {
       max-width: 600px;
       margin: 40px auto;
@@ -39,7 +32,6 @@
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-
     #quiz-choices button {
       display: block;
       margin: 10px 0;
@@ -48,19 +40,146 @@
   </style>
 </head>
 <body>
-
   <div class="quiz-container">
     <h1>Quiz Mode</h1>
+
+    <label for="topic-select">Choose a flashcard set:</label>
+    <select id="topic-select" class="btn"></select>
+
     <div id="quiz-screen">
       <h2 id="quiz-question">Loading...</h2>
       <div id="quiz-choices"></div>
       <button id="quiz-next" class="btn" style="display:none;">Next</button>
       <div id="quiz-result" style="display:none;"></div>
     </div>
+
     <button onclick="startQuiz()" class="btn">Start Quiz</button>
   </div>
 
-  <script src="quiz-data.js"></script>
-  <script src="quiz.js"></script>
+  <script>
+    let selectedFlashcards = [];
+    let quizQuestions = [];
+    let quizIndex = 0;
+    let quizScore = 0;
+
+    function shuffle(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    function generateQuizQuestions() {
+      quizQuestions = selectedFlashcards.map((card, i, arr) => {
+        const correct = card.definition;
+        const incorrect = arr.filter(c => c.definition !== correct)
+                              .sort(() => 0.5 - Math.random())
+                              .slice(0, 3)
+                              .map(c => c.definition);
+
+        const choices = shuffle([...incorrect, correct]);
+        return {
+          question: `What is "${card.term}"?`,
+          choices: choices,
+          answer: correct
+        };
+      });
+      shuffle(quizQuestions);
+    }
+
+    function startQuiz() {
+      const topic = document.getElementById("topic-select").value;
+      selectedFlashcards = window.flashcardGroups[topic] || [];
+
+      if (selectedFlashcards.length === 0) {
+        alert("No flashcards found for this set.");
+        return;
+      }
+
+      generateQuizQuestions();
+      quizIndex = 0;
+      quizScore = 0;
+      document.getElementById("quiz-result").style.display = "none";
+      document.getElementById("quiz-question").style.display = "block";
+      document.getElementById("quiz-choices").style.display = "block";
+      showQuizQuestion();
+    }
+
+    function showQuizQuestion() {
+      const q = quizQuestions[quizIndex];
+      document.getElementById("quiz-question").textContent = q.question;
+
+      const choicesDiv = document.getElementById("quiz-choices");
+      choicesDiv.innerHTML = "";
+
+      q.choices.forEach(choice => {
+        const btn = document.createElement("button");
+        btn.textContent = choice;
+        btn.className = "btn";
+        btn.onclick = () => handleQuizChoice(btn, choice, q.answer);
+        choicesDiv.appendChild(btn);
+      });
+
+      document.getElementById("quiz-next").style.display = "none";
+    }
+
+    function handleQuizChoice(button, selected, correct) {
+      const buttons = document.getElementById("quiz-choices").children;
+      for (let btn of buttons) {
+        btn.disabled = true;
+        btn.style.backgroundColor = btn.textContent === correct ? "lightgreen" : "lightcoral";
+      }
+
+      if (selected === correct) quizScore++;
+      document.getElementById("quiz-next").style.display = "inline-block";
+    }
+
+    function showQuizResults() {
+      document.getElementById("quiz-question").style.display = "none";
+      document.getElementById("quiz-choices").style.display = "none";
+      document.getElementById("quiz-next").style.display = "none";
+
+      const resultDiv = document.getElementById("quiz-result");
+      resultDiv.style.display = "block";
+      resultDiv.innerHTML = `
+        <h2>Quiz Complete!</h2>
+        <p>You scored ${quizScore} out of ${quizQuestions.length}.</p>
+        <button onclick="startQuiz()" class="btn">Try Again</button>
+      `;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const nextBtn = document.getElementById("quiz-next");
+      nextBtn.onclick = () => {
+        quizIndex++;
+        if (quizIndex < quizQuestions.length) {
+          showQuizQuestion();
+        } else {
+          showQuizResults();
+        }
+      };
+
+      // Load sets from localStorage
+      const saved = JSON.parse(localStorage.getItem("flashcardGroups") || "{}");
+
+      // Predefined hardcoded set (can be updated or replaced by pulling from Supabase/API)
+      const predefined = {
+        "Intro to Biology": [
+          { term: "Biology", definition: "The scientific study of life and living organisms." },
+          { term: "Cell", definition: "Basic structural unit of all known organisms." },
+          { term: "Mitochondria", definition: "Powerhouse of the cell." },
+          { term: "DNA", definition: "Carrier of genetic information." },
+          { term: "Photosynthesis", definition: "Process by which plants make food using sunlight." }
+        ]
+      };
+
+      window.flashcardGroups = { ...predefined, ...saved };
+
+      const select = document.getElementById("topic-select");
+      for (const key in window.flashcardGroups) {
+        const opt = document.createElement("option");
+        opt.value = key;
+        opt.textContent = key;
+        select.appendChild(opt);
+      }
+    });
+  </script>
 </body>
 </html>
