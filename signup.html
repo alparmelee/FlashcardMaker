@@ -97,10 +97,9 @@
                 } else {
                     // Insert user data into the custom `users` table
                     const userId = data.user.id; // Get the user ID from the auth response
-                    const { error: dbError } = await supabase.from('users').insert([
-                        { id: userId, username, email }
+                    const { error: dbError } = await supabase.from('auth_users').insert([
+                        { user_id: userId, username, email }
                     ]);
-
                     if (dbError) {
                         messageBox.textContent = 'Signup successful, but failed to save user data.';
                         messageBox.className = 'message-box warning';
@@ -125,10 +124,9 @@
         });
     </script>
 
-// Check who is signed in and display user status
 <script>
 
-  async function checkUser() {
+  async function checkUser() {  // check if user is logged in
     const { data: { user } } = await supabase.auth.getUser();
 
     const authButtons = document.querySelector('.auth-buttons');
