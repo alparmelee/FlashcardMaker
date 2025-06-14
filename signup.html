@@ -98,9 +98,9 @@
                     messageBox.className = 'message-box error';
                     messageBox.style.display = 'block';
                 } else {
-                    // Insert user data into the custom `users` table
+                    // Insert user data into the custom `profiles` table
                     const userId = data.user?.id; // Get the user ID from the auth response
-                    const { error: dbError } = await supabase.from('users').insert([
+                    const { error: dbError } = await supabase.from('profiles').insert([
                         { id: userId, username, email }
                     ]);
                     if (dbError) {
