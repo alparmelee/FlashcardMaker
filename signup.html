@@ -99,9 +99,9 @@
                     messageBox.style.display = 'block';
                 } else {
                     // Insert user data into the custom `profiles` table
-                    const userId = data.user?.id; // Get the user ID from the auth response
-                    const { error: dbError } = await supabase.from('profiles').insert([
-                        { id: userId, username, email }
+                    const user_id = data.user?.id; // Get the user ID from the auth response
+                    const { error: dbError } = await supabase.from('public.profiles').insert([
+                        { id: user_id, username, email }
                     ]);
                     if (dbError) {
                         messageBox.textContent = 'Signup successful, but failed to save user data.';
