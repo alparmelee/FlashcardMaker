@@ -31,64 +31,62 @@
 
     <div class="content-wrapper" id="dashboard-content" style="display: none;">
         <h1>My Dashboard</h1>
-        <p class="user-greeting">Here are your flashcard sets, DemoUser.</p>
+        <p class="user-greeting" id="user-greeting-msg"></p>
         <a href="create.html" class="create-new-set-btn">+ Create New Set</a>
 
         <h2>Your Sets</h2>
         <div class="sets-grid">
-            <div class="set-card">
-                <h3><a href="flashcard_set.html">Chapter 1: Intro to Biology</a></h3>
-                <p>Key terms and concepts from the first chapter of our biology textbook.</p>
-                <p class="set-meta">12 Terms &nbsp;&bull;&nbsp; Created: May 15, 2025</p>
-            </div>
-            <div class="set-card">
-                <h3>Spanish Vocabulary: Unit 3</h3>
-                <p>Common verbs and nouns for everyday conversation. Focus on travel.</p>
-                <p class="set-meta">52 Terms &nbsp;&bull;&nbsp; Created: May 10, 2025</p>
-            </div>
-            <div class="set-card">
-                <h3>Historical Figures: WW2</h3>
-                <p>Important leaders and their roles during World War II.</p>
-                <p class="set-meta">30 Terms &nbsp;&bull;&nbsp; Created: April 28, 2025</p>
-            </div>
-            <div class="set-card">
-                <h3>JavaScript ES6+ Features</h3>
-                <p>Quick reference for modern JavaScript syntax and features like arrow functions, promises, etc.</p>
-                <p class="set-meta">45 Terms &nbsp;&bull;&nbsp; Created: April 02, 2025</p>
-            </div>
-            <div class="set-card">
-                <h3>My Favorite Recipes</h3>
-                <p>A collection of ingredients and steps for my go-to meals.</p>
-                <p class="set-meta">15 Terms &nbsp;&bull;&nbsp; Created: March 20, 2025</p>
-            </div>
+            <!-- Static content for now -->
         </div>
     </div>
+
     <script type="module">
         import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-        const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co'; // Database URL
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8'; // API Key
+        const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
         const supabase = createClient(supabaseUrl, supabaseKey);
-        window.supabase = supabase;
 
-        const {data: {user}, error} = await supabase.auth.getUser();
-        if (user) {
-            const response = await fetch("https://uxytxzliqxpinajccvbu.supabase.co/functions/v1/user-created-handler", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({user}),
-            });
+        async function loadUserDashboard() {
+            const {data: {user}, error} = await supabase.auth.getUser();
 
-            if (response.ok) {
-                console.log("Profile initialized by edge function.");
+            if (user) {
+                // Call Edge Function (first login profile insertion)
+                await fetch("https://uxytxzliqxpinajccvbu.supabase.co/functions/v1/user-created-handler", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({user})
+                });
+
+                // Now fetch the username from the profiles table
+                const {data: profile, error: profileError} = await supabase
+                    .from('profiles')
+                    .select('username')
+                    .eq('user_id', user.id)
+                    .single();
+
+                if (profileError) {
+                    console.error('Profile fetch error:', profileError);
+                    document.getElementById('welcome-msg').textContent = `Welcome, ${user.email}`;
+                    document.getElementById('user-greeting-msg').textContent = `Here are your flashcard sets, ${user.email}.`;
+                } else {
+                    document.getElementById('welcome-msg').textContent = `Welcome, ${profile.username}!`;
+                    document.getElementById('user-greeting-msg').textContent = `Here are your flashcard sets, ${profile.username}.`;
+                }
+
+                document.querySelector('.user-status').style.display = 'flex';
+                document.getElementById('dashboard-content').style.display = 'block';
             } else {
-                const err = await response.json();
-                console.error("Edge function error:", err);
+                window.location.href = 'login.html';
             }
         }
-    </script>
 
+        loadUserDashboard();
+
+        async function signOut() {
+            await supabase.auth.signOut();
+            location.href = 'index.html';
+        }
+    </script>
 </body>
 
 </html>
