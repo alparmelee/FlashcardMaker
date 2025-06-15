@@ -20,7 +20,7 @@
             </ul>
             <div class="user-status" style="display: none;">
                 <span id="welcome-msg">Welcome, DemoUser!</span>
-                <a href="#" onclick="signOut()" class="logout-button">Logout</a>
+                <a href="#" id="logout-btn" class="logout-button">Logout</a>
             </div>
         </div>
     </nav>
@@ -71,7 +71,7 @@
                             "Content-Type": "application/json",
                             "Authorization": `Bearer ${accessToken}`
                         },
-                        body: JSON.stringify({user})
+                        body: JSON.stringify({user: {id: user.id, email: user.email}})
                     });
                     console.log('Edge function status:', edgeResp.status);
                 } else {
@@ -103,10 +103,11 @@
 
         loadUserDashboard();
 
-        async function signOut() {
+        document.getElementById('logout-btn').addEventListener('click', async (e) => {
+            e.preventDefault();
             await supabase.auth.signOut();
-            location.href = 'index.html';
-        }
+            window.location.href = 'index.html';
+        });
     </script>
 </body>
 
