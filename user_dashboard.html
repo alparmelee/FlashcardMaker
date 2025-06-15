@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard - CramCraft</title>
     <link rel="stylesheet" href="stylesheet.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
@@ -36,7 +37,7 @@
     </div>
 
     <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
         const supabase = createClient(supabaseUrl, supabaseKey);
@@ -44,7 +45,7 @@
         async function loadUserDashboard() {
             try {
                 console.log('Checking auth user...');
-                const { data: { user }, error } = await supabase.auth.getUser();
+                const {data: {user}, error} = await supabase.auth.getUser();
                 console.log('User:', user);
 
                 if (!user) {
@@ -52,15 +53,26 @@
                     return;
                 }
 
-                console.log('Calling edge function for user:', user.id);
-                const edgeResp = await fetch("https://uxytxzliqxpinajccvbu.supabase.co/functions/v1/user-created-handler", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ user })
-                });
-                console.log('Edge function status:', edgeResp.status);
+                const {data: sessionData} = await supabase.auth.getSession();
+                const accessToken = sessionData.session?.access_token;
+                console.log('Access token for Edge Function:', accessToken);
 
-                const { data: profile, error: profileError } = await supabase
+                if (accessToken) {
+                    console.log('Calling edge function for user:', user.id);
+                    const edgeResp = await fetch("https://uxytxzliqxpinajccvbu.supabase.co/functions/v1/user-created-handler", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${accessToken}`
+                        },
+                        body: JSON.stringify({user})
+                    });
+                    console.log('Edge function status:', edgeResp.status);
+                } else {
+                    console.warn('No access token found. Edge function call skipped.');
+                }
+
+                const {data: profile, error: profileError} = await supabase
                     .from('profiles')
                     .select('username')
                     .eq('user_id', user.id)
