@@ -1,74 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard - CramCraft</title>
-    <link rel="stylesheet" href="stylesheet.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard - CramCraft</title>
+  <link rel="stylesheet" href="stylesheet.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-        const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co'; // Database URL
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8'; // API Key
-        const supabase = createClient(supabaseUrl, supabaseKey);
-        window.supabase = supabase;
-    </script>
-    
+  <script type="module">
+    import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co'; // Database URL
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8'; // API Key
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    window.supabase = supabase;
+  </script>
+
 </head>
-<body>
-    <nav class="top-nav">
-        <div class="top-nav-inner">
-            <div class="nav-logo"><a href="index.html">CramCraft</a></div>
-            <ul>
-                <li><a href="index.html" class="active">Home</a></li>
-                <li><a href="create.html">Create</a></li>
-                <li><a href="user_dashboard.html">Dashboard</a></li>
-                <li><a href="search_page.html">Search</a></li>
-                <li><a href="about.html">About</a></li>
-            </ul>
-            <div class="user-status" style="display: none;">
-                <span>Welcome, DemoUser!</span>
-                <a href="#" onclick="signOut()" class="logout-button">Logout</a>
-            </div>
-        </div>
-    </nav>
 
- <div class="main-content-wrapper">
-        <div id="about-section">
-            <img src="Cramcraft.png" alt="CramCraft Logo" class="logo-center" /> <h1>Welcome to CramCraft!</h1>
-            <p class="lead">You have successfully signed up.</p>
-        </div>
-</div>
+<body>
+  <div class="main-content-wrapper">
+    <div id="about-section">
+      <img src="Cramcraft.png" alt="CramCraft Logo" class="logo-center" />
+      <h1>Welcome to CramCraft!</h1>
+      <h1>Check Your Email</h1>
+      <p class="lead">We've sent you a confirmation link. Please check your inbox to activate your account.</p>
+      <button onclick="window.close()">Close</button>
+    </div>
+  </div>
 
 <script>
-
-  async function checkUser() {
-    const { data: { user } } = await supabase.auth.getUser();
-
-    const authButtons = document.querySelector('.auth-buttons');
-    const userStatus = document.querySelector('.user-status');
-
-    if (user) {
-      if (authButtons) authButtons.style.display = 'none';
-      if (userStatus) {
-        userStatus.innerHTML = `
-          <span>Welcome, ${user.email}!</span>
-          <a href="#" onclick="signOut()" class="logout-button">Logout</a>
-        `;
-        userStatus.style.display = 'flex';
-      }
-    } else {
-      if (authButtons) authButtons.style.display = 'flex';
-      if (userStatus) userStatus.style.display = 'none';
-    }
+  // Function to close the window after email confirmation
+  function closeWindow() {
+    window.close();
   }
-
-  async function signOut() {
-    await supabase.auth.signOut();
-    location.href = 'index.html'; // redirect to home
-  }
-
-  checkUser();
-
+      // Redirect to login page after a delay
+    setTimeout(() => {
+      window.location.href = 'login.html';
+    }, 5000); // Redirect after 5 seconds
 </script>
+</body>
+</html>

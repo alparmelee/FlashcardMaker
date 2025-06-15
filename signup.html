@@ -98,9 +98,7 @@
                     messageBox.className = 'message-box error';
                     messageBox.style.display = 'block';
                 } else {
-                    messageBox.textContent = 'Signup successful! Please check your email to confirm your account.';
-                    messageBox.className = 'message-box success';
-                    messageBox.style.display = 'block';
+                    window.location.href = 'email_confirmation.html';
                 }
             } catch (err) {
                 console.error('Unexpected Error:', err); // Log unexpected errors

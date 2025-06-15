@@ -67,7 +67,9 @@
             try {
                 // Authenticate user with Supabase
                 const {data, error} = await supabase.auth.signInWithPassword({email, password});
-
+                if (data.session) {
+                    window.location.href = 'user_dashboard.html';
+                }
                 if (error) {
                     alert('Login failed: ' + error.message);
                 } else if (data.session) {
@@ -90,4 +92,5 @@
     </script>
 
 </body>
+
 </html>
