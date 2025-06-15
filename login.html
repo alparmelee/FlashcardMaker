@@ -67,15 +67,13 @@
             try {
                 // Authenticate user with Supabase
                 const {data, error} = await supabase.auth.signInWithPassword({email, password});
-                if (data.session) {
-                    window.location.href = 'user_dashboard.html';
-                }
+
                 if (error) {
                     alert('Login failed: ' + error.message);
-                } else if (data.session) {
+                } else if (data && data.session) {
                     window.location.href = 'user_dashboard.html';
                 } else {
-                    alert('Login failed: No session found');
+                    alert('Login failed: No session created.');
                 }
             } catch (err) {
                 alert('An unexpected error occurred. Please try again.');
