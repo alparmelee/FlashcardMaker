@@ -36,6 +36,7 @@
                     alert('Login failed: ' + error.message);
                 } else if (data?.session) {
                     console.log('Login successful, redirecting...');
+                    await supabase.auth.setSession(data.session); // helps in rare fallback cases
                     window.location.href = 'user_dashboard.html';
                 } else {
                     alert('Login failed: No session created.');
@@ -89,31 +90,6 @@
             <p class="form-link">Don't have an account? <a href="signup.html">Sign Up</a></p>
         </div>
     </div>
-
-    <script>
-        document.getElementById('login-form').addEventListener('submit', async function (event) {
-            event.preventDefault();
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            try {
-                // Authenticate user with Supabase
-                const {data, error} = await supabase.auth.signInWithPassword({email, password});
-
-                if (error) {
-                    alert('Login failed: ' + error.message);
-                } else if (data && data.session) {
-                    window.location.href = 'user_dashboard.html';
-                } else {
-                    alert('Login failed: No session created.');
-                }
-            } catch (err) {
-                alert('An unexpected error occurred. Please try again.');
-            }
-        });
-    </script>
-
 </body>
 
 </html>
