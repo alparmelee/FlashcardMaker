@@ -1,28 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard - CramCraft</title>
     <link rel="stylesheet" href="stylesheet.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-        const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co'; // Database URL
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8'; // API Key
-        const supabase = createClient(supabaseUrl, supabaseKey);
-        window.supabase = supabase;
-    </script>
-    
 </head>
+
 <body>
     <nav class="top-nav">
         <div class="top-nav-inner">
             <div class="nav-logo"><a href="index.html">CramCraft</a></div>
             <ul>
                 <li><a href="index.html" class="active">Home</a></li>
-                <!-- <li><a href="create.html">Create</a></li> --> 
+                <!-- <li><a href="create.html">Create</a></li> -->
                 <!-- <li><a href="user_dashboard.html">Dashboard</a></li> -->
                 <!-- <li><a href="search_page.html">Search</a></li> -->
                 <li><a href="about.html">About</a></li>
@@ -61,40 +56,39 @@
                 <p>Quick reference for modern JavaScript syntax and features like arrow functions, promises, etc.</p>
                 <p class="set-meta">45 Terms &nbsp;&bull;&nbsp; Created: April 02, 2025</p>
             </div>
-             <div class="set-card">
+            <div class="set-card">
                 <h3>My Favorite Recipes</h3>
                 <p>A collection of ingredients and steps for my go-to meals.</p>
                 <p class="set-meta">15 Terms &nbsp;&bull;&nbsp; Created: March 20, 2025</p>
             </div>
         </div>
     </div>
+    <script type="module">
+        import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co'; // Database URL
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8'; // API Key
+        const supabase = createClient(supabaseUrl, supabaseKey);
+        window.supabase = supabase;
 
-    <script>
-        async function checkUser() {
-            const { data: { user }, error } = await supabase.auth.getUser();
-            const dashboardContent = document.getElementById('dashboard-content');
-            const userStatus = document.querySelector('.user-status');
+        const {data: {user}, error} = await supabase.auth.getUser();
+        if (user) {
+            const response = await fetch("https://uxytxzliqxpinajccvbu.supabase.co/functions/v1/user-created-handler", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({user}),
+            });
 
-            if (user) {
-                dashboardContent.style.display = 'block';
-                userStatus.style.display = 'flex';
-                userStatus.innerHTML = `
-                    <span>Welcome, ${user.email}!</span>
-                    <a href="#" onclick="signOut()" class="logout-button">Logout</a>
-                `;
+            if (response.ok) {
+                console.log("Profile initialized by edge function.");
             } else {
-                dashboardContent.style.display = 'none';
-                userStatus.style.display = 'none';
-                location.href = 'index.html'; // Redirect to homepage if not signed in
+                const err = await response.json();
+                console.error("Edge function error:", err);
             }
         }
-
-        async function signOut() {
-            await supabase.auth.signOut();
-            location.href = 'index.html'; // Redirect to homepage
-        }
-
-        checkUser();
     </script>
+
 </body>
+
 </html>

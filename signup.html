@@ -99,26 +99,20 @@
                     messageBox.style.display = 'block';
                 } else {
                     // Insert user data into the custom `profiles` table
-                    const user_id = data.user?.id; // Get the user ID from the auth response
-                    const { error: dbError } = await supabase.from('public.profiles').insert([
-                        { id: user_id, username, email }
+                    const user_id = data?.user?.id || data?.session?.user?.id; // Get the user ID from the auth response
+                    const { error: dbError } = await supabase.from('profiles').insert([
+                        { user_id, username, email }
                     ]);
                     if (dbError) {
                         messageBox.textContent = 'Signup successful, but failed to save user data.';
                         messageBox.className = 'message-box warning';
                         messageBox.style.display = 'block';
                     } else {
-                        if (data.user.confirmed_at) {
-                            setTimeout(() => {
-                                window.location.href = 'user_dashboard.html';
-                            }, 2000);
-                        } else {
                             messageBox.textContent = 'Signup successful! Please check your email to confirm your account.';
                             messageBox.className = 'message-box success';
                             messageBox.style.display = 'block';
                         }
                     }
-                }
             } catch (err) {
                 console.error('Unexpected Error:', err); // Log unexpected errors
                 messageBox.textContent = 'An unexpected error occurred. Please try again.';
@@ -126,35 +120,6 @@
                 messageBox.style.display = 'block';
             }
         });
-
-        async function checkUser() { // Check if user is logged in
-            const { data: { user } } = await supabase.auth.getUser();
-
-            const authButtons = document.querySelector('.auth-buttons');
-            const userStatus = document.querySelector('.user-status');
-
-            if (user) {
-                if (authButtons) authButtons.style.display = 'none';
-                if (userStatus) {
-                    userStatus.innerHTML = `
-                        <span>Welcome, ${user.email}!</span>
-                        <a href="#" onclick="signOut()" class="logout-button">Logout</a>
-                    `;
-                    userStatus.style.display = 'flex';
-                }
-            } else {
-                if (userStatus) userStatus.style.display = 'none';
-            }
-        }
-        checkUser();
-
-        async function signOut() {
-            const { error } = await supabase.auth.signOut();
-            if (error) {
-                console.error('Sign out error:', error);
-            }
-            location.href = 'index.html'; // Redirect to home
-        }
     </script>
 </body>
 
