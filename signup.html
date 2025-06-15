@@ -98,21 +98,10 @@
                     messageBox.className = 'message-box error';
                     messageBox.style.display = 'block';
                 } else {
-                    // Insert user data into the custom `profiles` table
-                    const user_id = data?.user?.id || data?.session?.user?.id; // Get the user ID from the auth response
-                    const { error: dbError } = await supabase.from('profiles').insert([
-                        { user_id, username, email }
-                    ]);
-                    if (dbError) {
-                        messageBox.textContent = 'Signup successful, but failed to save user data.';
-                        messageBox.className = 'message-box warning';
-                        messageBox.style.display = 'block';
-                    } else {
-                            messageBox.textContent = 'Signup successful! Please check your email to confirm your account.';
-                            messageBox.className = 'message-box success';
-                            messageBox.style.display = 'block';
-                        }
-                    }
+                    messageBox.textContent = 'Signup successful! Please check your email to confirm your account.';
+                    messageBox.className = 'message-box success';
+                    messageBox.style.display = 'block';
+                }
             } catch (err) {
                 console.error('Unexpected Error:', err); // Log unexpected errors
                 messageBox.textContent = 'An unexpected error occurred. Please try again.';
