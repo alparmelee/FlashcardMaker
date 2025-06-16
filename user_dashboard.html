@@ -52,7 +52,7 @@
 
         async function loadUserDashboard() {
             try {
-                 // Attempt manual session restoration if needed
+                // Attempt manual session restoration if needed
                 const stored = localStorage.getItem('supabase.auth.token');
                 if (stored) {
                     const parsed = JSON.parse(stored);
@@ -104,6 +104,10 @@
                     .select('username')
                     .eq('user_id', user.id)
                     .single();
+
+                if (error && error.code !== 'PGRST116') {
+                    console.error('Unexpected profile error:', error.message);
+                }
 
                 if (profileError) {
                     console.error('Profile fetch error:', profileError);
