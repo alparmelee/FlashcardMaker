@@ -52,6 +52,19 @@
 
         async function loadUserDashboard() {
             try {
+                 // Attempt manual session restoration if needed
+                const stored = localStorage.getItem('supabase.auth.token');
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    const current = parsed?.currentSession;
+                    if (current?.access_token && current?.refresh_token) {
+                        await supabase.auth.setSession({
+                            access_token: current.access_token,
+                            refresh_token: current.refresh_token,
+                        });
+                        console.log('Manual session restored.');
+                    }
+                }
                 let retries = 3;
                 let session = null;
                 while (retries-- > 0) {
