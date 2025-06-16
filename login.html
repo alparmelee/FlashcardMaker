@@ -15,12 +15,12 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8'; // API Key
         const supabase = createClient(supabaseUrl, supabaseKey, {
             auth: {
-                storage: localStorage,
+                storage: localStorage, // Ensure we're not using fallback memory
                 persistSession: true,
                 autoRefreshToken: true,
+                detectSessionInUrl: false, // Disable URL detection to avoid conflicts
             },
         });
-
 
         // Check session before form submission
         supabase.auth.getSession().then(({data}) => {
@@ -36,18 +36,26 @@
             try {
                 const {data, error} = await supabase.auth.signInWithPassword({email, password});
 
-                console.log('Login response:', data);
-
                 if (error) {
+                    console.error('Login failed:', error.message);
                     alert('Login failed: ' + error.message);
                 } else if (data?.session) {
-                    window.location.href = 'user_dashboard.html';
+                    console.log('Login success:', data);
+
+                    // Manually persist (optional, for debugging)
+                    localStorage.setItem('sb-access-token', data.session.access_token);
+                    localStorage.setItem('sb-refresh-token', data.session.refresh_token);
+
+                    // Redirect
+                    location.href = "user_dashboard.html";
                 } else {
                     alert('Login failed: No session created.');
                 }
             } catch (err) {
+                console.error('Unexpected error:', err);
                 alert('An unexpected error occurred. Please try again.');
             }
+
         });
     </script>
 
