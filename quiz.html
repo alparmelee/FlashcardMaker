@@ -2,55 +2,168 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Quiz Mode</title>
-  <link rel="stylesheet" href="stylesheet.css" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     body {
-      background-color: #ffffff;
-      color: #000000;
+      background: #f0f4f8;
+      color: #222;
       font-family: 'Poppins', sans-serif;
-    }
-    .btn {
-      background-color: #e0e0e0;
-      color: #000000;
-      border: none;
-      padding: 8px 12px;
-      cursor: pointer;
-      border-radius: 4px;
-      font-family: 'Poppins', sans-serif;
-      text-decoration: none;
-      display: inline-block;
-      margin: 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
     }
     .quiz-container {
-      max-width: 600px;
-      margin: 40px auto;
-      padding: 20px;
-      background-color: #f5f5f5;
+      width: 100%;
+      max-width: 720px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+      padding: 40px 30px;
+      text-align: center;
+      transition: all 0.4s ease;
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-weight: 700;
+      color: #334e68;
+    }
+    label {
+      font-weight: 600;
+      color: #4a6fa5;
+    }
+    select, input[type=checkbox] {
+      margin: 10px 0 20px;
+      cursor: pointer;
+    }
+    .btn {
+      background: #4a6fa5;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: 600;
       border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin: 10px 6px;
+      user-select: none;
+    }
+    .btn:hover:not(:disabled) {
+      background: #3c5b87;
+    }
+    .btn:disabled {
+      background: #b0b8c1;
+      cursor: default;
+    }
+    #quiz-question {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin: 25px 0 20px;
+      color: #1c2541;
+    }
+    #quiz-status, #timer {
+      font-size: 1rem;
+      color: #617d98;
+      margin-bottom: 12px;
     }
     #quiz-choices button {
       display: block;
-      margin: 10px 0;
       width: 100%;
+      margin: 12px 0;
+      padding: 14px 20px;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      border: 2px solid transparent;
+      background-color: #f0f4f8;
+      color: #1c2541;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      user-select: none;
+    }
+    #quiz-choices button:hover:not(:disabled) {
+      background-color: #dbe6fd;
+      border-color: #4a6fa5;
+      color: #334e68;
+    }
+    #quiz-choices button:disabled {
+      cursor: default;
+      opacity: 0.8;
+    }
+    #quiz-choices button.correct {
+      background-color: #b7e4c7 !important;
+      border-color: #34a853 !important;
+      color: #27632a !important;
+      font-weight: 700;
+      box-shadow: 0 0 10px #34a853aa;
+    }
+    #quiz-choices button.incorrect {
+      background-color: #f8c3c3 !important;
+      border-color: #ea4335 !important;
+      color: #a02828 !important;
+      font-weight: 700;
+      box-shadow: 0 0 10px #ea4335aa;
+    }
+    #review-section {
+      margin-top: 30px;
+      text-align: left;
+      max-height: 300px;
+      overflow-y: auto;
+      border-top: 1px solid #ddd;
+      padding-top: 20px;
+    }
+    #review-section h3 {
+      color: #334e68;
+      margin-bottom: 15px;
+    }
+    #review-section p {
+      font-size: 1rem;
+      margin: 10px 0;
+      line-height: 1.4;
+    }
+    #review-section hr {
+      border: none;
+      border-bottom: 1px solid #eee;
+      margin: 12px 0;
+    }
+    .fade-out {
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: all 0.4s ease;
+    }
+    .fade-in {
+      opacity: 1;
+      transform: translateY(0);
+      transition: all 0.4s ease;
     }
   </style>
 </head>
 <body>
-  <div class="quiz-container">
+  <div class="quiz-container" id="quiz-container">
     <h1>Quiz Mode</h1>
 
-    <label for="topic-select">Choose a flashcard set:</label>
+    <label for="topic-select">Choose a flashcard set:</label><br />
     <select id="topic-select" class="btn"></select>
 
+    <div style="margin: 20px 0;">
+      <label><input type="checkbox" id="shuffle-toggle" checked> 🔀 Shuffle Questions</label><br />
+      <label><input type="checkbox" id="retry-toggle"> 🔁 Retry Missed Questions at End</label>
+    </div>
+
     <div id="quiz-screen">
-      <h2 id="quiz-question">Loading...</h2>
+      <p id="quiz-status"></p>
+      <p id="timer">⏱️ 30s</p>
+      <h2 id="quiz-question">Select a flashcard set and press Start Quiz</h2>
       <div id="quiz-choices"></div>
       <button id="quiz-next" class="btn" style="display:none;">Next</button>
       <div id="quiz-result" style="display:none;"></div>
+      <div id="review-section"></div>
     </div>
 
     <button onclick="startQuiz()" class="btn">Start Quiz</button>
@@ -61,9 +174,26 @@
     let quizQuestions = [];
     let quizIndex = 0;
     let quizScore = 0;
+    let correctList = [];
+    let incorrectList = [];
+    let retryQueue = [];
+    let timer, timeLeft = 30;
+    let reviewData = [];
 
     function shuffle(array) {
       return array.sort(() => Math.random() - 0.5);
+    }
+
+    function fadeTransition(element, callback) {
+      element.classList.add("fade-out");
+      setTimeout(() => {
+        callback();
+        element.classList.remove("fade-out");
+        element.classList.add("fade-in");
+        setTimeout(() => {
+          element.classList.remove("fade-in");
+        }, 400);
+      }, 300);
     }
 
     function generateQuizQuestions() {
@@ -78,10 +208,15 @@
         return {
           question: `What is "${card.term}"?`,
           choices: choices,
-          answer: correct
+          answer: correct,
+          term: card.term
         };
       });
-      shuffle(quizQuestions);
+
+      const shuffleToggle = document.getElementById("shuffle-toggle");
+      if (shuffleToggle.checked) {
+        shuffle(quizQuestions);
+      }
     }
 
     function startQuiz() {
@@ -96,38 +231,92 @@
       generateQuizQuestions();
       quizIndex = 0;
       quizScore = 0;
+      correctList = [];
+      incorrectList = [];
+      retryQueue = [];
+      reviewData = [];
+
       document.getElementById("quiz-result").style.display = "none";
+      document.getElementById("review-section").style.display = "none";
       document.getElementById("quiz-question").style.display = "block";
       document.getElementById("quiz-choices").style.display = "block";
+      document.getElementById("quiz-status").style.display = "block";
+      document.getElementById("timer").style.display = "block";
+
       showQuizQuestion();
     }
 
     function showQuizQuestion() {
-      const q = quizQuestions[quizIndex];
-      document.getElementById("quiz-question").textContent = q.question;
+      clearInterval(timer);
+      timeLeft = 30;
+      startTimer();
 
-      const choicesDiv = document.getElementById("quiz-choices");
-      choicesDiv.innerHTML = "";
+      const container = document.getElementById("quiz-container");
+      fadeTransition(container, () => {
+        const q = quizQuestions[quizIndex];
+        document.getElementById("quiz-question").textContent = q.question;
+        document.getElementById("quiz-status").textContent = `Question ${quizIndex + 1} of ${quizQuestions.length}`;
 
-      q.choices.forEach(choice => {
-        const btn = document.createElement("button");
-        btn.textContent = choice;
-        btn.className = "btn";
-        btn.onclick = () => handleQuizChoice(btn, choice, q.answer);
-        choicesDiv.appendChild(btn);
+        const choicesDiv = document.getElementById("quiz-choices");
+        choicesDiv.innerHTML = "";
+
+        q.choices.forEach(choice => {
+          const btn = document.createElement("button");
+          btn.textContent = choice;
+          btn.className = "btn";
+          btn.onclick = () => handleQuizChoice(btn, choice, q);
+          choicesDiv.appendChild(btn);
+        });
+
+        document.getElementById("quiz-next").style.display = "none";
       });
-
-      document.getElementById("quiz-next").style.display = "none";
     }
 
-    function handleQuizChoice(button, selected, correct) {
+    function startTimer() {
+      const timerEl = document.getElementById("timer");
+      timerEl.textContent = `⏱️ ${timeLeft}s`;
+      timer = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = `⏱️ ${timeLeft}s`;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          handleQuizChoice(null, null, quizQuestions[quizIndex]);
+        }
+      }, 1000);
+    }
+
+    function handleQuizChoice(button, selected, questionObj) {
+      clearInterval(timer);
       const buttons = document.getElementById("quiz-choices").children;
       for (let btn of buttons) {
         btn.disabled = true;
-        btn.style.backgroundColor = btn.textContent === correct ? "lightgreen" : "lightcoral";
+        if (btn.textContent === questionObj.answer) {
+          btn.classList.add("correct");
+        } else if (btn.textContent === selected) {
+          btn.classList.add("incorrect");
+        }
       }
 
-      if (selected === correct) quizScore++;
+      let wasCorrect = false;
+      if (selected === questionObj.answer) {
+        quizScore++;
+        correctList.push(questionObj);
+        wasCorrect = true;
+      } else {
+        incorrectList.push(questionObj);
+        const retryToggle = document.getElementById("retry-toggle");
+        if (retryToggle.checked) {
+          retryQueue.push(questionObj);
+        }
+      }
+
+      reviewData.push({
+        question: questionObj.question,
+        correctAnswer: questionObj.answer,
+        userAnswer: selected,
+        wasCorrect: wasCorrect
+      });
+
       document.getElementById("quiz-next").style.display = "inline-block";
     }
 
@@ -135,14 +324,37 @@
       document.getElementById("quiz-question").style.display = "none";
       document.getElementById("quiz-choices").style.display = "none";
       document.getElementById("quiz-next").style.display = "none";
+      document.getElementById("quiz-status").style.display = "none";
+      document.getElementById("timer").style.display = "none";
 
       const resultDiv = document.getElementById("quiz-result");
       resultDiv.style.display = "block";
-      resultDiv.innerHTML = `
-        <h2>Quiz Complete!</h2>
-        <p>You scored ${quizScore} out of ${quizQuestions.length}.</p>
-        <button onclick="startQuiz()" class="btn">Try Again</button>
-      `;
+
+      let feedback = "";
+      const percent = (quizScore / (quizQuestions.length + retryQueue.length)) * 100;
+      if (percent === 100) feedback = "🌟 Perfect score!";
+      else if (percent >= 75) feedback = "👍 Great job!";
+      else if (percent >= 50) feedback = "🙂 Good effort!";
+      else feedback = "😅 Keep practicing!";
+
+      let summary = `<h2>Quiz Complete!</h2><p>You scored ${quizScore} out of ${quizQuestions.length + retryQueue.length}.</p><p>${feedback}</p><hr>`;
+      resultDiv.innerHTML = summary + `<button onclick="startQuiz()" class="btn">Try Again</button><button onclick="showReview()" class="btn">Review Answers</button>`;
+    }
+
+    function showReview() {
+      const reviewDiv = document.getElementById("review-section");
+      reviewDiv.style.display = "block";
+      reviewDiv.innerHTML = `<h3>Review</h3>`;
+
+      reviewData.forEach((item, index) => {
+        reviewDiv.innerHTML += `
+          <p><strong>Q${index + 1}: ${item.question}</strong><br>
+          Your answer: ${item.userAnswer || "No answer"} <br>
+          Correct answer: ${item.correctAnswer} <br>
+          <span style="color: ${item.wasCorrect ? 'green' : 'red'}">${item.wasCorrect ? 'Correct' : 'Incorrect'}</span></p>
+          <hr>
+        `;
+      });
     }
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -151,28 +363,22 @@
         quizIndex++;
         if (quizIndex < quizQuestions.length) {
           showQuizQuestion();
+        } else if (retryQueue.length > 0) {
+          quizQuestions = [...retryQueue];
+          retryQueue = [];
+          quizIndex = 0;
+          showQuizQuestion();
         } else {
           showQuizResults();
         }
       };
 
-      // Load sets from localStorage
+      // Load flashcard groups from localStorage only — no predefined sets
       const saved = JSON.parse(localStorage.getItem("flashcardGroups") || "{}");
-
-      // Predefined hardcoded set (can be updated or replaced by pulling from Supabase/API)
-      const predefined = {
-        "Intro to Biology": [
-          { term: "Biology", definition: "The scientific study of life and living organisms." },
-          { term: "Cell", definition: "Basic structural unit of all known organisms." },
-          { term: "Mitochondria", definition: "Powerhouse of the cell." },
-          { term: "DNA", definition: "Carrier of genetic information." },
-          { term: "Photosynthesis", definition: "Process by which plants make food using sunlight." }
-        ]
-      };
-
-      window.flashcardGroups = { ...predefined, ...saved };
+      window.flashcardGroups = saved;
 
       const select = document.getElementById("topic-select");
+      select.innerHTML = '<option value="" disabled selected>Select a set</option>';
       for (const key in window.flashcardGroups) {
         const opt = document.createElement("option");
         opt.value = key;
