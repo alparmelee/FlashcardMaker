@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up - CramCraft</title>
     <link rel="stylesheet" href="stylesheet.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co'; // Database URL
@@ -21,7 +23,7 @@
             <div class="nav-logo"><a href="index.html">CramCraft</a></div>
             <ul>
                 <li><a href="index.html">Home</a></li>
-                <!-- <li><a href="create.html">Create</a></li> --> 
+                <!-- <li><a href="create.html">Create</a></li> -->
                 <!-- <li><a href="user_dashboard.html">Dashboard</a></li> -->
                 <!-- <li><a href="search_page.html">Search</a></li> -->
                 <li><a href="about.html">About</a></li>
@@ -52,7 +54,8 @@
                 </div>
                 <div class="form-group">
                     <label for="confirm-password">Confirm Password</label>
-                    <input type="password" id="confirm-password" name="confirm-password" placeholder="Re-enter your password" required>
+                    <input type="password" id="confirm-password" name="confirm-password"
+                        placeholder="Re-enter your password" required>
                 </div>
                 <button type="submit" class="form-button">Create Account</button>
             </form>
@@ -62,7 +65,7 @@
     </div>
 
     <script>
-        document.getElementById('signup-form').addEventListener('submit', async function(event) {
+        document.getElementById('signup-form').addEventListener('submit', async function (event) {
             event.preventDefault();
 
             const username = document.getElementById('username').value;
@@ -95,66 +98,16 @@
                     messageBox.className = 'message-box error';
                     messageBox.style.display = 'block';
                 } else {
-                    // Insert user data into the custom `users` table
-                    const userId = data.user.id; // Get the user ID from the auth response
-                    const { error: dbError } = await supabase.from('users').insert([
-                        { id: userId, username, email }
-                    ]);
-
-                    if (dbError) {
-                        messageBox.textContent = 'Signup successful, but failed to save user data.';
-                        messageBox.className = 'message-box warning';
-                        messageBox.style.display = 'block';
-                    } else {
-                        if (data.user.confirmed_at) {
-                            setTimeout(() => {
-                                window.location.href = 'user_dashboard.html';
-                            }, 2000);
-                        } else {
-                            messageBox.textContent = 'Signup successful! Please check your email to confirm your account.';
-                            messageBox.className = 'message-box success';
-                            messageBox.style.display = 'block';
-                        }
-                    }
+                    window.location.href = 'confirm_email.html';
                 }
             } catch (err) {
+                console.error('Unexpected Error:', err); // Log unexpected errors
                 messageBox.textContent = 'An unexpected error occurred. Please try again.';
                 messageBox.className = 'message-box error';
                 messageBox.style.display = 'block';
             }
         });
     </script>
-
-// Check who is signed in and display user status
-<script>
-
-  async function checkUser() {
-    const { data: { user } } = await supabase.auth.getUser();
-
-    const authButtons = document.querySelector('.auth-buttons');
-    const userStatus = document.querySelector('.user-status');
-
-    if (user) {
-      if (authButtons) authButtons.style.display = 'none';
-      if (userStatus) {
-        userStatus.innerHTML = `
-          <span>Welcome, ${user.email}!</span>
-          <a href="#" onclick="signOut()" class="logout-button">Logout</a>
-        `;
-        userStatus.style.display = 'flex';
-      }
-    } else {
-    location.href = 'user_dashboard.html'; // redirect to user dashboard
-  }   if (userStatus) userStatus.style.display = 'none';
-    }
-  checkUser();
-
-  function signOut() {
-  supabase.auth.signOut();
-  location.href = 'index.html'; // redirect to home
-}
-
-
-</script>
 </body>
+
 </html>

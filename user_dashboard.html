@@ -1,100 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard - CramCraft</title>
     <link rel="stylesheet" href="stylesheet.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-        const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co'; // Database URL
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8'; // API Key
-        const supabase = createClient(supabaseUrl, supabaseKey);
-        window.supabase = supabase;
-    </script>
-    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
     <nav class="top-nav">
         <div class="top-nav-inner">
             <div class="nav-logo"><a href="index.html">CramCraft</a></div>
             <ul>
                 <li><a href="index.html" class="active">Home</a></li>
-                <!-- <li><a href="create.html">Create</a></li> --> 
-                <!-- <li><a href="user_dashboard.html">Dashboard</a></li> -->
-                <!-- <li><a href="search_page.html">Search</a></li> -->
                 <li><a href="about.html">About</a></li>
             </ul>
             <div class="user-status" style="display: none;">
-                <span>Welcome, DemoUser!</span>
-                <a href="#" onclick="signOut()" class="logout-button">Logout</a>
+                <span id="welcome-msg">Welcome, DemoUser!</span>
+                <a href="#" id="logout-btn" class="logout-button">Logout</a>
             </div>
         </div>
     </nav>
 
     <div class="content-wrapper" id="dashboard-content" style="display: none;">
         <h1>My Dashboard</h1>
-        <p class="user-greeting">Here are your flashcard sets, DemoUser.</p>
+        <p class="user-greeting" id="user-greeting-msg"></p>
         <a href="create.html" class="create-new-set-btn">+ Create New Set</a>
 
         <h2>Your Sets</h2>
         <div class="sets-grid">
-            <div class="set-card">
-                <h3><a href="flashcard_set.html">Chapter 1: Intro to Biology</a></h3>
-                <p>Key terms and concepts from the first chapter of our biology textbook.</p>
-                <p class="set-meta">12 Terms &nbsp;&bull;&nbsp; Created: May 15, 2025</p>
-            </div>
-            <div class="set-card">
-                <h3>Spanish Vocabulary: Unit 3</h3>
-                <p>Common verbs and nouns for everyday conversation. Focus on travel.</p>
-                <p class="set-meta">52 Terms &nbsp;&bull;&nbsp; Created: May 10, 2025</p>
-            </div>
-            <div class="set-card">
-                <h3>Historical Figures: WW2</h3>
-                <p>Important leaders and their roles during World War II.</p>
-                <p class="set-meta">30 Terms &nbsp;&bull;&nbsp; Created: April 28, 2025</p>
-            </div>
-            <div class="set-card">
-                <h3>JavaScript ES6+ Features</h3>
-                <p>Quick reference for modern JavaScript syntax and features like arrow functions, promises, etc.</p>
-                <p class="set-meta">45 Terms &nbsp;&bull;&nbsp; Created: April 02, 2025</p>
-            </div>
-             <div class="set-card">
-                <h3>My Favorite Recipes</h3>
-                <p>A collection of ingredients and steps for my go-to meals.</p>
-                <p class="set-meta">15 Terms &nbsp;&bull;&nbsp; Created: March 20, 2025</p>
-            </div>
+            <!-- Static content for now -->
         </div>
     </div>
 
-    <script>
-        async function checkUser() {
-            const { data: { user }, error } = await supabase.auth.getUser();
-            const dashboardContent = document.getElementById('dashboard-content');
-            const userStatus = document.querySelector('.user-status');
+    <script type="module">
+        import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
+        const supabase = createClient(supabaseUrl, supabaseKey, {
+            auth: {
+                storage: localStorage, // Ensure we're not using fallback memory
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: false, // Disable URL detection to avoid conflicts
+            },
+        });
 
-            if (user) {
-                dashboardContent.style.display = 'block';
-                userStatus.style.display = 'flex';
-                userStatus.innerHTML = `
-                    <span>Welcome, ${user.email}!</span>
-                    <a href="#" onclick="signOut()" class="logout-button">Logout</a>
-                `;
-            } else {
-                dashboardContent.style.display = 'none';
-                userStatus.style.display = 'none';
-                location.href = 'index.html'; // Redirect to homepage if not signed in
+
+        async function loadUserDashboard() {
+            try {
+                // Attempt manual session restoration if needed
+                const stored = localStorage.getItem('supabase.auth.token');
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    const current = parsed?.currentSession;
+                    if (current?.access_token && current?.refresh_token) {
+                        await supabase.auth.setSession({
+                            access_token: current.access_token,
+                            refresh_token: current.refresh_token,
+                        });
+                        console.log('Manual session restored.');
+                    }
+                }
+                let retries = 3;
+                let session = null;
+                while (retries-- > 0) {
+                    const {data: sessionResult} = await supabase.auth.getSession();
+                    session = sessionResult.session;
+                    if (session) break;
+                    await new Promise(res => setTimeout(res, 300));
+                }
+
+                if (!session || !session.user) {
+                    console.warn('No session or user found after retry. Redirecting...');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const user = session.user;
+                const accessToken = session.access_token;
+                console.log('Access token for Edge Function:', accessToken);
+
+                if (accessToken) {
+                    console.log('Calling edge function for user:', user.id);
+                    const edgeResp = await fetch("https://uxytxzliqxpinajccvbu.supabase.co/functions/v1/user-created-handler", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${accessToken}`
+                        },
+                        body: JSON.stringify({user: {id: user.id, email: user.email}})
+                    });
+                    console.log('Edge function status:', edgeResp.status);
+                } else {
+                    console.warn('No access token found. Edge function call skipped.');
+                }
+
+                const {data: profile, error: profileError} = await supabase
+                    .from('profiles')
+                    .select('username')
+                    .eq('user_id', user.id)
+                    .single();
+
+                if (error && error.code !== 'PGRST116') {
+                    console.error('Unexpected profile error:', error.message);
+                }
+
+                if (profileError) {
+                    console.error('Profile fetch error:', profileError);
+                    document.getElementById('welcome-msg').textContent = `Welcome, ${user.email}`;
+                    document.getElementById('user-greeting-msg').textContent = `Here are your flashcard sets, ${user.email}.`;
+                } else {
+                    document.getElementById('welcome-msg').textContent = `Welcome, ${profile.username}!`;
+                    document.getElementById('user-greeting-msg').textContent = `Here are your flashcard sets, ${profile.username}.`;
+                }
+
+                document.querySelector('.user-status').style.display = 'flex';
+                document.getElementById('dashboard-content').style.display = 'block';
+            } catch (err) {
+                console.error('Unexpected error loading dashboard:', err);
+                window.location.href = 'login.html';
             }
         }
 
-        async function signOut() {
-            await supabase.auth.signOut();
-            location.href = 'index.html'; // Redirect to homepage
-        }
+        loadUserDashboard();
 
-        checkUser();
+        document.getElementById('logout-btn').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await supabase.auth.signOut();
+            window.location.href = 'index.html';
+        });
     </script>
 </body>
+
 </html>

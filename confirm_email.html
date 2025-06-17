@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Dashboard - CramCraft</title>
+  <link rel="stylesheet" href="stylesheet.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <script type="module">
+    import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co'; // Database URL
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8'; // API Key
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    window.supabase = supabase;
+  </script>
+
+</head>
+
+<body>
+  <div class="main-content-wrapper">
+    <div id="about-section">
+      <img src="Cramcraft.png" alt="CramCraft Logo" class="logo-center" />
+      <h1>Welcome to CramCraft!</h1>
+      <h1>Check Your Email</h1>
+      <p class="lead">We've sent you a confirmation link. Please check your inbox to activate your account.</p>
+      <button onclick="window.close()">Close</button>
+    </div>
+  </div>
+
+<script>
+  // Function to close the window after email confirmation
+  function closeWindow() {
+    window.close();
+  }
+      // Redirect to login page after a delay
+    setTimeout(() => {
+      window.location.href = 'login.html';
+    }, 5000); // Redirect after 5 seconds
+</script>
+</body>
+</html>

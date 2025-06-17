@@ -386,40 +386,8 @@
             });
         });
     </script>
-
-// Check who is signed in and display user status
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script>
 
-  async function checkUser() {
-    const { data: { user } } = await supabase.auth.getUser();
-
-    const authButtons = document.querySelector('.auth-buttons');
-    const userStatus = document.querySelector('.user-status');
-
-    if (user) {
-      if (authButtons) authButtons.style.display = 'none';
-      if (userStatus) {
-        userStatus.innerHTML = `
-          <span>Welcome, ${user.email}!</span>
-          <a href="#" onclick="signOut()" class="logout-button">Logout</a>
-        `;
-        userStatus.style.display = 'flex';
-      }
-    } else {
-      if (authButtons) authButtons.style.display = 'flex';
-      if (userStatus) userStatus.style.display = 'none';
-    }
-  }
-
-  async function signOut() {
-    await supabase.auth.signOut();
-    location.href = 'index.html'; // redirect to home
-  }
-
-  checkUser();
-
-</script>
 
 </body>
 </html>
