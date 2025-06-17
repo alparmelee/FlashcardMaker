@@ -21,9 +21,9 @@
             <div class="nav-logo"><a href="index.html">CramCraft</a></div>
             <ul>
                 <li><a href="index.html">Home</a></li>
-                <li><a href="create.html">Create</a></li>
-                <li><a href="user_dashboard.html">Dashboard</a></li>
-                <li><a href="search_page.html">Search</a></li>
+                <!-- <li><a href="create.html">Create</a></li> --> 
+                <!-- <li><a href="user_dashboard.html">Dashboard</a></li> -->
+                <!-- <li><a href="search_page.html">Search</a></li> -->
                 <li><a href="about.html">About</a></li>
             </ul>
             <div class="auth-buttons">
@@ -57,7 +57,7 @@
                 <button type="submit" class="form-button">Create Account</button>
             </form>
             <p class="form-link">Already have an account? <a href="login.html">Login</a></p>
-            <div id="signup-message" class="message-box"></div>
+            <div id="signup-message" class="message-box" aria-live="polite"></div>
         </div>
     </div>
 
@@ -73,8 +73,9 @@
 
             // Check if passwords match
             if (password !== confirmPassword) {
-                messageBox.textContent = 'Passwords do not match!';
+                messageBox.textContent = 'Error: Passwords do not match!';
                 messageBox.className = 'message-box error';
+                messageBox.style.display = 'block';
                 return;
             }
 
@@ -89,21 +90,42 @@
                 });
 
                 if (error) {
-                    messageBox.textContent = error.message;
+                    console.error('Signup Error:', error); // Log the error for debugging
+                    messageBox.textContent = `Error: ${error.message}`;
                     messageBox.className = 'message-box error';
+                    messageBox.style.display = 'block';
                 } else {
-                    messageBox.textContent = 'Signup successful! Please check your email to confirm your account.';
-                    messageBox.className = 'message-box success';
+                    // Insert user data into the custom `users` table
+                    const userId = data.user.id; // Get the user ID from the auth response
+                    const { error: dbError } = await supabase.from('users').insert([
+                        { id: userId, username, email }
+                    ]);
+
+                    if (dbError) {
+                        messageBox.textContent = 'Signup successful, but failed to save user data.';
+                        messageBox.className = 'message-box warning';
+                        messageBox.style.display = 'block';
+                    } else {
+                        if (data.user.confirmed_at) {
+                            setTimeout(() => {
+                                window.location.href = 'user_dashboard.html';
+                            }, 2000);
+                        } else {
+                            messageBox.textContent = 'Signup successful! Please check your email to confirm your account.';
+                            messageBox.className = 'message-box success';
+                            messageBox.style.display = 'block';
+                        }
+                    }
                 }
             } catch (err) {
                 messageBox.textContent = 'An unexpected error occurred. Please try again.';
                 messageBox.className = 'message-box error';
+                messageBox.style.display = 'block';
             }
         });
     </script>
 
 // Check who is signed in and display user status
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script>
 
   async function checkUser() {
@@ -122,17 +144,16 @@
         userStatus.style.display = 'flex';
       }
     } else {
-      if (authButtons) authButtons.style.display = 'flex';
-      if (userStatus) userStatus.style.display = 'none';
+    location.href = 'user_dashboard.html'; // redirect to user dashboard
+  }   if (userStatus) userStatus.style.display = 'none';
     }
-  }
-
-  async function signOut() {
-    await supabase.auth.signOut();
-    location.href = 'index.html'; // redirect to home
-  }
-
   checkUser();
+
+  function signOut() {
+  supabase.auth.signOut();
+  location.href = 'index.html'; // redirect to home
+}
+
 
 </script>
 </body>
