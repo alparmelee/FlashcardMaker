@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co'; // Database URL
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8'; // API Key
         const supabase = createClient(supabaseUrl, supabaseKey);
@@ -50,7 +50,8 @@
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Create a strong password" required>
+                    <input type="password" id="password" name="password" placeholder="Create a strong password"
+                        required>
                 </div>
                 <div class="form-group">
                     <label for="confirm-password">Confirm Password</label>
@@ -84,11 +85,11 @@
 
             try {
                 // Create user account in Supabase
-                const { data, error } = await supabase.auth.signUp({
+                const {data, error} = await supabase.auth.signUp({
                     email,
                     password,
                     options: {
-                        data: { username }
+                        data: {username}
                     }
                 });
 
@@ -98,6 +99,7 @@
                     messageBox.className = 'message-box error';
                     messageBox.style.display = 'block';
                 } else {
+                    localStorage.setItem('cramcraft_username', username);
                     window.location.href = 'confirm_email.html';
                 }
             } catch (err) {

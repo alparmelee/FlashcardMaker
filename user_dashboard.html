@@ -86,13 +86,14 @@
 
                 if (accessToken) {
                     console.log('Calling edge function for user:', user.id);
+                    const savedUsername = localStorage.getItem('username') || user.email.split('@')[0];
                     const edgeResp = await fetch("https://uxytxzliqxpinajccvbu.supabase.co/functions/v1/user-created-handler", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
                             "Authorization": `Bearer ${accessToken}`
                         },
-                        body: JSON.stringify({user: {id: user.id, email: user.email}})
+                        body: JSON.stringify({user: {id: user.id, email: user.email, username: savedUsername}})
                     });
                     console.log('Edge function status:', edgeResp.status);
                 } else {
