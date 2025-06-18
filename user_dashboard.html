@@ -75,8 +75,12 @@
                 // Call Edge Function to create profile
                 if (accessToken) {
                     console.log('Calling edge function for user:', user.id);
-                    const savedUsername = localStorage.getItem('username') || user.email.split('@')[0];
+                    const savedUsername = localStorage.getItem('username');
                     console.log('Saved username for edge:', savedUsername);
+
+                    if (!savedUsername) {
+                        console.warn('No saved username found in localStorage!');
+                    }
 
                     edgeResp = await fetch("https://uxytxzliqxpinajccvbu.supabase.co/functions/v1/user-created-handler", {
                         method: "POST",
