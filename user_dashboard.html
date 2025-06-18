@@ -106,10 +106,6 @@
                     .eq('user_id', user.id)
                     .single();
 
-                if (error && error.code !== 'PGRST116') {
-                    console.error('Unexpected profile error:', error.message);
-                }
-
                 if (profileError) {
                     console.error('Profile fetch error:', profileError);
                     document.getElementById('welcome-msg').textContent = `Welcome, ${user.email}`;
