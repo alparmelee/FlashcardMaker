@@ -1,29 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - CramCraft</title>
     <link rel="stylesheet" href="stylesheet.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-      
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
     <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co'; // Database URL
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8'; // API Key
-        const supabase = createClient(supabaseUrl, supabaseKey);
-        window.supabase = supabase;
+        const supabase = createClient(supabaseUrl, supabaseKey, {
+            auth: {
+                storage: localStorage, // Ensure we're not using fallback memory
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: false, // Disable URL detection to avoid conflicts
+            },
+        });
+
+        // Check session before form submission
+        supabase.auth.getSession().then(({data}) => {
+            console.log('Initial session (before login):', data);
+        });
+
+        document.getElementById('login-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const {data, error} = await supabase.auth.signInWithPassword({email, password});
+
+                if (error) {
+                    console.error('Login failed:', error.message);
+                    alert('Login failed: ' + error.message);
+                } else if (data?.session) {
+                    console.log('Login success:', data);
+
+                    // Manually persist (optional, for debugging)
+                    localStorage.setItem('sb-access-token', data.session.access_token);
+                    localStorage.setItem('sb-refresh-token', data.session.refresh_token);
+
+                    // Redirect
+                    location.href = "user_dashboard.html";
+                } else {
+                    alert('Login failed: No session created.');
+                }
+            } catch (err) {
+                console.error('Unexpected error:', err);
+                alert('An unexpected error occurred. Please try again.');
+            }
+
+        });
     </script>
-    
+
 </head>
+
 <body>
     <nav class="top-nav">
         <div class="top-nav-inner">
             <div class="nav-logo"><a href="index.html">CramCraft</a></div>
             <ul>
-                <li><a href="index.html" class="active">Home</a></li>
-                <!-- <li><a href="create.html">Create</a></li> --> 
-                <!-- <li><a href="user_dashboard.html">Dashboard</a></li> -->
+                <li><a href="index.html">Home</a></li>
+                <li><a href="user_dashboard.html">Dashboard</a></li>
+                <!-- <li><a href="create.html">Create</a></li> -->
                 <!-- <li><a href="search_page.html">Search</a></li> -->
                 <li><a href="about.html">About</a></li>
             </ul>
@@ -53,65 +98,6 @@
             <p class="form-link">Don't have an account? <a href="signup.html">Sign Up</a></p>
         </div>
     </div>
-
-    <script>
-        document.getElementById('login-form').addEventListener('submit', async function(event) {
-            event.preventDefault();
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            try {
-                // Authenticate user with Supabase
-                const { session, error } = await supabase.auth.signInWithPassword({
-                    email,
-                    password
-                });
-
-                if (error) {
-                    alert('Login failed: ' + error.message);
-                } else {
-                    window.location.href = 'user_dashboard.html'; // Redirect to dashboard
-                }
-            } catch (err) {
-                alert('An unexpected error occurred. Please try again.');
-            }
-        });
-    </script>
-
-// Check who is signed in and display user status
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script>
-
-  async function checkUser() {
-    const { data: { user } } = await supabase.auth.getUser();
-
-    const authButtons = document.querySelector('.auth-buttons');
-    const userStatus = document.querySelector('.user-status');
-
-    if (user) {
-      if (authButtons) authButtons.style.display = 'none';
-      if (userStatus) {
-        userStatus.innerHTML = `
-          <span>Welcome, ${user.email}!</span>
-          <a href="#" onclick="signOut()" class="logout-button">Logout</a>
-        `;
-        userStatus.style.display = 'flex';
-      }
-    } else {
-      if (authButtons) authButtons.style.display = 'flex';
-      if (userStatus) userStatus.style.display = 'none';
-    }
-  }
-
-  async function signOut() {
-    await supabase.auth.signOut();
-    location.href = 'index.html'; // redirect to home
-  }
-
-  checkUser();
-
-</script>
-
 </body>
+
 </html>
