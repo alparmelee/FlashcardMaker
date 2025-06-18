@@ -37,6 +37,19 @@
         </div>
     </div>
 
+    <div id="flashcard-set-container" class="hidden">
+        <button onclick="backToDashboard()">← Back to Sets</button>
+        <div class="study-modes">
+            <button class="mode-button active" id="mode-flashcards">Flashcards</button>
+            <button class="mode-button" id="mode-quiz">Quiz</button>
+            <button class="mode-button" id="mode-list">List</button>
+            <button class="mode-button" id="mode-print">Print</button>
+        </div>
+        <div id="flashcard-view" class="hidden">[...]</div>
+        <div id="quiz-view" class="hidden">[...]</div>
+        <div id="list-view" class="hidden">[...]</div>
+    </div>
+
     <script type="module">
         import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
