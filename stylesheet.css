@@ -2308,3 +2308,122 @@ nav.top-nav ul li a {
         text-transform: uppercase;
     }
 }
+
+/* Basic styling for the modal for set title input */
+.modal {
+    display: none;
+    /* Hidden by default - THIS IS THE CORRECTED LINE */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1000;
+    /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Black w/ opacity */
+    /* Removed conflicting 'display: flex;' from here */
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    color: #4a5fc4;
+}
+
+.modal-content input[type="text"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+.modal-content .modal-buttons {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+}
+
+.modal-content .modal-buttons button {
+    flex: 1;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    transition: background-color 0.2s;
+    font-family: 'Poppins', sans-serif;
+}
+
+.modal-content .modal-buttons .save-btn-modal {
+    background-color: #4CAF50;
+    /* Green */
+    color: white;
+}
+
+.modal-content .modal-buttons .save-btn-modal:hover {
+    background-color: #45a049;
+}
+
+.modal-content .modal-buttons .cancel-btn-modal {
+    background-color: #f44336;
+    /* Red */
+    color: white;
+}
+
+.modal-content .modal-buttons .cancel-btn-modal:hover {
+    background-color: #da190b;
+}
+
+/* Adjustments for general button styling to match modal */
+.btn {
+    padding: 10px 20px;
+    /* Slightly larger padding for better touch targets */
+    border-radius: 8px;
+    /* More rounded corners */
+}
+
+.message-box {
+    position: fixed;
+    /* Keep it in view */
+    left: 50%;
+    transform: translateX(-50%);
+    top: 20px;
+    /* Position at the bottom */
+    width: auto;
+    /* Auto width based on content */
+    max-width: 90%;
+    /* Responsive max width */
+    min-width: 250px;
+    padding: 15px;
+    z-index: 1001;
+    /* Above modal if both are shown (unlikely) */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-size: 0.95em;
+}
