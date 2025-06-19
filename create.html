@@ -24,7 +24,7 @@
         });
 
         async function updateAuthUI() {
-            const {data: {session}} = await window.supabase.auth.getSession();
+            const { data: { session } } = await supabase.auth.getSession();
             const authButtonsDiv = document.querySelector('.auth-buttons');
 
             if (session?.user) {
