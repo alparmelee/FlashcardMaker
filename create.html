@@ -24,47 +24,39 @@
         });
 
         async function updateAuthUI() {
-            const { data: { session } } = await supabase.auth.getSession();
+            const {data: {session}} = await supabase.auth.getSession();
             const authButtonsDiv = document.querySelector('.auth-buttons');
 
             if (session?.user) {
                 const savedUsername = localStorage.getItem("username");
                 const username = savedUsername || session.user.email;
                 authButtonsDiv.innerHTML = `
-      <div class="user-status">
+        <div class="user-status">
           <span>Welcome, ${username}!</span>
           <a href="#" id="logout-btn" class="logout-button btn">Logout</a>
-      </div>`;
-
+        </div>`;
                 document.getElementById('logout-btn').addEventListener('click', async (e) => {
                     e.preventDefault();
-                    await window.supabase.auth.signOut();
+                    await supabase.auth.signOut();
                     window.location.href = 'login.html';
                 });
-
             } else {
                 authButtonsDiv.innerHTML = `
-      <a href="login.html" class="btn">Login</a>
-      <a href="signup.html" class="btn">Signup</a>`;
+        <a href="login.html" class="btn">Login</a>
+        <a href="signup.html" class="btn">Signup</a>`;
             }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             updateAuthUI();
 
-            document.addEventListener('click', async (e) => {
-                if (e.target && e.target.id === 'logout-btn') {
-                    e.preventDefault();
-                    await supabase.auth.signOut();
-                    window.location.href = 'login.html';
-                }
-            });
-
             const saveBtn = document.getElementById('save-flashcards');
+            if (!saveBtn) return;
+
             saveBtn.addEventListener('click', async () => {
-                const {data: {user}, error: userError} = await supabase.auth.getUser();
+                const {data: {user}, error} = await supabase.auth.getUser();
                 if (!user) {
-                    alert('You must be logged in to save flashcards. Redirecting to login...');
+                    alert('You must be logged in to save flashcards. Redirecting...');
                     return window.location.href = 'login.html';
                 }
 
@@ -73,9 +65,10 @@
                 const flashcards = [];
 
                 rows.forEach(row => {
-                    const term = row.querySelector('.term-input').value.trim();
-                    const definition = row.querySelector('.definition-input').value.trim();
+                    const term = row.querySelector('.term-input')?.value.trim();
+                    const definition = row.querySelector('.definition-input')?.value.trim();
                     const category = row.querySelector('.category-input')?.value.trim() || null;
+
                     if (term && definition) {
                         flashcards.push({term, definition, category});
                     }
@@ -93,29 +86,30 @@
                     .single();
 
                 if (setError) {
-                    console.error('Error creating set:', setError);
-                    return alert('Error saving flashcard set.');
+                    console.error('Set creation error:', setError);
+                    return alert('Error creating flashcard set.');
                 }
 
-                const cardsWithSetId = flashcards.map(card => ({
+                const cardsToInsert = flashcards.map(card => ({
                     ...card,
                     set_id: set.id
                 }));
 
                 const {error: cardError} = await supabase
                     .from('flashcards')
-                    .insert(cardsWithSetId);
+                    .insert(cardsToInsert);
 
                 if (cardError) {
-                    console.error('Error inserting flashcards:', cardError);
-                    return alert('Set created but failed to save flashcards.');
+                    console.error('Flashcard insert error:', cardError);
+                    return alert('Flashcards failed to save.');
                 }
 
-                alert('Flashcard set saved successfully!');
+                alert('Flashcard set saved!');
                 window.location.href = 'user_dashboard.html';
             });
         });
     </script>
+
 
 </head>
 
