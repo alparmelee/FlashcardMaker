@@ -37,6 +37,19 @@
         </div>
     </div>
 
+    <div id="flashcard-set-container" class="hidden">
+        <button onclick="backToDashboard()">← Back to Sets</button>
+        <div class="study-modes">
+            <button class="mode-button active" id="mode-flashcards">Flashcards</button>
+            <button class="mode-button" id="mode-quiz">Quiz</button>
+            <button class="mode-button" id="mode-list">List</button>
+            <button class="mode-button" id="mode-print">Print</button>
+        </div>
+        <div id="flashcard-view" class="hidden">[...]</div>
+        <div id="quiz-view" class="hidden">[...]</div>
+        <div id="list-view" class="hidden">[...]</div>
+    </div>
+
     <script type="module">
         import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
@@ -146,8 +159,30 @@
                 console.error('Unexpected error loading dashboard:', err);
                 window.location.href = 'login.html';
             }
-        }
 
+            const {data: sets, error: setsError} = await supabase
+                .from('flashcard_sets')
+                .select('id, title, terms_count')
+                .eq('user_id', user.id)
+                .order('created_at', {ascending: false});
+
+            if (setsError) {
+                console.error('Failed to load sets:', setsError.message);
+            } else {
+                const grid = document.querySelector('.sets-grid');
+                grid.innerHTML = '';
+                sets.forEach(set => {
+                    const card = document.createElement('div');
+                    card.className = 'set-card';
+                    card.innerHTML = `<h3>${set.title}</h3><p>${set.terms_count} terms</p>`;
+                    card.addEventListener('click', () => {
+                        window.location.href = `flashcard_set.html?set_id=${set.id}`;
+                    });
+                    grid.appendChild(card);
+                });
+            }
+
+        }
 
         loadUserDashboard();
 
