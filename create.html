@@ -544,69 +544,78 @@ Term2\tDefinition2..."></textarea>
                         definition: card.definition
                     }));
 
-                    // 4. Insert the individual flashcards
-                    const {error: cardsInsertError} = await window.supabase
-                        .from('flashcards')
-                        .insert(cardsToInsert);
+                    const flashcards = [ /* [{ term, definition, category }] */];
 
-                    if (cardsInsertError) {
-                        throw new Error(`Failed to save individual cards: ${cardsInsertError.message}`);
-                    }
+                    const {error: flashcardsError} = await supabase
+                        .from('flashcards')
+                        .insert(flashcards.map(card => ({
+                            ...card,
+                            set_id: setId,
+                        })));
+
+                        // 4. Insert the individual flashcards
+                        const {error: cardsInsertError} = await window.supabase
+                            .from('flashcards')
+                            .insert(cardsToInsert);
+
+                        if(cardsInsertError) {
+                            throw new Error(`Failed to save individual cards: ${cardsInsertError.message}`);
+                        }
 
                     showMessage('Flashcard set saved successfully! You\'ll be redirected to your dashboard.', 'success');
                     setTimeout(() => {
                         window.location.href = 'user_dashboard.html';
                     }, 2000);
 
-                } catch (error) {
-                    console.error('Save error:', error.message);
-                    showMessage(`Failed to save flashcards: ${error.message}`, 'error');
-                } finally {
-                    saveBtn.disabled = false;
-                }
+        } catch (error) {
+            console.error('Save error:', error.message);
+            showMessage(`Failed to save flashcards: ${error.message}`, 'error');
+        } finally {
+            saveBtn.disabled = false;
+        }
             });
 
-            // Event listener for "Cancel" button inside the modal
-            modalCancelSaveBtn.addEventListener('click', () => {
-                setTitleModal.style.display = 'none'; // Hide the modal
-                modalErrorMessage.style.display = 'none'; // Clear any error message
-                showMessage('Save operation cancelled.', 'info');
-            });
+        // Event listener for "Cancel" button inside the modal
+        modalCancelSaveBtn.addEventListener('click', () => {
+            setTitleModal.style.display = 'none'; // Hide the modal
+            modalErrorMessage.style.display = 'none'; // Clear any error message
+            showMessage('Save operation cancelled.', 'info');
+        });
 
 
-            // Update Auth buttons in top nav based on session on page load
-            async function updateAuthUI() {
-                const {data: {session}} = await window.supabase.auth.getSession();
-                const authButtonsDiv = document.querySelector('.auth-buttons');
+        // Update Auth buttons in top nav based on session on page load
+        async function updateAuthUI() {
+            const {data: {session}} = await window.supabase.auth.getSession();
+            const authButtonsDiv = document.querySelector('.auth-buttons');
 
-                if (session) {
-                    const {data: profile, error: profileError} = await window.supabase
-                        .from('profiles')
-                        .select('username')
-                        .eq('user_id', session.user.id)
-                        .single();
+            if (session) {
+                const {data: profile, error: profileError} = await window.supabase
+                    .from('profiles')
+                    .select('username')
+                    .eq('user_id', session.user.id)
+                    .single();
 
-                    const username = (profile && !profileError) ? profile.username : session.user.email;
-                    authButtonsDiv.innerHTML = `
+                const username = (profile && !profileError) ? profile.username : session.user.email;
+                authButtonsDiv.innerHTML = `
                         <div class="user-status">
                             <span>Welcome, ${username}!</span>
                             <a href="#" id="logout-btn" class="logout-button btn">Logout</a>
                         </div>`;
 
-                    document.getElementById('logout-btn').addEventListener('click', async (e) => {
-                        e.preventDefault();
-                        await window.supabase.auth.signOut();
-                        window.location.href = 'login.html';
-                    });
+                document.getElementById('logout-btn').addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await window.supabase.auth.signOut();
+                    window.location.href = 'login.html';
+                });
 
-                } else {
-                    authButtonsDiv.innerHTML = `
+            } else {
+                authButtonsDiv.innerHTML = `
                         <a href="login.html" class="btn">Login</a>
                         <a href="signup.html" class="btn">Signup</a>`;
-                }
             }
+        }
 
-            updateAuthUI();
+        updateAuthUI();
         });
     </script>
 

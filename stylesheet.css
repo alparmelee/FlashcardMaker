@@ -2427,3 +2427,20 @@ nav.top-nav ul li a {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     font-size: 0.95em;
 }
+
+.set-card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease;
+}
+.set-card:hover {
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.sets-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
