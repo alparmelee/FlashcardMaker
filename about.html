@@ -4,10 +4,305 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>About CramCraft</title>
-    <link rel="stylesheet" href="stylesheet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        /* Global Styles */
+        :root {
+            --primary-color: #007bff;
+            --primary-hover-color: #0056b3;
+            --accent-color: #6f42c1;
+            --bg-light: #f7f9fc;
+            --container-bg: #ffffff;
+            --text-dark: #2c3e50;
+            --text-light: #555;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --nav-bg-color: #343a40;
+            --danger-color: #dc3545;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            /* Changed background to a blue version of cramcraft.jpg for the whole body */
+            background: url('about.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Keeps the background image fixed while scrolling */
+            color: white; /* Changed text color to white for readability against dark background */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
+        }
+
+        /* Navigation Bar Styles (common for all pages) */
+        .top-nav {
+            background-color: #ffffff; /* Navigator background remains white as per last request */
+            padding: 0.75rem 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1002;
+        }
+
+        .top-nav-inner {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .top-nav .nav-logo a {
+            color: #212529; /* Text color is black */
+            text-decoration: none;
+            font-size: 1.75rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .top-nav ul {
+            list-style-type: none;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .top-nav ul li a {
+            color: #212529; /* Text color is black */
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.5rem 0.75rem;
+            border-radius: 5px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .top-nav ul li a:hover,
+        .top-nav ul li a.active {
+            background-color: var(--primary-color);
+            color: white; /* Active/hover text remains white for contrast */
+        }
+
+        .top-nav .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .top-nav .auth-buttons .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+        }
+
+        .top-nav .auth-buttons .btn:hover {
+            background-color: var(--primary-hover-color);
+        }
+
+        .main-content-wrapper {
+            padding-top: 1rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Styles for About Section */
+        #about-section {
+            background-color: rgba(255, 255, 255, 0.9); /* Add a semi-transparent white background to the content area for readability */
+            color: var(--text-dark); /* Ensure text within this section is dark */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+            max-width: 900px;
+            margin: 0 auto 2rem auto;
+            text-align: center;
+            width: 100%;
+            border-radius: 10px; /* Match existing styling */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Enhance shadow for depth */
+        }
+
+        #about-section .logo-center {
+            height: 250px;
+            width: 250px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 10px var(--shadow-color);
+        }
+
+        #about-section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent-color);
+        }
+
+        #about-section p.lead {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+
+        #about-section section.features,
+        #about-section section.tutorial {
+            background: var(--container-bg);
+            padding: 2rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+
+        #about-section section.features h2,
+        #about-section section.tutorial h2 {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            font-weight: 600;
+            font-size: 1.8rem;
+        }
+
+        #about-section section.features ul {
+            list-style-type: disc;
+            color: var(--text-dark);
+            font-size: 1rem;
+            text-align: left;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 20px;
+        }
+
+        #about-section section.features ul li {
+            margin-bottom: 0.7rem;
+            line-height: 1.4;
+        }
+
+        #about-section .tutorial-video-embed-container {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            padding-top: 56.25%;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px var(--shadow-color);
+            background-color: #000;
+        }
+
+        #about-section .tutorial-video-embed-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        @media (max-width: 768px) {
+            .top-nav-inner {
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 0.5rem 1rem;
+            }
+
+            .top-nav ul {
+                gap: 0.5rem;
+                flex-wrap: wrap;
+                justify-content: center;
+                margin-top: 0.5rem;
+            }
+
+            .top-nav .auth-buttons {
+                margin-top: 0.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            #about-section h1 {
+                font-size: 2rem;
+            }
+
+            #about-section .logo-center {
+                height: 200px;
+                width: 200px;
+            }
+
+            #about-section p.lead {
+                font-size: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            #about-section section.features h2,
+            #about-section section.tutorial h2 {
+                font-size: 1.5rem;
+            }
+        }
+        /* Message Box */
+        .message-box {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--warning-color);
+            color: var(--text-dark);
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+            font-size: 16px;
+            font-weight: 500;
+            animation: fadeInOut 3s ease-in-out;
+            border: 2px solid var(--danger-color);
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .message-box.success {
+            background-color: var(--success-color);
+            color: white;
+            border: 2px solid var(--success-color);
+        }
+
+        .message-box.error {
+            background-color: var(--danger-color);
+            color: white;
+            border: 2px solid var(--danger-color);
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+            10%, 90% {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+    </style>
     <script type="module">
-        import { createClient } from '@supabase/supabase-js';
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'; /* Updated import path based on typical CDN usage for modules */
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co'; // Database URL
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8'; // API Key
         const supabase = createClient(supabaseUrl, supabaseKey);
@@ -15,7 +310,7 @@
     </script>
 
 </head>
- 
+
 <body>
     <nav class="top-nav">
         <div class="top-nav-inner">
@@ -25,8 +320,6 @@
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="user_dashboard.html">Dashboard</a></li>
-                <!-- <li><a href="create.html">Create</a></li> --> 
-                <!-- <li><a href="search_page.html">Search</a></li> -->
                 <li><a href="about.html" class="active">About</a></li>
             </ul>
             <div class="auth-buttons">
@@ -37,10 +330,11 @@
         </div>
     </nav>
 
- 
- <div class="main-content-wrapper">
+
+    <div class="main-content-wrapper">
         <div id="about-section">
-            <img src="Cramcraft.png" alt="CramCraft Logo" class="logo-center" /> <h1>About CramCraft</h1>
+            <img src="Cramcraft.png" alt="CramCraft Logo" class="logo-center" />
+            <h1>About CramCraft</h1>
             <p class="lead">Your magical flashcard companion for smarter studying and better memory retention.</p>
 
             <section class="features">
@@ -73,6 +367,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    
+
 </body>
 </html>

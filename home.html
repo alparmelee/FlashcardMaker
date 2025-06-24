@@ -15,6 +15,10 @@
             --nav-text: #000000;
             --btn-bg: #e0e0e0;
             --btn-text: #000000;
+            --primary-color: #007bff; /* Added for consistency with other pages */
+            --primary-hover-color: #0056b3; /* Added for consistency with other pages */
+            --accent-color: #6f42c1; /* Added for consistency with other pages */
+            --shadow-color: rgba(0, 0, 0, 0.08); /* Added for consistency with other pages */
         }
 
         .dark-mode {
@@ -24,6 +28,11 @@
             --nav-text: #e0e0e0;
             --btn-bg: #333333;
             --btn-text: #e0e0e0;
+            /* Adjust primary/accent colors for dark mode if needed, or define specific dark mode colors */
+            --primary-color: #66b3ff; /* Lighter blue for dark mode */
+            --primary-hover-color: #3399ff;
+            --accent-color: #9d7fe3;
+            --shadow-color: rgba(255, 255, 255, 0.1);
         }
 
         /* Apply variables */
@@ -31,16 +40,63 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             transition: background-color 0.3s ease, color 0.3s ease;
+            font-family: 'Poppins', sans-serif; /* Ensure Poppins is applied */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
         }
 
-        /* Adjust nav background and text */
+        /* Navigation Bar Styles (common for all pages) */
         nav.top-nav {
             background-color: var(--nav-bg);
             color: var(--nav-text);
             transition: background-color 0.3s ease, color 0.3s ease;
+            padding: 0.75rem 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1002;
         }
-        nav.top-nav a {
+        nav.top-nav .top-nav-inner {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+        nav.top-nav .nav-logo a {
             color: var(--nav-text);
+            text-decoration: none;
+            font-size: 1.75rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        nav.top-nav ul {
+            list-style-type: none;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        nav.top-nav ul li a {
+            color: var(--nav-text);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.5rem 0.75rem;
+            border-radius: 5px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            cursor: pointer;
+        }
+        nav.top-nav ul li a:hover,
+        nav.top-nav ul li a.active {
+            background-color: var(--primary-color); /* Uses primary-color from root or dark-mode */
+            color: white; /* Always white on hover/active for contrast */
         }
 
         /* Adjust buttons */
@@ -48,16 +104,104 @@
             background-color: var(--btn-bg);
             color: var(--btn-text);
             border: none;
-            padding: 8px 12px;
+            padding: 0.4rem 0.8rem; /* Adjusted to match other pages' btn padding */
             cursor: pointer;
-            border-radius: 4px;
+            border-radius: 5px; /* Adjusted to match other pages' btn border-radius */
             transition: background-color 0.3s ease, color 0.3s ease;
             font-family: 'Poppins', sans-serif;
             text-decoration: none;
             display: inline-block;
+            font-size: 0.9rem; /* Adjusted to match other pages' btn font-size */
+            font-weight: 500; /* Adjusted to match other pages' btn font-weight */
         }
         .btn:hover {
             filter: brightness(0.9);
+            /* Consider using specific hover colors like var(--primary-hover-color) for consistency
+               For now, keeping brightness filter for general dark/light mode button styling */
+        }
+
+        /* Main Content Wrapper */
+        .main-content-wrapper {
+            padding-top: 1rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center; /* Center content vertically */
+            padding: 2rem 1rem;
+        }
+
+        /* Home Section Specific Styles */
+        #home-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+            max-width: 900px;
+            margin: 0 auto; /* Center the section */
+            text-align: center;
+            width: 100%;
+            background-color: var(--bg-color); /* Use background color variable */
+            box-shadow: 0 4px 15px var(--shadow-color); /* Use shadow color variable */
+            border-radius: 10px;
+        }
+
+        #home-section .logo-center {
+            height: 250px; /* Kept original size for this logo */
+            width: 250px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Specific shadow for logo */
+        }
+
+        #home-section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color); /* Use primary color */
+            transition: color 0.3s ease;
+        }
+
+        #home-section p.lead {
+            font-size: 1.1rem;
+            color: var(--text-color); /* Use general text color */
+            margin-bottom: 2rem;
+            max-width: 600px;
+            transition: color 0.3s ease;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            nav.top-nav-inner {
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 0.5rem 1rem;
+            }
+
+            nav.top-nav ul {
+                gap: 0.5rem;
+                flex-wrap: wrap;
+                justify-content: center;
+                margin-top: 0.5rem;
+            }
+
+            .auth-buttons {
+                margin-top: 0.5rem;
+            }
+
+            #home-section h1 {
+                font-size: 2rem;
+            }
+
+            #home-section .logo-center {
+                height: 200px;
+                width: 200px;
+            }
+
+            #home-section p.lead {
+                font-size: 1rem;
+                margin-bottom: 1.5rem;
+            }
         }
     </style>
 </head>

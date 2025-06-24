@@ -4,8 +4,493 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>About CramCraft</title>
-    <link rel="stylesheet" href="stylesheet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <style>
+        /* Global Styles */
+        :root {
+            --primary-color: #007bff;
+            --primary-hover-color: #0056b3;
+            --accent-color: #6f42c1;
+            --bg-light: #f7f9fc;
+            --container-bg: #ffffff;
+            --text-dark: #2c3e50;
+            --text-light: #555;
+            --shadow-color: rgba(0, 0, 0, 0.08);
+            --nav-bg-color: #343a40; /* Changed back to dark for consistency with original HTML */
+            --danger-color: #dc3545;
+            /* Red for errors */
+            --success-color: #28a745;
+            /* Green for success */
+            --warning-color: #ffc107;
+            /* Yellow for warnings */
+            --text-dark: #212529;
+            /* Dark text */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.6;
+        }
+
+        /* Navigation Bar Styles */
+        .top-nav {
+            background-color: #fff;
+            padding: 0.75rem 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1002;
+        }
+
+        .top-nav-inner {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .top-nav .nav-logo a {
+            color: #212529;
+            text-decoration: none;
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .top-nav ul {
+            list-style-type: none;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .top-nav ul li a {
+            color: #212529;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.5rem 0.75rem;
+            border-radius: 5px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .top-nav ul li a:hover,
+        .top-nav ul li a.active {
+            background-color: var(--primary-color);
+            color: #fff;
+        }
+
+        .top-nav .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .top-nav .auth-buttons .btn {
+            background-color: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+        }
+
+        .top-nav .auth-buttons .btn:hover {
+            background-color: var(--primary-hover-color);
+        }
+
+        .main-content-wrapper {
+            padding-top: 1rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Styles for Home Section */
+        /* Hero Section */
+        .hero-section {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 4rem 1rem;
+            position: relative;
+            overflow: hidden; /* Ensure image doesn't spill out */
+        }
+
+        .hero-section .hero-content {
+            position: relative;
+            z-index: 1; /* Ensure content is above the image */
+        }
+
+        .hero-section .hero-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-section .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .hero-section .btn-primary {
+            background-color: white;
+            color: var(--primary-color);
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .hero-section .btn-primary:hover {
+            background-color: var(--primary-hover-color);
+            color: white;
+        }
+
+        .hero-section::before {
+            content: '';
+            background-image: url('cramcraft.jpg');
+            background-size: cover;
+            background-position: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.3; /* Adjust opacity as needed */
+            z-index: 0;
+        }
+
+        /* Features Section - Wider Layout */
+        .features {
+            padding: 3rem 1rem;
+            background-color: var(--bg-light);
+            text-align: center;
+        }
+
+        .features h2 {
+            color: black;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); /* Wider cards */
+            gap: 2rem; /* Slightly larger gap for visual balance */
+            max-width: 1400px; /* Increased max width */
+            margin: 0 auto;
+        }
+
+        .feature-item {
+            background-color: var(--container-bg);
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            cursor: pointer;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-item a.card-link {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .feature-item .card-image-wrapper {
+            width: 100%;
+            height: 220px; /* Slightly taller images for wider cards */
+            overflow: hidden;
+            position: relative;
+        }
+
+        .feature-item .card-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px 10px 0 0;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-item:hover .card-image-wrapper img {
+            transform: scale(1.05);
+        }
+
+        .feature-item .card-content {
+            padding: 1.25rem;
+            position: relative;
+            z-index: 2;
+            background-color: white;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .feature-item .card-title-overlay {
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 0.75rem 1rem;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 0 0 10px 10px;
+            box-sizing: border-box;
+        }
+        .feature-item .card-title-overlay h3 {
+            margin: 0;
+            color: white;
+        }
+
+        .feature-item p {
+            color: var(--text-light);
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+            line-height: 1.5;
+        }
+
+        .feature-item .btn {
+            display: inline-block;
+            margin-top: auto;
+            align-self: flex-start;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
+        }
+
+        .feature-item .btn:hover {
+            background-color: var(--primary-hover-color);
+        }
+
+        /* Testimonials Section - No changes, keeping original */
+        .testimonials {
+            padding: 3rem 1rem;
+            background-color: var(--container-bg);
+            text-align: center;
+        }
+
+        .testimonials h2 {
+            color: var(--accent-color);
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .testimonial-item {
+            background-color: var(--bg-light);
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px var(--shadow-color);
+            text-align: center;
+        }
+
+        .testimonial-item p {
+            font-style: italic;
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .testimonial-item span {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        /* About Preview Section - Improved styling */
+        .about-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 3rem 1.5rem 2.5rem 1.5rem;
+            background: linear-gradient(135deg, var(--bg-light) 60%, #e9e6fa 100%);
+            margin: 2rem auto 0 auto;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: 0 6px 24px rgba(111, 66, 193, 0.10), 0 1.5px 6px var(--shadow-color);
+            transition: box-shadow 0.2s;
+        }
+
+        .about-preview h2 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .about-preview p {
+            color: var(--text-light);
+            font-size: 1.08rem;
+            margin-bottom: 2rem;
+            max-width: 480px;
+        }
+
+        .about-preview .btn {
+            background: var(--primary-color);
+            color: #fff;
+            font-weight: 600;
+            padding: 0.7rem 2.2rem;
+            border-radius: 8px;
+            font-size: 1.08rem;
+            box-shadow: 0 2px 8px rgba(111, 66, 193, 0.08);
+            transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+            border: none;
+            outline: none;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .about-preview .btn:hover {
+            background: var(--primary-hover-color);
+            box-shadow: 0 4px 16px rgba(111, 66, 193, 0.15);
+            transform: translateY(-2px) scale(1.03);
+        }
+
+        @media (max-width: 768px) {
+            .top-nav-inner {
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 0.5rem 1rem;
+            }
+
+            .top-nav ul {
+                gap: 0.5rem;
+                flex-wrap: wrap;
+                justify-content: center;
+                margin-top: 0.5rem;
+            }
+
+            .top-nav .auth-buttons {
+                margin-top: 0.5rem;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr; /* Stack cards on smaller screens */
+            }
+
+            .feature-item .card-image-wrapper {
+                height: 200px; /* Slightly larger image height for stacked cards */
+            }
+        }
+
+        @media (max-width: 600px) {
+            #about-section h1 {
+                font-size: 2rem;
+            }
+
+            #about-section .logo-center {
+                height: 200px;
+                width: 200px;
+            }
+
+            #about-section p.lead {
+                font-size: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            #about-section section.features h2,
+            #about-section section.tutorial h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Message Box */
+        .message-box {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--warning-color);
+            color: var(--text-dark);
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+            font-size: 16px;
+            font-weight: 500;
+            animation: fadeInOut 3s ease-in-out;
+            border: 2px solid var(--danger-color);
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .message-box.success {
+            background-color: var(--success-color);
+            color: white;
+            border: 2px solid var(--success-color);
+        }
+
+        .message-box.error {
+            background-color: var(--danger-color);
+            color: white;
+            border: 2px solid var(--danger-color);
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+            10%, 90% {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        /* Adjustments for general button styling to match modal */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+    </style>
 
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
@@ -26,8 +511,6 @@
             <ul>
                 <li><a href="index.html" class="active">Home</a></li>
                 <li><a href="user_dashboard.html">Dashboard</a></li>
-                <!-- <li><a href="create.html">Create</a></li> --> 
-                <!-- <li><a href="search_page.html">Search</a></li> -->
                 <li><a href="about.html">About</a></li>
             </ul>
             <div class="auth-buttons">
@@ -46,25 +529,51 @@
         </div>
     </header>
 
-    <!-- basic home page layout -->
     <main class="home-content">
         <section class="features">
             <h2>Why Choose CramCraft?</h2>
             <div class="feature-grid">
                 <div class="feature-item">
-                    <h3>Create Flashcards</h3> 
-                    <p>Quickly create flashcards with our intuitive interface.</p>
-                    <a href="create.html" class="btn">Learn More</a>
+                    <a href="create.html" class="card-link">
+                        <div class="card-image-wrapper">
+                            <img src="create.jpg" alt="Create Flashcards">
+                            <div class="card-title-overlay">
+                                <h3>Create Flashcards</h3>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <p>Quickly create flashcards with our intuitive interface.</p>
+                            <span class="btn">Learn More</span>
+                        </div>
+                    </a>
                 </div>
                 <div class="feature-item">
-                    <h3>Organize Your Study</h3>
-                    <p>Keep your flashcards organized and accessible anytime.</p>
-                    <a href="user_dashboard.html" class="btn">Learn More</a>
+                    <a href="user_dashboard.html" class="card-link">
+                        <div class="card-image-wrapper">
+                            <img src="study.jpg" alt="Organize Your Study">
+                            <div class="card-title-overlay">
+                                <h3>Organize Your Study</h3>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <p>Keep your flashcards organized and accessible anytime.</p>
+                            <span class="btn">Learn More</span>
+                        </div>
+                    </a>
                 </div>
                 <div class="feature-item">
-                    <h3>Search and Discover</h3>
-                    <p>Find flashcards created by others and expand your knowledge.</p>
-                    <a href="search_page.html" class="btn">Learn More</a>
+                    <a href="search_page.html" class="card-link">
+                        <div class="card-image-wrapper">
+                            <img src="search.jpg" alt="Search and Discover">
+                            <div class="card-title-overlay">
+                                <h3>Search and Discover</h3>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <p>Find flashcards created by others and expand your knowledge.</p>
+                            <span class="btn">Learn More</span>
+                        </div>
+                    </a>
                 </div>
             </div>
         </section>
@@ -87,12 +596,12 @@
             // --- Page Swapping Logic (Simplified) ---
             // Since "About" is its own page, we primarily ensure the create section is visible.
             const flashcardMakerSection = document.getElementById('flashcard-maker-section');
-            
-            // Default view: show flashcard maker section
-            flashcardMakerSection.classList.remove('hidden');
-            flashcardMakerSection.style.display = 'flex';
 
-            // --- Flashcard Maker JS ---
+            // Default view: show flashcard maker section
+            // flashcardMakerSection.classList.remove('hidden'); // This element is not in index.html
+            // flashcardMakerSection.style.display = 'flex'; // This element is not in index.html
+
+            // --- Flashcard Maker JS --- (These elements are not present in index.html, so this JS will not function)
             const addRowBtn = document.getElementById('add-row');
             const startManualBtn = document.getElementById('start-flashcards');
             const termDefInputs = document.getElementById('term-def-inputs');
@@ -140,39 +649,49 @@
 
             function isOptionLine(line) { return /^\s*[a-zA-Z]\.\s/.test(line.trim()); }
 
-            termDefDelimiterRadios.forEach(radio => {
-                radio.addEventListener('change', function() {
-                    customTermDefDelimiterInput.classList.toggle('hidden', this.value !== 'customTermDef');
-                    if (this.value === 'customTermDef') customTermDefDelimiterInput.focus();
+            if (termDefDelimiterRadios) {
+                termDefDelimiterRadios.forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        customTermDefDelimiterInput.classList.toggle('hidden', this.value !== 'customTermDef');
+                        if (this.value === 'customTermDef') customTermDefDelimiterInput.focus();
+                    });
                 });
-            });
+            }
 
-            cardDelimiterRadios.forEach(radio => {
-                radio.addEventListener('change', function() {
-                    customCardDelimiterInput.classList.toggle('hidden', this.value !== 'customCard');
-                    if (this.value === 'customCard') customCardDelimiterInput.focus();
+            if (cardDelimiterRadios) {
+                cardDelimiterRadios.forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        customCardDelimiterInput.classList.toggle('hidden', this.value !== 'customCard');
+                        if (this.value === 'customCard') customCardDelimiterInput.focus();
+                    });
                 });
-            });
+            }
 
-            showBulkInputBtn.addEventListener('click', () => {
-                manualInputArea.classList.add('hidden');
-                bulkInputArea.classList.remove('hidden');
-                displayArea.classList.add('hidden');
-            });
+            if (showBulkInputBtn) {
+                showBulkInputBtn.addEventListener('click', () => {
+                    manualInputArea.classList.add('hidden');
+                    bulkInputArea.classList.remove('hidden');
+                    displayArea.classList.add('hidden');
+                });
+            }
 
-            showManualInputBtn.addEventListener('click', () => {
-                bulkInputArea.classList.add('hidden');
-                manualInputArea.classList.remove('hidden');
-                displayArea.classList.add('hidden');
-            });
+            if (showManualInputBtn) {
+                showManualInputBtn.addEventListener('click', () => {
+                    bulkInputArea.classList.add('hidden');
+                    manualInputArea.classList.remove('hidden');
+                    displayArea.classList.add('hidden');
+                });
+            }
 
-            addRowBtn.addEventListener('click', () => {
-                rowCount++;
-                const newRow = document.createElement('div');
-                newRow.className = 'input-row';
-                newRow.innerHTML = `<input type="text" placeholder="Term ${rowCount}" class="term"><input type="text" placeholder="Definition ${rowCount}" class="definition">`;
-                termDefInputs.appendChild(newRow);
-            });
+            if (addRowBtn) {
+                addRowBtn.addEventListener('click', () => {
+                    rowCount++;
+                    const newRow = document.createElement('div');
+                    newRow.className = 'input-row';
+                    newRow.innerHTML = `<input type="text" placeholder="Term ${rowCount}" class="term"><input type="text" placeholder="Definition ${rowCount}" class="definition">`;
+                    termDefInputs.appendChild(newRow);
+                });
+            }
 
             function collectManualFlashcards() {
                 flashcardData = [];
@@ -225,9 +744,9 @@
                         if (currentCardBlockLines.length > 0) {
                             if (trimmedCurrentLine === "") isNewCardBoundary = true;
                             else if (!isOptionLine(currentLine) && (currentCardBlockLines.length > 0 && !isOptionLine(currentCardBlockLines[currentCardBlockLines.length-1]))) {
-                                 if(!isOptionLine(currentLine) && !isOptionLine(currentCardBlockLines[currentCardBlockLines.length-1])) {
-                                     isNewCardBoundary = true;
-                                 }
+                                    if(!isOptionLine(currentLine) && !isOptionLine(currentCardBlockLines[currentCardBlockLines.length-1])) {
+                                        isNewCardBoundary = true;
+                                    }
                             }
                         }
                         if (isNewCardBoundary && currentCardBlockLines.length > 0) { cardStrings.push(currentCardBlockLines.join('\n')); currentCardBlockLines = []; }
@@ -264,8 +783,9 @@
                         flashcardData.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` });
                     }
                 } else { showMessage('No data to display.', 'error'); return; }
-                manualInputArea.classList.add('hidden'); bulkInputArea.classList.add('hidden');
-                displayArea.classList.remove('hidden');
+                if (manualInputArea) manualInputArea.classList.add('hidden');
+                if (bulkInputArea) bulkInputArea.classList.add('hidden');
+                if (displayArea) displayArea.classList.remove('hidden');
                 currentPage = 0;
                 const actualCards = flashcardData.filter(c => c.term !== '(Empty Slot)').length;
                 totalPages = actualCards > 0 ? Math.ceil(actualCards / CARDS_PER_PAGE) * 2 : 0;
@@ -276,20 +796,27 @@
                 else if (flashcardData.length > 0 && actualCards === 0) showMessage('Generated empty slots.', 'warning');
                 else showMessage('No flashcards were generated.', 'error');
             }
-
-            startManualBtn.addEventListener('click', () => { if (collectManualFlashcards()) proceedToFlashcardDisplay(); });
-            parseBulkDataBtn.addEventListener('click', () => { if (parseBulkFlashcards()) proceedToFlashcardDisplay(); });
+            if (startManualBtn) {
+                startManualBtn.addEventListener('click', () => { if (collectManualFlashcards()) proceedToFlashcardDisplay(); });
+            }
+            if (parseBulkDataBtn) {
+                parseBulkDataBtn.addEventListener('click', () => { if (parseBulkFlashcards()) proceedToFlashcardDisplay(); });
+            }
 
             function updateDisplay() {
+                if (!cardsContainer) return;
+
                 cardsContainer.innerHTML = '';
                 const actualCardCount = flashcardData.filter(c => c.term !== `(Empty Slot)`).length;
                 totalPages = flashcardData.length > 0 ? (Math.ceil(flashcardData.length / CARDS_PER_PAGE)) * 2 : 0;
 
 
                 if (totalPages === 0 || actualCardCount === 0 && flashcardData.every(c => c.term === `(Empty Slot)`)) {
-                    pageInfo.textContent = 'No flashcards to display.';
+                    if (pageInfo) pageInfo.textContent = 'No flashcards to display.';
                     if (controlsDiv) controlsDiv.classList.add('hidden');
-                    prevBtn.disabled = true; nextBtn.disabled = true; printBtn.disabled = true;
+                    if (prevBtn) prevBtn.disabled = true;
+                    if (nextBtn) nextBtn.disabled = true;
+                    if (printBtn) printBtn.disabled = true;
                     return;
                 }
                 if (controlsDiv) controlsDiv.classList.remove('hidden');
@@ -297,8 +824,11 @@
                 const isTermPage = currentPage % 2 === 0;
                 const setIndex = Math.floor(currentPage / 2);
                 const startIdx = setIndex * CARDS_PER_PAGE;
-                pageInfo.textContent = `Page ${currentPage + 1} of ${totalPages} - ${isTermPage ? 'Terms' : 'Definitions'} (Card Set ${setIndex + 1})`;
-                pageInfo.classList.remove('hidden');
+                if (pageInfo) {
+                    pageInfo.textContent = `Page ${currentPage + 1} of ${totalPages} - ${isTermPage ? 'Terms' : 'Definitions'} (Card Set ${setIndex + 1})`;
+                    pageInfo.classList.remove('hidden');
+                }
+
                 const grid = document.createElement('div'); grid.className = 'flashcard-grid';
                 for (let i = 0; i < CARDS_PER_PAGE; i++) {
                     const itemIndex = startIdx + i; if (itemIndex >= flashcardData.length) break;
@@ -312,7 +842,7 @@
                             if(k === itemIndex) { displayIndex = count; break; }
                         }
                     } else {
-                        displayIndex = itemIndex + 1; 
+                        displayIndex = itemIndex + 1;
                     }
 
                     const labelText = isTermPage ? `TERM ${displayIndex}` : `DEFINITION ${displayIndex}`;
@@ -321,69 +851,81 @@
                     grid.appendChild(card);
                 }
                 cardsContainer.appendChild(grid);
-                prevBtn.disabled = currentPage === 0;
-                nextBtn.disabled = currentPage >= totalPages - 1;
-                printBtn.disabled = actualCardCount === 0;
+                if (prevBtn) prevBtn.disabled = currentPage === 0;
+                if (nextBtn) nextBtn.disabled = currentPage >= totalPages - 1;
+                if (printBtn) printBtn.disabled = actualCardCount === 0;
             }
 
-            nextBtn.addEventListener('click', () => { if (currentPage < totalPages - 1) { currentPage++; updateDisplay(); } });
-            prevBtn.addEventListener('click', () => { if (currentPage > 0) { currentPage--; updateDisplay(); } });
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => { if (currentPage < totalPages - 1) { currentPage++; updateDisplay(); } });
+            }
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => { if (currentPage > 0) { currentPage--; updateDisplay(); } });
+            }
 
-            printBtn.addEventListener('click', () => {
-                const actualCardsForPrint = flashcardData.filter(c => c.term !== '(Empty Slot)');
-                if (actualCardsForPrint.length === 0) { showMessage('No actual flashcards to print.', 'error'); return; }
-                const dataToPrint = [...actualCardsForPrint];
-                while (dataToPrint.length % CARDS_PER_PAGE !== 0) { dataToPrint.push({ term: `(Empty Slot)`, definition: `(Empty Slot)`}); }
-                const printTotalPages = (dataToPrint.length / CARDS_PER_PAGE) * 2;
-                const originalPageInfoClass = pageInfo.className;
-                const originalControlsClass = controlsDiv ? controlsDiv.className : '';
-                pageInfo.classList.add('hidden'); if (controlsDiv) controlsDiv.classList.add('hidden');
-                cardsContainer.innerHTML = '';
-                for (let i = 0; i < printTotalPages; i++) {
-                    const isTermPageForPrint = i % 2 === 0;
-                    const setIndexForPrint = Math.floor(i / 2);
-                    const startIdxForPrint = setIndexForPrint * CARDS_PER_PAGE;
-                    const printPageTitleElement = document.createElement('h3'); printPageTitleElement.className = 'print-page-title';
-                    printPageTitleElement.textContent = `Page ${i + 1} / ${printTotalPages} - ${isTermPageForPrint ? 'Terms' : 'Definitions'} (Set ${setIndexForPrint + 1})`;
-                    cardsContainer.appendChild(printPageTitleElement);
-                    const grid = document.createElement('div'); grid.className = 'flashcard-grid';
-                    for (let j = 0; j < CARDS_PER_PAGE; j++) {
-                        let indexToFetchDataFrom = startIdxForPrint + j; if (indexToFetchDataFrom >= dataToPrint.length) break;
-                        if (!isTermPageForPrint) {
-                            const numColumns = 2; const col = j % numColumns;
-                            if (col === 0) { if (indexToFetchDataFrom + 1 < dataToPrint.length && (j+1) < CARDS_PER_PAGE) indexToFetchDataFrom = startIdxForPrint + j + 1; }
-                            else { if (indexToFetchDataFrom - 1 >= startIdxForPrint) indexToFetchDataFrom = startIdxForPrint + j - 1; }
-                        }
-                        const itemToDisplay = dataToPrint[indexToFetchDataFrom];
-                        const card = document.createElement('div'); card.className = 'card-item';
-                        let originalItemIndex = -1;
-                        if (itemToDisplay.term !== '(Empty Slot)') {
-                           let count = 0;
-                            for(let k=0; k < actualCardsForPrint.length; k++) {
-                                if(actualCardsForPrint[k].term === itemToDisplay.term && actualCardsForPrint[k].definition === itemToDisplay.definition) {
-                                    originalItemIndex = k + 1; break;
-                                }
+            if (printBtn) {
+                printBtn.addEventListener('click', () => {
+                    const actualCardsForPrint = flashcardData.filter(c => c.term !== '(Empty Slot)');
+                    if (actualCardsForPrint.length === 0) { showMessage('No actual flashcards to print.', 'error'); return; }
+                    const dataToPrint = [...actualCardsForPrint];
+                    while (dataToPrint.length % CARDS_PER_PAGE !== 0) { dataToPrint.push({ term: `(Empty Slot)`, definition: `(Empty Slot)`}); }
+                    const printTotalPages = (dataToPrint.length / CARDS_PER_PAGE) * 2;
+                    const originalPageInfoClass = pageInfo ? pageInfo.className : '';
+                    const originalControlsClass = controlsDiv ? controlsDiv.className : '';
+                    if (pageInfo) pageInfo.classList.add('hidden');
+                    if (controlsDiv) controlsDiv.classList.add('hidden');
+                    if (cardsContainer) cardsContainer.innerHTML = '';
+                    for (let i = 0; i < printTotalPages; i++) {
+                        const isTermPageForPrint = i % 2 === 0;
+                        const setIndexForPrint = Math.floor(i / 2);
+                        const startIdxForPrint = setIndexForPrint * CARDS_PER_PAGE;
+                        const printPageTitleElement = document.createElement('h3'); printPageTitleElement.className = 'print-page-title';
+                        printPageTitleElement.textContent = `Page ${i + 1} / ${printTotalPages} - ${isTermPageForPrint ? 'Terms' : 'Definitions'} (Set ${setIndexForPrint + 1})`;
+                        if (cardsContainer) cardsContainer.appendChild(printPageTitleElement);
+                        const grid = document.createElement('div'); grid.className = 'flashcard-grid';
+                        for (let j = 0; j < CARDS_PER_PAGE; j++) {
+                            let indexToFetchDataFrom = startIdxForPrint + j; if (indexToFetchDataFrom >= dataToPrint.length) break;
+                            if (!isTermPageForPrint) {
+                                const numColumns = 2; const col = j % numColumns;
+                                if (col === 0) { if (indexToFetchDataFrom + 1 < dataToPrint.length && (j+1) < CARDS_PER_PAGE) indexToFetchDataFrom = startIdxForPrint + j + 1; }
+                                else { if (indexToFetchDataFrom - 1 >= startIdxForPrint) indexToFetchDataFrom = startIdxForPrint + j - 1; }
                             }
-                            if(originalItemIndex === -1) originalItemIndex = indexToFetchDataFrom + 1; 
-                        } else { originalItemIndex = indexToFetchDataFrom + 1; } 
-                        const labelText = isTermPageForPrint ? `TERM ${originalItemIndex}` : `DEFINITION ${originalItemIndex}`;
-                        const contentText = isTermPageForPrint ? itemToDisplay.term : itemToDisplay.definition;
-                        card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`;
-                        grid.appendChild(card);
+                            const itemToDisplay = dataToPrint[indexToFetchDataFrom];
+                            const card = document.createElement('div'); card.className = 'card-item';
+                            let originalItemIndex = -1;
+                            if (itemToDisplay.term !== '(Empty Slot)') {
+                               let count = 0;
+                                for(let k=0; k < actualCardsForPrint.length; k++) {
+                                    if(actualCardsForPrint[k].term === itemToDisplay.term && actualCardsForPrint[k].definition === itemToDisplay.definition) {
+                                        originalItemIndex = k + 1; break;
+                                    }
+                                }
+                                if(originalItemIndex === -1) originalItemIndex = indexToFetchDataFrom + 1;
+                            } else { originalItemIndex = indexToFetchDataFrom + 1; }
+                            const labelText = isTermPageForPrint ? `TERM ${originalItemIndex}` : `DEFINITION ${originalItemIndex}`;
+                            const contentText = isTermPageForPrint ? itemToDisplay.term : itemToDisplay.definition;
+                            card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`;
+                            grid.appendChild(card);
+                        }
+                        if (cardsContainer) cardsContainer.appendChild(grid);
                     }
-                    cardsContainer.appendChild(grid);
-                }
-                window.print();
-                cardsContainer.innerHTML = ''; pageInfo.className = originalPageInfoClass;
-                if (controlsDiv) controlsDiv.className = originalControlsClass;
-                if (!displayArea.classList.contains('hidden')) updateDisplay();
-            });
+                    window.print();
+                    if (cardsContainer) cardsContainer.innerHTML = '';
+                    if (pageInfo) pageInfo.className = originalPageInfoClass;
+                    if (controlsDiv) controlsDiv.classList.add('hidden');
+                    if (displayArea && !displayArea.classList.contains('hidden')) updateDisplay();
+                });
+            }
 
-            backBtn.addEventListener('click', () => {
-                displayArea.classList.add('hidden'); manualInputArea.classList.remove('hidden');
-                bulkInputArea.classList.add('hidden'); pageInfo.classList.add('hidden');
-                if (controlsDiv) controlsDiv.classList.add('hidden');
-            });
+            if (backBtn) {
+                backBtn.addEventListener('click', () => {
+                    if (displayArea) displayArea.classList.add('hidden');
+                    if (manualInputArea) manualInputArea.classList.remove('hidden');
+                    if (bulkInputArea) bulkInputArea.classList.add('hidden');
+                    if (pageInfo) pageInfo.classList.add('hidden');
+                    if (controlsDiv) controlsDiv.classList.add('hidden');
+                });
+            }
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
