@@ -7,15 +7,397 @@
     <link rel="stylesheet" href="stylesheet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <script type="module">
-        import { createClient } from '@supabase/supabase-js';
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'; /* Updated import path */
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co'; // Database URL
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8'; // API Key
         const supabase = createClient(supabaseUrl, supabaseKey);
         window.supabase = supabase;
     </script>
+    <style>
+        /* Add the new CSS provided above here, or ensure it's in your stylesheet.css */
 
+        /* Enhanced CramCraft Stylesheet (Existing CSS from previous iterations) */
+        :root {
+            --primary-color: #6366f1;
+            --primary-hover: #5855eb;
+            --primary-light: #818cf8;
+            --secondary-color: #f59e0b;
+            --secondary-hover: #d97706;
+            --accent-color: #06b6d4;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-light: #9ca3af;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-tertiary: #f3f4f6;
+            --border-color: #e5e7eb;
+            --border-focus: #3b82f6;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Base Reset & Typography */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            /* REMOVED: background-color: var(--bg-secondary); */
+            /* ADDED: background image for the body */
+            background: linear-gradient(135deg, rgba(249, 250, 251, 0.9), rgba(243, 244, 246, 0.9)), url('cramcraft.jpg'); /* Adjusted opacity to ensure readability of content on top */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Keeps background image fixed during scroll */
+            font-size: 16px;
+            overflow-x: hidden;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+
+        h1 { font-size: 3rem; }
+        h2 { font-size: 2.25rem; }
+        h3 { font-size: 1.875rem; }
+        h4 { font-size: 1.5rem; }
+        h5 { font-size: 1.25rem; }
+        h6 { font-size: 1.125rem; }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        /* Navigation */
+        .top-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .top-nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .nav-logo a {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .top-nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .top-nav ul li a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .top-nav ul li a:hover,
+        .top-nav ul li a.active {
+            color: var(--primary-color);
+            background-color: rgba(99, 102, 241, 0.1);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .user-status {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border: none;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-hover), var(--primary-color));
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Hero Section (Not used on this About page, but kept for consistency with other pages) */
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 6rem 2rem;
+            position: relative;
+            overflow: hidden;
+            display: none; /* Hide hero section on About page */
+        }
+
+        /* Main content wrapper on generic pages, about page will use .about-page-content */
+        /* .main-content { /* No longer needed if .about-page-content is the main wrapper */
+            /* max-width: 1200px; */
+            /* margin: 0 auto; */
+            /* padding: 4rem 2rem; */
+        /* } */
+
+        /* New About page specific styles */
+        .about-page-content {
+            max-width: 900px;
+            margin: 4rem auto; /* Ensures content is centered with space from top/bottom */
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.95); /* Slightly transparent white for content box */
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            text-align: center;
+            position: relative; /* Needed for z-index with body background */
+            z-index: 1; /* Ensure content box is above body background */
+        }
+
+        .about-page-content h1 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 3rem;
+        }
+
+        .about-page-content .lead {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 2rem auto;
+        }
+
+        .about-logo {
+            max-width: 150px;
+            height: auto;
+            display: block;
+            margin: 0 auto 2rem auto;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .about-page-features {
+            text-align: left;
+            margin-top: 3rem;
+        }
+
+        .about-page-features h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        .about-page-features ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 2rem;
+        }
+
+        .about-page-features li {
+            background: var(--bg-secondary);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 0.75rem;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .about-page-features li::before {
+            content: '✅';
+            margin-right: 0.5rem;
+            font-size: 1.2em;
+        }
+
+        .tutorial {
+            margin-top: 4rem;
+            margin-bottom: 2rem;
+        }
+
+        .tutorial h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+        }
+
+        .tutorial-video-embed-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            overflow: hidden;
+            max-width: 800px;
+            margin: 0 auto;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+        }
+
+        .tutorial-video-embed-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            border-radius: var(--radius-lg);
+        }
+
+
+        /* Other common styles that might be in stylesheet.css */
+        /*
+        .features {}
+        .feature-grid {}
+        .feature-item {}
+        .about-preview {}
+        .footer {}
+        .message-box {}
+        .hidden {}
+        .text-center {}
+        .mt-1, etc. {}
+        @media (max-width: 768px) {}
+        @media print {}
+        */
+
+        /* Dark mode adjustments for new elements */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, rgba(17, 24, 39, 0.9), rgba(31, 41, 55, 0.9)), url('cramcraft.jpg');
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+            }
+            .about-page-content {
+                background: rgba(31, 41, 55, 0.95); /* Slightly transparent dark background */
+                border-color: var(--border-color);
+            }
+            .about-page-features li {
+                background: var(--bg-tertiary); /* Slightly lighter background for list items in dark mode */
+                border-color: var(--border-color);
+                color: var(--text-secondary);
+            }
+            .about-page-features li::before {
+                filter: brightness(1.2); /* Make checkmark stand out a bit more in dark mode */
+            }
+            .tutorial-video-embed-container {
+                border-color: var(--border-color);
+            }
+        }
+
+        /* Print Styles for new elements */
+        @media print {
+            body {
+                background: white !important; /* Ensure white background for printing */
+            }
+            .top-nav,
+            .footer,
+            .message-box {
+                display: none !important;
+            }
+            .about-page-content {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+                margin: 0;
+                background: none !important; /* No background on print */
+            }
+            .about-logo {
+                display: none; /* Hide logo on print */
+            }
+            .about-page-features li {
+                background: none;
+                border: none;
+                page-break-inside: avoid; /* Prevent list items from breaking across pages */
+                margin-bottom: 0.5rem;
+            }
+            .tutorial-video-embed-container {
+                display: none; /* Hide video on print */
+            }
+        }
+    </style>
 </head>
- 
+
 <body>
     <nav class="top-nav">
         <div class="top-nav-inner">
@@ -23,12 +405,8 @@
                 <a href="index.html">CramCraft</a>
             </div>
             <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="user_dashboard.html">Dashboard</a></li>
-                <!-- <li><a href="create.html">Create</a></li> --> 
-                <!-- <li><a href="search_page.html">Search</a></li> -->
-                <li><a href="about.html" class="active">About</a></li>
-            </ul>
+                <li><a href="index.html">Home</a></li> <li><a href="user_dashboard.html">Dashboard</a></li>
+                <li><a href="about.html" class="active">About</a></li> </ul>
             <div class="auth-buttons">
                 <div class="user-status" style="display: none;"></div>
                 <a href="login.html" class="btn">Login</a>
@@ -37,40 +415,42 @@
         </div>
     </nav>
 
- 
- <div class="main-content-wrapper">
-        <div id="about-section">
-            <img src="Cramcraft.png" alt="CramCraft Logo" class="logo-center" /> <h1>About CramCraft</h1>
-            <p class="lead">Your magical flashcard companion for smarter studying and better memory retention.</p>
+    <main class="about-page-content"> <img src="Cramcraft.png" alt="CramCraft Logo" class="about-logo" /> <h1>About CramCraft</h1>
+        <p class="lead">Your magical flashcard companion for smarter studying and better memory retention.</p>
 
-            <section class="features">
-                <h2>Why Choose CramCraft?</h2>
-                <ul>
-                    <li>Personalized dashboard to manage your flashcard sets (Coming Soon!)</li>
-                    <li>Manually add or remove cards, or bulk import your data</li>
-                    <li>Digital flashcard preview before printing</li>
-                    <li>Print double-sided or export your flashcards as PDFs</li>
-                    <li>Interactive quiz mode to test your knowledge (Coming Soon!)</li>
-                    <li>Search and discover flashcards created by others (Coming Soon!)</li>
-                    <li>Dark and light mode toggle for comfortable studying (Future Feature)</li>
-                    <li>Optimized layout for mobile devices</li>
-                </ul>
-            </section>
+        <section class="about-page-features"> <h2>Why Choose CramCraft?</h2>
+            <ul>
+                <li>Personalized dashboard to manage your flashcard sets (Coming Soon!)</li>
+                <li>Manually add or remove cards, or bulk import your data</li>
+                <li>Digital flashcard preview before printing</li>
+                <li>Print double-sided or export your flashcards as PDFs</li>
+                <li>Interactive quiz mode to test your knowledge (Coming Soon!)</li>
+                <li>Search and discover flashcards created by others (Coming Soon!)</li>
+                <li>Dark and light mode toggle for comfortable studying (Future Feature)</li>
+                <li>Optimized layout for mobile devices</li>
+            </ul>
+        </section>
 
-            <section class="tutorial">
-                <h2>How to Use CramCraft</h2>
-                <div class="tutorial-video-embed-container">
-                    <iframe
-                        src="https://www.youtube.com/embed/Np4swmKgRIA" title="FASTEST way to print DOUBLE-SIDED Flashcards"
-                        frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        referrerpolicy="strict-origin-when-cross-origin"
-                        allowfullscreen>
-                    </iframe>
-                </div>
-            </section>
-        </div>
-    </div>
+        <section class="tutorial">
+            <h2>How to Use CramCraft</h2>
+            <div class="tutorial-video-embed-container">
+                <iframe
+                    src="https://www.youtube.com/embed/Np4swmKgRIA?si=shorts"
+                    title="How to Use CramCraft"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>© 2025 CramCraft. All rights reserved.</p>
+    </footer>
+
+    <div class="message-box" id="custom-alert"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     
