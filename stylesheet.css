@@ -1,6 +1,6 @@
 /* Consolidated and Enhanced CramCraft Stylesheet */
 
-/* Global Variables - Consolidated to the latest theme */
+/* Global Variables - Consolidated to the latest theme (Purple/Cyan/Orange palette) */
 :root {
     --primary-color: #6366f1; /* Main purple-blue */
     --primary-hover: #5855eb; /* Darker purple-blue for hover */
@@ -19,8 +19,8 @@
 
     --bg-primary: #ffffff; /* Main content background (white) */
     --bg-secondary: #f9fafb; /* Lighter background for sections/elements */
-    --bg-tertiary: #f3f4f6; /* Even lighter background, e.g., for delimiter options */
-    --bg-overlay-light: rgba(255, 255, 255, 0.95); /* Semi-transparent white for overlays/forms */
+    --bg-tertiary: #f3f4f6; /* Even lighter background, e.g., for delimiter options, list items */
+    --bg-overlay-light: rgba(255, 255, 255, 0.95); /* Semi-transparent white for main content boxes */
     --bg-overlay-dark: rgba(31, 41, 55, 0.95); /* Semi-transparent dark for dark mode overlays */
 
     --border-color: #e5e7eb; /* Light grey border */
@@ -40,18 +40,18 @@
     --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Base Reset */
+/* Base Reset & Universal Typography */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Universal Body Styling - Cramcraft.jpg as backdrop */
 body {
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     line-height: 1.6;
     color: var(--text-primary);
+    /* Universal background with cramcraft.jpg and light overlay */
     background: linear-gradient(135deg, rgba(249, 250, 251, 0.8), rgba(243, 244, 246, 0.8)), url('cramcraft.jpg');
     background-size: cover;
     background-position: center;
@@ -59,16 +59,14 @@ body {
     font-size: 16px;
     overflow-x: hidden;
     min-height: 100vh;
-    display: flex; /* For overall page layout (nav, content, footer) */
+    display: flex; /* For overall page layout */
     flex-direction: column;
 }
 
-/* Smooth scrolling */
 html {
     scroll-behavior: smooth;
 }
 
-/* Typography */
 h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
     line-height: 1.2;
@@ -99,15 +97,16 @@ a:hover {
     text-decoration: underline;
 }
 
-/* Navigation Bar Styles (Consolidated) */
+/* Navigation Bar Styles (Consolidated & Unified) */
 .top-nav {
     background: var(--bg-overlay-light); /* Semi-transparent white for navigation */
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border-color);
     position: sticky;
     top: 0;
-    z-index: 1000;
+    z-index: 1000; /* Adjusted z-index for consistency with messages */
     transition: var(--transition);
+    width: 100%; /* Ensure it spans full width */
 }
 
 .top-nav-inner {
@@ -135,25 +134,25 @@ a:hover {
     display: flex;
     align-items: center;
     gap: 2rem;
-    margin: 0; /* Override any list default margin */
-    padding: 0; /* Override any list default padding */
+    margin: 0;
+    padding: 0;
 }
 
 .top-nav ul li a {
-    color: var(--text-secondary);
+    color: var(--text-secondary); /* Text color from root */
     text-decoration: none;
     font-size: 1rem;
     font-weight: 500;
     padding: 0.5rem 1rem;
     border-radius: var(--radius-md);
     transition: var(--transition);
-    position: relative; /* For potential future effects */
+    position: relative;
 }
 
 .top-nav ul li a:hover,
 .top-nav ul li a.active {
     color: var(--primary-color);
-    background-color: rgba(99, 102, 241, 0.1);
+    background-color: rgba(99, 102, 241, 0.1); /* Transparent primary color */
 }
 
 .top-nav .auth-buttons {
@@ -163,21 +162,21 @@ a:hover {
 }
 
 .user-status {
-    color: var(--text-secondary);
+    color: var(--text-secondary); /* Consistent text color */
     font-weight: 500;
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem; /* Adjusted gap */
 }
 
 .logout-button {
-    background-color: var(--error-color); /* Red for logout */
+    background-color: var(--error-color);
     color: white;
     border: none;
-    padding: 0.5rem 1rem; /* Match general btn padding */
-    border-radius: var(--radius-md); /* Match general btn radius */
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-md);
     cursor: pointer;
-    font-size: 0.875rem; /* Match general btn size */
+    font-size: 0.875rem;
     font-weight: 500;
     text-decoration: none;
     transition: var(--transition);
@@ -214,15 +213,14 @@ a:hover {
     border-color: var(--primary-color);
 }
 
-/* Primary Button Style */
-.btn-primary, .form-button { /* Apply to form button too */
+.btn-primary, .form-button, .create-new-set-btn, .search-bar-container button {
     background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
     color: white;
     border: none;
     box-shadow: var(--shadow-md);
 }
 
-.btn-primary:hover, .form-button:hover {
+.btn-primary:hover, .form-button:hover, .create-new-set-btn:hover, .search-bar-container button:hover {
     background: linear-gradient(135deg, var(--primary-hover), var(--primary-color));
     box-shadow: var(--shadow-lg);
 }
@@ -234,15 +232,15 @@ a:hover {
     box-shadow: none;
 }
 
-/* Specific Button variations for auth-buttons */
+/* Specific Button variations for auth-buttons in top-nav */
 .top-nav .auth-buttons .btn {
-    background-color: transparent; /* Reset background for nav buttons */
+    background-color: transparent;
     border: 1px solid transparent;
-    color: var(--text-on-dark); /* White-ish text for nav buttons */
+    color: var(--primary-color); /* Use primary color for login/signup in light mode nav */
     padding: 0.5rem 0.75rem;
 }
 .top-nav .auth-buttons .btn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(99, 102, 241, 0.1); /* Light transparent primary hover */
     transform: none;
     box-shadow: none;
 }
@@ -260,21 +258,19 @@ a:hover {
     background: linear-gradient(135deg, var(--primary-hover), var(--primary-color));
 }
 
-
-/* Main Content Wrapper (Generic) */
-.main-content-wrapper, .content-wrapper { /* Apply to both generic wrappers */
+/* Main Content Wrapper (Applies to most page content areas) */
+.main-content-wrapper, .content-wrapper, .container-fc {
     flex-grow: 1; /* Allow content to push footer down */
     padding: 2rem; /* Consistent padding */
-    max-width: 1200px;
-    margin: 2rem auto;
-    background: var(--bg-overlay-light); /* Semi-transparent background for content */
+    max-width: 1200px; /* Max width for general content */
+    margin: 2rem auto; /* Consistent margin */
+    background: var(--bg-overlay-light); /* Semi-transparent background for content cards */
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-lg);
     border: 1px solid var(--border-color);
     position: relative;
     z-index: 1;
 }
-
 
 /* Styles for Home Page (index.html) specific sections */
 .hero-section {
@@ -287,7 +283,6 @@ a:hover {
     padding: 6rem 2rem;
     position: relative;
     overflow: hidden;
-    /* Remove `display: none;` if this is meant to be visible on index.html */
 }
 
 .hero-section::before { /* Grain effect */
@@ -322,14 +317,14 @@ a:hover {
     color: rgba(255, 255, 255, 0.9);
 }
 
-.home-content { /* Main section for index.html content */
+.home-content { /* Specific content area for index.html */
     max-width: 1200px;
     margin: 0 auto;
     padding: 4rem 2rem;
 }
 
-/* Features Section (on index.html) */
-.features { /* This applies to both index and about page features sections */
+/* Features Section (on index.html & part of about.html structure) */
+.features {
     margin-bottom: 4rem;
     text-align: center;
 }
@@ -373,6 +368,7 @@ a:hover {
 
 .feature-item p {
     flex-grow: 1; /* Allows paragraph to take remaining height */
+    margin-bottom: 1.5rem; /* Ensure consistent spacing */
 }
 
 .feature-item img {
@@ -381,67 +377,6 @@ a:hover {
     object-fit: cover;
     border-radius: var(--radius-md);
     margin-bottom: 1.5rem;
-}
-
-/* Image Gallery Section (on index.html, optional) */
-.image-gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin: 3rem 0;
-}
-
-.gallery-item {
-    position: relative;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    box-shadow: var(--shadow-md);
-    transition: var(--transition);
-}
-
-.gallery-item:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-xl);
-}
-
-.gallery-item img {
-    width: 100%;
-    height: 300px;
-    object-fit: cover;
-    transition: var(--transition);
-}
-
-.gallery-item:hover img {
-    transform: scale(1.1);
-}
-
-.gallery-item .overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-    color: white;
-    padding: 2rem 1rem 1rem;
-    transform: translateY(100%);
-    transition: var(--transition);
-    text-align: left;
-}
-
-.gallery-item:hover .overlay {
-    transform: translateY(0);
-}
-
-.gallery-item .overlay h4 {
-    margin-bottom: 0.5rem;
-    font-size: 1.25rem;
-    color: white; /* Ensure heading color is white on dark overlay */
-}
-
-.gallery-item .overlay p {
-    font-size: 0.875rem;
-    opacity: 0.9;
-    color: rgba(255, 255, 255, 0.9);
 }
 
 /* About Preview (on index.html) */
@@ -479,6 +414,46 @@ a:hover {
     margin-bottom: 1.5rem;
 }
 
+/* Testimonials Section (on index.html) */
+.testimonials {
+    padding: 3rem 2rem; /* Consistent padding */
+    background-color: var(--bg-secondary); /* Use secondary background */
+    text-align: center;
+    margin-bottom: 4rem; /* Consistent spacing with other sections */
+}
+
+.testimonials h2 {
+    color: var(--primary-color); /* Highlight heading */
+    margin-bottom: 2rem;
+    font-size: 2.25rem;
+}
+
+.testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.testimonial-item {
+    background-color: var(--bg-primary); /* White card background */
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.testimonial-item p {
+    font-style: italic;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.testimonial-item span {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
 
 /* Styles for ABOUT Page (about.html) */
 .about-page-content {
@@ -507,34 +482,35 @@ a:hover {
     margin: 0 auto 2rem auto;
 }
 
-.about-logo {
+.about-logo { /* Logo image on about page */
     max-width: 150px;
     height: auto;
     display: block;
     margin: 0 auto 2rem auto;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-md); /* Consistent radius */
     box-shadow: var(--shadow-sm);
 }
 
+/* Feature list within About page (reuses .features, but adds about-page-features for specificity) */
 .about-page-features {
-    text-align: left;
+    text-align: left; /* Override .features center-align */
     margin-top: 3rem;
 }
 
-.about-page-features h2 {
+.about-page-features h2 { /* Consistent heading style */
     text-align: center;
     margin-bottom: 2rem;
     color: var(--text-primary);
 }
 
 .about-page-features ul {
-    list-style: none;
+    list-style: none; /* Remove default bullets */
     padding-left: 0;
     margin-bottom: 2rem;
 }
 
 .about-page-features li {
-    background: var(--bg-secondary);
+    background: var(--bg-secondary); /* Lighter background for list items */
     padding: 1rem 1.5rem;
     border-radius: var(--radius-md);
     margin-bottom: 0.75rem;
@@ -552,12 +528,12 @@ a:hover {
     font-size: 1.2em;
 }
 
-.tutorial {
+.tutorial { /* Tutorial section on About page */
     margin-top: 4rem;
     margin-bottom: 2rem;
 }
 
-.tutorial h2 {
+.tutorial h2 { /* Consistent heading style */
     text-align: center;
     margin-bottom: 2rem;
     color: var(--text-primary);
@@ -588,7 +564,7 @@ a:hover {
 
 
 /* Styles for LOGIN & SIGNUP Pages (form-page-wrapper) */
-.form-page-wrapper {
+.form-page-wrapper { /* Wraps the form-container */
     flex-grow: 1;
     display: flex;
     justify-content: center;
@@ -599,7 +575,7 @@ a:hover {
 }
 
 .form-container {
-    background: var(--bg-overlay-light); /* Semi-transparent white background */
+    background: var(--bg-overlay-light);
     padding: 2.5rem;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-xl);
@@ -647,28 +623,7 @@ a:hover {
     background: var(--bg-primary);
 }
 
-.form-button { /* Uses btn-primary styling */
-    display: block;
-    width: 100%;
-    padding: 1rem;
-    margin-top: 1.5rem;
-    font-size: 1.125rem;
-    font-weight: 600;
-    color: white;
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-    border: none;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    transition: var(--transition);
-    box-shadow: var(--shadow-md);
-}
-
-.form-button:hover { /* Uses btn-primary hover styling */
-    background: linear-gradient(135deg, var(--primary-hover), var(--primary-color));
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-2px);
-}
-
+/* form-button already uses .btn-primary */
 
 .form-link {
     display: block;
@@ -703,42 +658,25 @@ a:hover {
 .user-greeting {
     font-size: 1.4em;
     font-weight: 500;
-    margin-bottom: 25px;
+    margin-bottom: 1.5rem; /* Consistent spacing */
     color: var(--text-primary);
 }
 
-.create-new-set-btn { /* Uses btn-primary styling */
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem; /* Match general btn padding */
-    border-radius: var(--radius-md); /* Match general btn radius */
-    cursor: pointer;
-    font-size: 0.875rem; /* Match general btn size */
-    font-weight: 500;
-    text-decoration: none;
-    display: inline-block;
-    margin-bottom: 25px;
-    transition: var(--transition);
-}
-
-.create-new-set-btn:hover { /* Uses btn-primary hover styling */
-    background-color: var(--primary-hover);
-}
+/* create-new-set-btn already uses .btn-primary */
 
 
 /* Styles for Search Page (search.html) */
 .search-bar-container {
-    margin-bottom: 30px;
+    margin-bottom: 1.5rem; /* Consistent spacing */
     display: flex;
-    gap: 1rem; /* Consistent gap */
+    gap: 1rem;
 }
 
 .search-bar-container input[type="text"] {
     flex-grow: 1;
-    padding: 1rem; /* Consistent padding */
-    border: 2px solid var(--border-color); /* Consistent border */
-    border-radius: var(--radius-md); /* Consistent radius */
+    padding: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
     font-size: 1rem;
     transition: var(--transition);
     background: var(--bg-secondary);
@@ -750,28 +688,58 @@ a:hover {
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     background: var(--bg-primary);
 }
-
-
-.search-bar-container button { /* Uses btn-primary styling */
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem; /* Consistent padding */
-    border-radius: var(--radius-md); /* Consistent radius */
-    cursor: pointer;
-    font-size: 0.875rem; /* Consistent size */
-    font-weight: 500;
-    transition: var(--transition);
-}
-
-.search-bar-container button:hover { /* Uses btn-primary hover styling */
-    background-color: var(--primary-hover);
-}
+/* Search button already uses .btn-primary */
 
 .search-results-info {
-    margin-bottom: 20px;
+    margin-bottom: 1.5rem;
     font-size: 1.1em;
-    color: var(--text-secondary); /* Consistent text color */
+    color: var(--text-secondary);
+}
+
+/* Set Cards (used in Dashboard and Search) */
+.sets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem; /* Consistent gap */
+}
+
+.set-card {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.set-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--primary-light);
+}
+
+.set-card h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+    font-size: 1.3em;
+    font-weight: 600;
+}
+
+.set-card p {
+    font-size: 0.95em;
+    color: var(--text-secondary); /* Use text-secondary */
+    margin-bottom: 0.75rem;
+}
+
+.set-card .set-meta {
+    font-size: 0.85em;
+    color: var(--text-light);
+    margin-top: auto;
 }
 
 
@@ -782,33 +750,15 @@ a:hover {
     align-items: center;
     padding: 2rem; /* Consistent with main-content-wrapper */
     width: 100%;
-    /* No direct background-color here, as it's typically within a .main-content-wrapper or similar */
+    /* The background is handled by .container-fc or the body itself */
 }
 
-#flashcard-maker-section h2 { /* Specific heading style */
-    color: var(--primary-color); /* Highlight heading */
-    margin-bottom: 2rem;
-    font-size: 2.25rem; /* Consistent with H2 */
-    text-align: center;
-}
-
-.container-fc { /* Main container for flashcard maker content */
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem; /* Consistent gap */
-    background-color: var(--bg-overlay-light); /* Semi-transparent white */
-    padding: 2rem; /* Consistent padding */
-    border-radius: var(--radius-lg); /* Consistent radius */
-    box-shadow: var(--shadow-lg); /* Consistent shadow */
-    max-width: 750px;
-    width: 100%;
-    border: 1px solid var(--border-color); /* Consistent border */
-}
+/* .container-fc is defined higher, as it's a common content container */
 
 .container-fc .logo-center-small { /* If you use a small logo here */
     display: block;
-    height: 120px; /* Reduced size */
-    width: 120px; /* Reduced size */
+    height: 120px;
+    width: 120px;
     object-fit: cover;
     border-radius: 50%;
     margin: 0 auto 1.5rem auto;
@@ -824,7 +774,7 @@ a:hover {
 }
 
 .container-fc h2 { /* Sub-headings within container, e.g., "Manual Input Mode" */
-    color: var(--text-primary); /* Use primary text color for sub-headings */
+    color: var(--text-primary);
     margin-top: 0;
     margin-bottom: 1rem;
     font-weight: 500;
@@ -834,140 +784,76 @@ a:hover {
 }
 
 .input-area {
-    background-color: var(--bg-secondary); /* Lighter background for input areas */
+    background-color: var(--bg-secondary);
     padding: 1.5rem;
     border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
     margin-bottom: 1.5rem;
     box-shadow: var(--shadow-sm);
+    width: 100%; /* Ensure it spans full width of container-fc */
 }
 
 .input-row {
     display: flex;
-    gap: 1rem; /* Consistent gap */
+    gap: 1rem;
     margin-bottom: 1rem;
 }
 
 .input-row input,
 .input-area textarea {
     flex: 1;
-    padding: 1rem; /* Consistent padding */
-    border: 1px solid var(--border-color); /* Consistent border */
-    border-radius: var(--radius-md); /* Consistent radius */
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
     font-size: 1rem;
     font-family: 'Poppins', sans-serif;
     transition: var(--transition);
-    background: var(--bg-primary); /* White input background */
+    background: var(--bg-primary);
     color: var(--text-primary);
 }
 
 .input-area textarea {
-    width: 100%;
-    min-height: 150px; /* Ensure a decent height */
+    min-height: 150px;
     margin-bottom: 1rem;
     line-height: 1.5;
 }
 
-.input-row input:focus,
-.input-area textarea:focus {
-    border-color: var(--border-focus);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    outline: none;
-    background: var(--bg-primary);
-}
-
-/* Specific buttons within flashcard maker */
-.container-fc button { /* General button style in fc container, usually overridden by btn classes */
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    font-size: 0.875rem;
-    font-weight: 500;
-    margin-right: 0.5rem; /* Adjust margin */
-    margin-top: 0.5rem;
-    transition: var(--transition);
-    box-shadow: var(--shadow-sm);
-    text-transform: capitalize; /* Keep consistency, remove uppercase */
-    letter-spacing: normal;
-}
-
-.container-fc button:hover {
-    background-color: var(--primary-hover);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
-}
-
-.container-fc button:active {
-    transform: translateY(0px);
-    box-shadow: var(--shadow-sm);
-}
-
-.container-fc button:disabled {
-    background-color: #b0bec5;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-}
-
-/* Specific button overrides */
-.container-fc #show-bulk-input,
-.container-fc #show-manual-input,
-.container-fc #back-to-input {
-    background-color: var(--text-secondary); /* Grey button style */
-}
-
-.container-fc #show-bulk-input:hover,
-.container-fc #show-manual-input:hover,
-.container-fc #back-to-input:hover {
-    background-color: #5a6268; /* Darker grey on hover */
-}
-
-.container-fc #print-cards {
-    background-color: var(--success-color);
-}
-
-.container-fc #print-cards:hover {
-    background-color: #1e7e34;
-}
-
+/* Buttons in FC section - already covered by general .btn rules and specific overrides */
 
 .display-area {
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
-    padding: 1.5rem; /* Consistent padding */
-    background-color: var(--bg-primary); /* White background */
+    padding: 1.5rem;
+    background-color: var(--bg-primary);
     display: flex;
     flex-direction: column;
     box-shadow: var(--shadow-lg);
-    width: 100%; /* Fill container width */
+    width: 100%;
 }
 
 .hidden {
-    display: none !important;
+    display: none !important; /* Forces hiding */
 }
 
 .flashcard-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Adjusted min-width for grid cards */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     grid-auto-rows: minmax(130px, auto);
     min-height: 400px;
-    gap: 1.5rem; /* Consistent gap */
+    gap: 1.5rem;
 }
 
 .card-item {
     border: 1px solid var(--border-color);
-    background-color: var(--bg-secondary); /* Light grey for card items */
+    background-color: var(--bg-secondary);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
     padding: 1rem;
-    font-size: 1rem; /* Adjusted font size */
-    border-radius: var(--radius-md); /* Consistent radius */
+    font-size: 1rem;
+    border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
     word-wrap: break-word;
     min-height: 120px;
@@ -977,13 +863,13 @@ a:hover {
 }
 
 .card-item:hover {
-    transform: translateY(-2px); /* Subtle lift */
+    transform: translateY(-2px);
     box-shadow: var(--shadow-md);
 }
 
 .card-item .label {
     font-weight: 600;
-    font-size: 0.8em; /* Relative to card font size */
+    font-size: 0.8em;
     color: var(--primary-color);
     margin-bottom: 0.5rem;
     text-transform: uppercase;
@@ -991,24 +877,23 @@ a:hover {
 }
 
 .controls {
-    margin-top: 1.5rem; /* Consistent margin */
+    margin-top: 1.5rem;
     text-align: center;
-    display: flex; /* For button layout */
+    display: flex;
     justify-content: center;
-    gap: 1rem; /* Consistent gap */
+    gap: 1rem;
     flex-wrap: wrap;
 }
 
 #page-info {
     text-align: center;
     margin-bottom: 1rem;
-    font-size: 1.125rem; /* Consistent with general info text */
+    font-size: 1.125rem;
     color: var(--text-secondary);
     font-weight: 500;
 }
 
-/* Message Box (global and specific) */
-.message-box {
+.message-box { /* Global message box */
     position: fixed;
     top: 2rem;
     right: 2rem;
@@ -1019,12 +904,12 @@ a:hover {
     z-index: 1000;
     box-shadow: var(--shadow-lg);
     display: none;
-    animation: slideInRight 0.3s ease-out; /* Use more modern animation */
+    animation: slideInRight 0.3s ease-out;
 }
 
 .message-box.success {
     background: var(--success-color);
-    border: 1px solid var(--success-color); /* Add a border for visual consistency */
+    border: 1px solid var(--success-color);
 }
 
 .message-box.warning {
@@ -1048,7 +933,7 @@ a:hover {
     }
 }
 
-.print-page-title { /* Only for print, keep display: none for screen */
+.print-page-title { /* Only for print */
     display: none;
 }
 
@@ -1068,7 +953,7 @@ a:hover {
 }
 
 .input-instructions code {
-    background-color: #e0e0e0;
+    background-color: #e0e0e0; /* Static light grey for code */
     padding: 3px 6px;
     border-radius: 4px;
     font-family: 'Courier New', Courier, monospace;
@@ -1083,11 +968,11 @@ a:hover {
 }
 
 .delimiter-group {
-    margin-bottom: 1rem; /* Consistent margin */
-    padding: 1rem; /* Consistent padding */
-    background-color: var(--bg-secondary); /* Consistent background */
-    border-radius: var(--radius-md); /* Consistent radius */
-    border: 1px solid var(--border-color); /* Consistent border */
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
 }
 
 .delimiter-group-title {
@@ -1100,12 +985,12 @@ a:hover {
 .delimiter-options {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem 1rem; /* Consistent gap */
+    gap: 0.5rem 1rem;
     align-items: center;
 }
 
 .delimiter-options label {
-    margin-right: 0.5rem; /* Adjusted margin */
+    margin-right: 0.5rem;
     font-size: 0.95em;
     cursor: pointer;
     display: inline-flex;
@@ -1114,15 +999,15 @@ a:hover {
 }
 
 .delimiter-options input[type="radio"] {
-    margin-right: 0.4rem; /* Adjusted margin */
+    margin-right: 0.4rem;
     accent-color: var(--primary-color);
 }
 
 .delimiter-options input[type="text"] {
-    padding: 0.5rem 0.75rem; /* Adjusted padding */
+    padding: 0.5rem 0.75rem;
     font-size: 0.95em;
     margin-left: 0.5rem;
-    border-radius: var(--radius-sm); /* Smaller radius for inputs */
+    border-radius: var(--radius-sm);
     border: 1px solid var(--border-color);
     font-family: 'Poppins', sans-serif;
     background-color: var(--bg-primary);
@@ -1138,114 +1023,18 @@ a:hover {
     width: 100px;
 }
 
-/* Set Cards (used in Dashboard and Search) */
-.sets-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.5rem; /* Consistent gap */
-}
 
-.set-card {
-    background-color: var(--bg-primary); /* White card background */
-    border: 1px solid var(--border-color); /* Consistent border */
-    border-radius: var(--radius-lg); /* Consistent radius */
-    padding: 1.5rem; /* Consistent padding */
-    box-shadow: var(--shadow-md); /* Consistent shadow */
-    transition: var(--transition);
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.set-card:hover {
-    transform: translateY(-4px); /* Consistent hover effect */
-    box-shadow: var(--shadow-xl); /* Consistent hover shadow */
-    border-color: var(--primary-light); /* Highlight border on hover */
-}
-
-.set-card h3 {
-    margin-top: 0;
-    margin-bottom: 0.5rem;
-    color: var(--primary-color);
-    font-size: 1.3em;
-    font-weight: 600;
-}
-
-.set-card p {
-    font-size: 0.95em;
-    color: var(--text-secondary);
-    margin-bottom: 0.75rem;
-}
-
-.set-card .set-meta {
-    font-size: 0.85em;
-    color: var(--text-light);
-    margin-top: auto; /* Push meta to bottom */
-}
-
-
-/* Testimonials Section (on index.html) */
-.testimonials {
-    padding: 3rem 2rem;
-    background-color: var(--bg-secondary); /* Use secondary background */
-    text-align: center;
-}
-
-.testimonials h2 {
-    color: var(--primary-color);
-    margin-bottom: 2rem;
-    font-size: 2.25rem;
-}
-
-.testimonial-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-}
-
-.testimonial-item {
-    background-color: var(--bg-primary); /* White card background */
-    padding: 1.5rem;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    text-align: center;
-    border: 1px solid var(--border-color);
-}
-
-.testimonial-item p {
-    font-style: italic;
-    color: var(--text-secondary);
-    margin-bottom: 1rem;
-}
-
-.testimonial-item span {
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-
-/* Footer */
-.footer {
-    background: var(--text-primary); /* Dark background for footer */
-    color: white;
-    text-align: center;
-    padding: 2rem;
-    margin-top: auto; /* Push footer to bottom of viewport */
-}
-
-
-/* MODAL Styles */
+/* Basic styling for the modal for set title input */
 .modal {
-    display: flex; /* Always use flex for centering */
+    display: flex; /* Always use flex for centering when visible */
     position: fixed;
-    z-index: 1001; /* Sit on top, above normal content but below message box */
+    z-index: 1001; /* Sit on top, above content */
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.4); /* Dark overlay */
     align-items: center;
     justify-content: center;
 }
@@ -1272,7 +1061,7 @@ a:hover {
 }
 
 .modal-content input[type="text"] {
-    width: 100%; /* Full width */
+    width: 100%;
     padding: 1rem;
     margin-bottom: 1.5rem;
     border: 2px solid var(--border-color);
@@ -1297,7 +1086,7 @@ a:hover {
     gap: 1rem;
 }
 
-.modal-content .modal-buttons button { /* Uses general btn style from :root colors */
+.modal-content .modal-buttons button {
     flex: 1;
     padding: 0.75rem 1rem;
     border: none;
@@ -1333,8 +1122,315 @@ a:hover {
 }
 
 
+/* Flashcard Viewer Styles (from set_viewer.html) */
+.main-container { /* Specific container for set viewer */
+    width: 100%;
+    max-width: 900px; /* Adjusted max-width */
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.set-header h1 {
+    font-size: 2.5em; /* Consistent with H1 */
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color); /* Highlight header */
+}
+
+.set-meta-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.9em;
+    color: var(--text-secondary); /* Consistent text color */
+    margin-bottom: 2rem;
+}
+
+.set-meta-info .fa-star { /* For icons, if you use Font Awesome */
+    color: var(--warning-color);
+}
+
+.study-modes {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.mode-button {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    font-size: 0.9em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: var(--transition);
+    color: var(--text-primary);
+    font-family: 'Poppins', sans-serif;
+    box-shadow: var(--shadow-sm);
+}
+
+.mode-button:hover {
+    background-color: var(--bg-secondary);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.mode-button.active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-md);
+}
+
+.mode-button .fa-solid {
+    font-size: 1.1em;
+}
+
+.flashcard-viewer-container {
+    perspective: 1000px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.card-navigation-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem; /* Space below flashcard */
+}
+
+.card-progress {
+    font-weight: 600;
+    font-size: 1.2em;
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.flashcard {
+    width: 100%;
+    max-width: 700px;
+    height: 400px;
+    position: relative;
+    cursor: pointer;
+}
+
+.flashcard-inner {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+    box-shadow: var(--shadow-xl); /* Stronger shadow for main card */
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+}
+
+.flashcard.flipped .flashcard-inner {
+    transform: rotateY(180deg);
+}
+
+.flashcard-front,
+.flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5em;
+    padding: 2rem;
+    text-align: center;
+    box-sizing: border-box;
+    color: var(--text-primary);
+}
+
+.flashcard-back {
+    transform: rotateY(180deg);
+}
+
+.card-nav-button {
+    background: none;
+    border: none;
+    font-size: 2em;
+    color: var(--text-secondary); /* Consistent color */
+    cursor: pointer;
+    padding: 0 1rem;
+    transition: var(--transition-fast);
+}
+
+.card-nav-button:hover:not(:disabled) {
+    color: var(--primary-color);
+    transform: scale(1.1);
+}
+
+.card-nav-button:disabled {
+    color: var(--text-light); /* Lighter disabled color */
+    cursor: not-allowed;
+}
+
+.quiz-mode-container {
+    background-color: var(--bg-primary);
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--border-color);
+}
+
+.quiz-question {
+    font-size: 1.5em;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: var(--text-primary);
+}
+
+#quiz-choices-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.choice-button {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    font-size: 1em;
+    font-family: 'Poppins', sans-serif;
+    text-align: left;
+    cursor: pointer;
+    transition: var(--transition);
+    height: 100%;
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+.choice-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
+    background-color: var(--bg-primary);
+    box-shadow: var(--shadow-md);
+}
+
+.choice-button.correct {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+    color: white;
+}
+
+.choice-button.incorrect {
+    background-color: var(--error-color);
+    border-color: var(--error-color);
+    color: white;
+}
+
+.choice-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.list-view-controls {
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.list-view-controls label {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+#category-filter {
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.term-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.term-row {
+    background-color: var(--bg-primary);
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.term-row .term {
+    flex: 1;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.term-row .definition {
+    flex: 2;
+    color: var(--text-secondary);
+}
+
+.creator-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.creator-info img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.creator-info .details {
+    font-size: 0.9em;
+}
+
+.creator-info .details span {
+    display: block;
+    color: var(--text-secondary);
+}
+
+.creator-info .details strong {
+    color: var(--text-primary);
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Print View Setup (for flashcards) */
+#print-view {
+    display: none; /* Hidden by default */
+}
+
 /* Responsive Adjustments (Consolidated) */
 @media (max-width: 768px) {
+    h1 { font-size: 2.5rem; }
+    h2 { font-size: 2rem; }
+    h3 { font-size: 1.5rem; }
+
     .top-nav-inner {
         flex-direction: column;
         gap: 1rem;
@@ -1342,18 +1438,20 @@ a:hover {
     }
     .top-nav ul {
         gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
     }
-    .auth-buttons {
+    .top-nav .auth-buttons {
         flex-direction: column;
-        width: 100%;
+        width: 100%; /* Make buttons full width in column layout */
     }
-    .auth-buttons .btn {
-        width: 100%;
+    .top-nav .auth-buttons .btn {
+        width: 100%; /* Make buttons full width */
     }
 
     /* General content wrappers */
-    .main-content-wrapper, .content-wrapper, .about-page-content, #flashcard-maker-section {
-        padding: 1rem; /* Reduced padding on smaller screens */
+    .main-content-wrapper, .content-wrapper, .about-page-content, .container-fc, #flashcard-maker-section {
+        padding: 1rem;
         margin: 1rem auto;
     }
 
@@ -1368,7 +1466,7 @@ a:hover {
         grid-template-columns: 1fr;
     }
     .feature-item img {
-        height: 150px; /* Adjusted for smaller screens */
+        height: 150px;
     }
 
     .image-gallery { /* if still used */
@@ -1424,9 +1522,9 @@ a:hover {
 }
 
 @media (max-width: 480px) {
-    h1 { font-size: 2.5rem; }
-    h2 { font-size: 2rem; }
-    h3 { font-size: 1.5rem; }
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.8rem; } /* Slightly smaller for h2 */
+    h3 { font-size: 1.4rem; } /* Slightly smaller for h3 */
 
     .hero-content h1 {
         font-size: 2rem;
@@ -1468,32 +1566,29 @@ a:hover {
         --text-primary: #f9fafb;
         --text-secondary: #d1d5db;
         --text-light: #9ca3af;
-        --text-on-dark: #f9fafb; /* Explicitly light text on dark elements */
+        --text-on-dark: #f9fafb;
 
-        --bg-primary: #1f2937; /* Dark background for primary elements */
-        --bg-secondary: #111827; /* Very dark background for body/sections */
-        --bg-tertiary: #374151; /* Dark grey for tertiary backgrounds (e.g., input instructions) */
-        --bg-overlay-light: rgba(31, 41, 55, 0.95); /* Semi-transparent dark for content boxes */
-        --bg-overlay-dark: rgba(0, 0, 0, 0.9); /* Even darker for overlays/modals */
+        --bg-primary: #1f2937;
+        --bg-secondary: #111827;
+        --bg-tertiary: #374151;
+        --bg-overlay-light: rgba(31, 41, 55, 0.95);
+        --bg-overlay-dark: rgba(0, 0, 0, 0.9);
 
-        --border-color: #374151; /* Darker border color */
-        --border-focus: #818cf8; /* Lighter focus border */
+        --border-color: #374151;
+        --border-focus: #818cf8;
     }
     
     body {
         background: linear-gradient(135deg, rgba(17, 24, 39, 0.8), rgba(31, 41, 55, 0.8)), url('cramcraft.jpg');
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
         color: var(--text-primary);
     }
 
     /* Navigation */
     .top-nav {
-        background: var(--bg-secondary); /* Darker solid background for nav */
+        background: var(--bg-secondary);
         border-bottom-color: var(--border-color);
     }
-    .nav-logo a { /* Adjust gradient for dark mode */
+    .nav-logo a {
         background: linear-gradient(135deg, var(--primary-light), var(--accent-color));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -1562,9 +1657,6 @@ a:hover {
     /* Hero Section */
     .hero-section {
         background: linear-gradient(135deg, rgba(79, 70, 229, 0.9), rgba(124, 58, 237, 0.9)), url('cramcraft.jpg');
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
     }
     .hero-content h1 {
         color: white;
@@ -1582,19 +1674,9 @@ a:hover {
         color: var(--primary-light);
     }
 
-    /* Image Gallery */
-    .gallery-item .overlay h4 {
-        color: white;
-    }
-    .gallery-item .overlay p {
-        color: rgba(255, 255, 255, 0.9);
-    }
-
     /* About Preview */
     .about-preview {
         background: linear-gradient(135deg, rgba(31, 41, 55, 0.9), rgba(17, 24, 39, 0.9)), url('study.jpg');
-        background-size: cover;
-        background-position: center;
     }
     .about-preview::before {
         background: rgba(31, 41, 55, 0.8);
@@ -1605,7 +1687,7 @@ a:hover {
     
     /* About Page Specific */
     .about-logo {
-        box-shadow: var(--shadow-sm); /* Keep shadow consistent */
+        box-shadow: var(--shadow-sm);
     }
     .about-page-features li {
         background: var(--bg-tertiary);
@@ -1654,7 +1736,7 @@ a:hover {
 
     /* Flashcard Maker (create.html) */
     .container-fc h2 {
-        color: var(--text-primary); /* Sub-headings should be primary text */
+        color: var(--text-primary);
     }
     .input-area {
         background-color: var(--bg-tertiary);
@@ -1671,7 +1753,7 @@ a:hover {
     .container-fc button#show-bulk-input,
     .container-fc button#show-manual-input,
     .container-fc button#back-to-input {
-        background-color: var(--text-secondary); /* Grey buttons */
+        background-color: var(--text-secondary);
         color: white;
     }
     .container-fc button#show-bulk-input:hover,
@@ -1690,7 +1772,7 @@ a:hover {
         border-color: var(--border-color);
     }
     .flashcard-grid {
-        /* background-color: var(--bg-primary); */ /* Grid itself doesn't need background */
+        /* background-color: var(--bg-primary); */
     }
     .card-item {
         background-color: var(--bg-tertiary);
@@ -1804,15 +1886,85 @@ a:hover {
         background-color: #da190b;
     }
 
+    /* Flashcard Viewer Styles */
+    .mode-button.active {
+        background-color: var(--primary-light); /* Lighter active background for dark mode */
+        border-color: var(--primary-light);
+    }
+    .flashcard-inner {
+        box-shadow: var(--shadow-xl);
+    }
+    .flashcard-front, .flashcard-back {
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+    }
+    .card-nav-button {
+        color: var(--text-secondary);
+    }
+    .card-nav-button:hover:not(:disabled) {
+        color: var(--primary-light);
+    }
+    .card-nav-button:disabled {
+        color: var(--text-light);
+    }
+    .quiz-mode-container {
+        background-color: var(--bg-primary);
+        border-color: var(--border-color);
+    }
+    .quiz-question {
+        color: var(--text-primary);
+    }
+    .choice-button {
+        background-color: var(--bg-secondary);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
+    .choice-button:hover:not(:disabled) {
+        background-color: var(--bg-primary);
+        border-color: var(--primary-light);
+    }
+    .choice-button.correct {
+        background-color: var(--success-color);
+        border-color: var(--success-color);
+    }
+    .choice-button.incorrect {
+        background-color: var(--error-color);
+        border-color: var(--error-color);
+    }
+    .list-view-controls label {
+        color: var(--text-primary);
+    }
+    #category-filter {
+        background-color: var(--bg-secondary);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+    }
+    .term-row {
+        background-color: var(--bg-primary);
+        border-color: var(--border-color);
+    }
+    .term-row .term {
+        color: var(--text-primary);
+    }
+    .term-row .definition {
+        color: var(--text-secondary);
+    }
+    .creator-info .details span {
+        color: var(--text-secondary);
+    }
+    .creator-info .details strong {
+        color: var(--text-primary);
+    }
+
     /* Footer */
     .footer {
         background: var(--bg-primary); /* Dark primary background for footer in dark mode */
         color: var(--text-secondary);
-        border-top: 1px solid var(--border-color); /* Add a border to separate from body */
+        border-top: 1px solid var(--border-color);
     }
 }
 
-/* Print Styles - Consolidated */
+/* Print Styles - Consolidated & Corrected */
 @media print {
     body {
         height: auto;
@@ -1841,7 +1993,10 @@ a:hover {
     #flashcard-maker-section .input-area,
     #flashcard-maker-section .controls,
     #flashcard-maker-section #page-info,
-    .input-instructions, .delimiter-group, .modal {
+    .input-instructions, .delimiter-group, .modal,
+    .study-modes, .flashcard-viewer-container, .card-navigation-wrapper,
+    .quiz-mode-container, .list-view-controls, .term-list-container,
+    .creator-info {
         display: none !important;
     }
 
@@ -1867,7 +2022,7 @@ a:hover {
         margin-bottom: 2mm;
         font-weight: bold;
         color: #000;
-        page-break-after: avoid; /* Keep title with its content */
+        page-break-after: avoid;
     }
 
     .flashcard-grid {
@@ -1879,10 +2034,9 @@ a:hover {
         background-color: #fff !important;
         grid-auto-rows: 1fr;
         border: none;
-        page-break-after: always; /* Ensure a new page after each grid */
+        page-break-after: always;
     }
 
-    /* Adjust the last grid to not force a page break if it's the end */
     .flashcard-grid:last-of-type {
         page-break-after: auto;
     }
