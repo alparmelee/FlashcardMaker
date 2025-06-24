@@ -1,0 +1,2058 @@
+/* Global Styles */
+:root {
+    --primary-color: #007bff;
+    --primary-hover-color: #0056b3;
+    --accent-color: #6f42c1;
+    --bg-light: #f7f9fc;
+    --container-bg: #ffffff;
+    --text-dark: #2c3e50;
+    --text-light: #555;
+    --shadow-color: rgba(0, 0, 0, 0.08);
+    --nav-bg-color: #343a40;
+    /* Changed back to dark for consistency with original HTML */
+    --danger-color: #dc3545;
+    /* Red for errors */
+    --success-color: #28a745;
+    /* Green for success */
+    --warning-color: #ffc107;
+    /* Yellow for warnings */
+    --input-bg: #ffffff;
+    /* Added for input area background */
+    --card-bg-color: #f0f7ff;
+    /* Defined for set-card in flashcard_set.html, now global */
+    --card-border-color: #a3c9f0;
+    /* Defined for set-card in flashcard_set.html, now global */
+}
+
+/* Dark mode CSS variables for home.html */
+.dark-mode {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --nav-bg: #1f1f1f;
+    --nav-text: #e0e0e0;
+    --btn-bg: #333333;
+    --btn-text: #e0e0e0;
+    --primary-color: #66b3ff;
+    /* Lighter blue for dark mode */
+    --primary-hover-color: #3399ff;
+    --accent-color: #9d7fe3;
+    --shadow-color: rgba(255, 255, 255, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Specific body backgrounds from individual HTML files */
+/* No specific background-image for index.html body, it uses hero-section::before */
+
+body.about-page {
+    background-image: url('images/about.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: white;
+    /* Changed text color to white for readability against dark background */
+}
+
+body.create-page {
+    background-image: url('images/create2.jpg');
+    /* New backdrop image */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    /* Makes the background fixed while content scrolls */
+}
+
+body.confirm-email-page {
+    background-image: url('images/email.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+body.login-page {
+    background-image: url('images/login.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+body.signup-page {
+    background-image: url('images/signup.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+body.search-page {
+    background-image: url('images/search2.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+body.user-dashboard-page {
+    background-image: url('images/study2.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* Navigation Bar Styles */
+.top-nav {
+    background-color: #fff;
+    /* Navigator background white for most pages, overridden by dark-mode for home.html */
+    padding: 0.75rem 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    position: sticky;
+    top: 0;
+    z-index: 1002;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Home.html specific nav styles to integrate dark mode */
+body.home-page .top-nav {
+    background-color: var(--nav-bg);
+    color: var(--nav-text);
+}
+
+.top-nav-inner {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+}
+
+.top-nav .nav-logo a {
+    color: #212529;
+    /* Black for most pages */
+    text-decoration: none;
+    font-size: 1.75rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* Home.html specific nav logo text color */
+body.home-page .top-nav .nav-logo a {
+    color: var(--nav-text);
+}
+
+
+.top-nav ul {
+    list-style-type: none;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+}
+
+.top-nav ul li a {
+    color: #212529;
+    /* Black for most pages */
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    border-radius: 5px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    cursor: pointer;
+}
+
+/* Home.html specific nav link text color */
+body.home-page .top-nav ul li a {
+    color: var(--nav-text);
+}
+
+.top-nav ul li a:hover,
+.top-nav ul li a.active {
+    background-color: var(--primary-color);
+    color: #fff;
+    /* Active/hover text white for contrast */
+}
+
+.top-nav .auth-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.top-nav .auth-buttons .btn {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+/* Home.html specific button styles for dark mode */
+body.home-page .auth-buttons .btn {
+    background-color: var(--btn-bg);
+    color: var(--btn-text);
+    padding: 0.4rem 0.8rem;
+    border-radius: 5px;
+}
+
+.top-nav .auth-buttons .btn:hover {
+    background-color: var(--primary-hover-color);
+}
+
+body.home-page .auth-buttons .btn:hover {
+    filter: brightness(0.9);
+}
+
+.top-nav .user-status {
+    color: #222;
+    /* Default for most pages */
+    font-size: 0.95em;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* flashcard_set.html specific user status color */
+body.flashcard-set-page .top-nav .user-status {
+    color: #e0eafc;
+}
+
+
+.top-nav .user-status .logout-button {
+    color: #222;
+    /* Default for most pages */
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0.5rem 0.75rem;
+    border-radius: 5px;
+    border: 1px solid #222;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* flashcard_set.html specific logout button color */
+body.flashcard-set-page .top-nav .user-status .logout-button {
+    color: #f8f9fa;
+    border: 1px solid #f8f9fa;
+}
+
+.top-nav .user-status .logout-button:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: #fff;
+}
+
+
+.main-content-wrapper {
+    padding-top: 1rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+}
+
+/* Home Section Styles (from index.html) */
+.hero-section {
+    background-color: var(--primary-color);
+    color: white;
+    text-align: center;
+    padding: 4rem 1rem;
+    position: relative;
+    overflow: hidden;
+    /* Ensure image doesn't spill out */
+}
+
+.hero-section .hero-content {
+    position: relative;
+    z-index: 1;
+    /* Ensure content is above the image */
+}
+
+.hero-section .hero-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.hero-section .hero-content p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.hero-section .btn-primary {
+    background-color: white;
+    color: var(--primary-color);
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.hero-section .btn-primary:hover {
+    background-color: var(--primary-hover-color);
+    color: white;
+}
+
+.hero-section::before {
+    content: '';
+    background-image: url('images/cramcraft.jpg');
+    background-size: cover;
+    background-position: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.3;
+    /* Adjust opacity as needed */
+    z-index: 0;
+}
+
+/* Features Section - Wider Layout (from index.html) */
+.features {
+    padding: 3rem 1rem;
+    background-color: var(--bg-light);
+    text-align: center;
+}
+
+.features h2 {
+    color: black;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    /* Wider cards */
+    gap: 2rem;
+    /* Slightly larger gap for visual balance */
+    max-width: 1400px;
+    /* Increased max width */
+    margin: 0 auto;
+}
+
+.feature-item {
+    background-color: var(--container-bg);
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.feature-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.feature-item a.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.feature-item .card-image-wrapper {
+    width: 100%;
+    height: 220px;
+    /* Slightly taller images for wider cards */
+    overflow: hidden;
+    position: relative;
+}
+
+.feature-item .card-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px 10px 0 0;
+    transition: transform 0.3s ease;
+}
+
+.feature-item:hover .card-image-wrapper img {
+    transform: scale(1.05);
+}
+
+.feature-item .card-content {
+    padding: 1.25rem;
+    position: relative;
+    z-index: 2;
+    background-color: white;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.feature-item .card-title-overlay {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 0.75rem 1rem;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 0 0 10px 10px;
+    box-sizing: border-box;
+}
+
+.feature-item .card-title-overlay h3 {
+    margin: 0;
+    color: white;
+}
+
+.feature-item p {
+    color: var(--text-light);
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    font-size: 1.05rem;
+    line-height: 1.5;
+}
+
+.feature-item .btn {
+    display: inline-block;
+    margin-top: auto;
+    align-self: flex-start;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.feature-item .btn:hover {
+    background-color: var(--primary-hover-color);
+}
+
+/* Testimonials Section (from index.html - no changes) */
+.testimonials {
+    padding: 3rem 1rem;
+    background-color: var(--container-bg);
+    text-align: center;
+}
+
+.testimonials h2 {
+    color: var(--accent-color);
+    margin-bottom: 2rem;
+    font-size: 2rem;
+}
+
+.testimonial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.testimonial-item {
+    background-color: var(--bg-light);
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px var(--shadow-color);
+    text-align: center;
+}
+
+.testimonial-item p {
+    font-style: italic;
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.testimonial-item span {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+/* About Preview Section (from index.html - improved styling) */
+.about-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3rem 1.5rem 2.5rem 1.5rem;
+    background: linear-gradient(135deg, var(--bg-light) 60%, #e9e6fa 100%);
+    margin: 2rem auto 0 auto;
+    max-width: 600px;
+    border-radius: 16px;
+    box-shadow: 0 6px 24px rgba(111, 66, 193, 0.10), 0 1.5px 6px var(--shadow-color);
+    transition: box-shadow 0.2s;
+}
+
+.about-preview h2 {
+    color: var(--primary-color);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.about-preview p {
+    color: var(--text-light);
+    font-size: 1.08rem;
+    margin-bottom: 2rem;
+    max-width: 480px;
+}
+
+.about-preview .btn {
+    background: var(--primary-color);
+    color: #fff;
+    font-weight: 600;
+    padding: 0.7rem 2.2rem;
+    border-radius: 8px;
+    font-size: 1.08rem;
+    box-shadow: 0 2px 8px rgba(111, 66, 193, 0.08);
+    transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+    border: none;
+    outline: none;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.about-preview .btn:hover {
+    background: var(--primary-hover-color);
+    box-shadow: 0 4px 16px rgba(111, 66, 193, 0.15);
+    transform: translateY(-2px) scale(1.03);
+}
+
+/* About Section Styles (from about.html) */
+#about-section {
+    background-color: rgba(255, 255, 255, 0.9);
+    /* Add a semi-transparent white background to the content area for readability */
+    color: var(--text-dark);
+    /* Ensure text within this section is dark */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+    max-width: 900px;
+    margin: 0 auto 2rem auto;
+    text-align: center;
+    width: 100%;
+    border-radius: 10px;
+    /* Match existing styling */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    /* Enhance shadow for depth */
+}
+
+#about-section .logo-center {
+    height: 250px;
+    width: 250px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 10px var(--shadow-color);
+}
+
+/* Smaller logo for confirm_email.html */
+body.confirm-email-page #about-section .logo-center {
+    height: 100px;
+    width: 100px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+
+#about-section h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--accent-color);
+}
+
+/* Smaller heading for confirm_email.html */
+body.confirm-email-page #about-section h1 {
+    font-size: 2rem;
+}
+
+#about-section p.lead {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin-bottom: 2rem;
+    max-width: 600px;
+}
+
+/* Smaller lead text for confirm_email.html */
+body.confirm-email-page #about-section p.lead {
+    font-size: 1.1rem;
+    max-width: 400px;
+}
+
+/* Button for confirm_email.html */
+body.confirm-email-page #about-section button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+body.confirm-email-page #about-section button:hover {
+    background-color: var(--primary-hover-color);
+}
+
+#about-section section.features,
+#about-section section.tutorial {
+    background: var(--container-bg);
+    padding: 2rem 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px var(--shadow-color);
+    margin-bottom: 2rem;
+    width: 100%;
+}
+
+#about-section section.features h2,
+#about-section section.tutorial h2 {
+    color: var(--accent-color);
+    margin-bottom: 1rem;
+    font-weight: 600;
+    font-size: 1.8rem;
+}
+
+#about-section section.features ul {
+    list-style-type: disc;
+    color: var(--text-dark);
+    font-size: 1rem;
+    text-align: left;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 20px;
+}
+
+#about-section section.features ul li {
+    margin-bottom: 0.7rem;
+    line-height: 1.4;
+}
+
+#about-section .tutorial-video-embed-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    padding-top: 56.25%;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px var(--shadow-color);
+    background-color: #000;
+}
+
+#about-section .tutorial-video-embed-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+/* Styles for Flashcard Maker section (from create.html) */
+#flashcard-maker-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    width: 100%;
+    background-color: transparent;
+    /* Changed to transparent to show backdrop */
+}
+
+.container-fc {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: var(--container-bg);
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px var(--shadow-color);
+    max-width: 750px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 1rem;
+}
+
+.container-fc .logo-center-small {
+    display: block;
+    height: 180px;
+    width: 180px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin: 0 auto 1rem auto;
+    box-shadow: 0 2px 6px var(--shadow-color);
+}
+
+.container-fc>h1 {
+    text-align: center;
+    color: var(--accent-color);
+    margin-bottom: 20px;
+    font-weight: 600;
+    font-size: 2em;
+}
+
+.container-fc h2 {
+    color: var(--primary-color);
+    margin-top: 0;
+    margin-bottom: 18px;
+    font-weight: 500;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+
+.input-area {
+    background-color: var(--input-bg);
+    padding: 25px;
+    border-radius: 10px;
+    border: 1px solid #e7e7e7;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.input-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 12px;
+}
+
+.input-row input,
+.input-area textarea {
+    flex: 1;
+    padding: 12px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 15px;
+    font-family: 'Poppins', sans-serif;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-area textarea {
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.input-row input:focus,
+.input-area textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
+    outline: none;
+}
+
+.container-fc button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    margin-right: 8px;
+    margin-top: 8px;
+    transition: background-color 0.2s ease-in-out, transform 0.1s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.container-fc button:hover {
+    background-color: var(--primary-hover-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.container-fc button:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.container-fc button:disabled {
+    background-color: #b0bec5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.container-fc #show-bulk-input,
+.container-fc #show-manual-input,
+.container-fc #back-to-input {
+    background-color: #6c757d;
+}
+
+.container-fc #show-bulk-input:hover,
+.container-fc #show-manual-input:hover,
+.container-fc #back-to-input:hover {
+    background-color: #5a6268;
+}
+
+.container-fc #print-cards {
+    background-color: var(--success-color);
+}
+
+.container-fc #print-cards:hover {
+    background-color: #1e7e34;
+}
+
+.display-area {
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: var(--container-bg);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 3px 10px var(--shadow-color);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.flashcard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-auto-rows: minmax(130px, auto);
+    min-height: 400px;
+    grid-gap: 20px;
+}
+
+.card-item {
+    border: 1px solid var(--card-border-color);
+    /* This variable is not defined in :root for this file, keeping for consistency */
+    background-color: var(--card-bg-color);
+    /* This variable is not defined in :root for this file, keeping for consistency */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 15px;
+    font-size: 14px;
+    border-radius: 8px;
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.07);
+    word-wrap: break-word;
+    min-height: 120px;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card-item:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card-item .label {
+    font-weight: 600;
+    font-size: 11px;
+    color: var(--primary-color);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.controls {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#page-info {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 17px;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.input-instructions {
+    font-size: 0.95em;
+    color: var(--text-light);
+    margin-top: 20px;
+    margin-bottom: 15px;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #eee;
+}
+
+.input-instructions p {
+    margin-bottom: 8px;
+}
+
+.input-instructions code {
+    background-color: #e0e0e0;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', Courier, monospace;
+    color: #333;
+}
+
+.input-instructions hr {
+    border: 0;
+    height: 1px;
+    background-color: #ddd;
+    margin: 15px 0;
+}
+
+.delimiter-group {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.delimiter-group-title {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+    font-size: 1.05em;
+}
+
+.delimiter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 15px;
+    align-items: center;
+}
+
+.delimiter-options label {
+    margin-right: 10px;
+    font-size: 0.98em;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+}
+
+.delimiter-options input[type="radio"] {
+    margin-right: 6px;
+    accent-color: var(--primary-color);
+}
+
+.delimiter-options input[type="text"] {
+    padding: 8px 10px;
+    font-size: 0.95em;
+    margin-left: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-family: 'Poppins', sans-serif;
+    background-color: white;
+}
+
+#custom-term-def-delimiter-input {
+    width: 50px;
+    text-align: center;
+}
+
+#custom-card-delimiter-input {
+    width: 100px;
+}
+
+/* Specific styles for flashcard_set.html content */
+.main-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    flex-grow: 1;
+    /* Allow content to grow and fill space */
+}
+
+.set-header h1 {
+    font-size: 2em;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+    /* Added color for header */
+}
+
+.set-meta-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.9em;
+    color: #555;
+    margin-bottom: 2rem;
+}
+
+.set-meta-info .fa-star {
+    color: #ffc107;
+}
+
+.study-modes {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.mode-button {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    font-size: 0.9em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.2s, color 0.2s;
+    color: #2c3e50;
+    font-family: 'Poppins', sans-serif;
+}
+
+.mode-button:hover {
+    background-color: #f0f0f0;
+}
+
+.mode-button.active {
+    background-color: #4a5fc4;
+    color: white;
+    border-color: #4a5fc4;
+}
+
+.mode-button .fa-solid {
+    font-size: 1.1em;
+}
+
+.flashcard-viewer-container {
+    perspective: 1000px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.card-navigation-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.card-progress {
+    font-weight: 600;
+    font-size: 1.2em;
+    text-align: center;
+}
+
+.flashcard {
+    width: 100%;
+    max-width: 700px;
+    height: 400px;
+    position: relative;
+    cursor: pointer;
+}
+
+.flashcard-inner {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.flashcard.flipped .flashcard-inner {
+    transform: rotateY(180deg);
+}
+
+.flashcard-front,
+.flashcard-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    background-color: white;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5em;
+    padding: 2rem;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.flashcard-back {
+    transform: rotateY(180deg);
+}
+
+.card-nav-button {
+    background: none;
+    border: none;
+    font-size: 2em;
+    color: #333;
+    cursor: pointer;
+    padding: 0 1rem;
+}
+
+.card-nav-button:disabled {
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+.quiz-mode-container {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.quiz-question {
+    font-size: 1.5em;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+#quiz-choices-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.choice-button {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    font-size: 1em;
+    font-family: 'Poppins', sans-serif;
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
+    height: 100%;
+}
+
+.choice-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    border-color: #4a5fc4;
+}
+
+.choice-button.correct {
+    background-color: #d4edda;
+    border-color: #28a745;
+}
+
+.choice-button.incorrect {
+    background-color: #f8d7da;
+    border-color: #dc3545;
+}
+
+.choice-button:disabled {
+    cursor: not-allowed;
+}
+
+.list-view-controls {
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.list-view-controls label {
+    font-weight: 600;
+}
+
+#category-filter {
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+}
+
+.term-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.term-row {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.term-row .term {
+    flex: 1;
+    font-weight: 600;
+}
+
+.term-row .definition {
+    flex: 2;
+    color: #555;
+}
+
+.creator-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.creator-info img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.creator-info .details {
+    font-size: 0.9em;
+}
+
+.creator-info .details span {
+    display: block;
+    color: #777;
+}
+
+.creator-info .details strong {
+    color: #333;
+}
+
+/* User Dashboard Styles (from user_dashboard.html) */
+.content-wrapper {
+    padding: 25px 30px;
+    max-width: 1200px;
+    margin: 25px auto;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    width: calc(100% - 60px);
+    flex-grow: 1;
+}
+
+/* Overwrite common content-wrapper for search_page */
+body.search-page .content-wrapper {
+    background-color: rgba(255, 255, 255, 0.9);
+    /* Semi-transparent white background for readability */
+    margin: 2rem auto;
+    /* Center the content wrapper */
+    box-sizing: border-box;
+    /* Include padding in element's total width and height */
+}
+
+/* Overwrite common content-wrapper for confirm_email.html (using #about-section) */
+body.confirm-email-page .main-content-wrapper {
+    justify-content: center;
+}
+
+
+.content-wrapper h1,
+.content-wrapper h2 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+/* search_page.html specific heading */
+body.search-page .content-wrapper h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--accent-color);
+    text-align: center;
+}
+
+
+.user-greeting {
+    font-size: 1.4em;
+    font-weight: 500;
+    margin-bottom: 25px;
+    color: var(--text-dark);
+}
+
+.sets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+/* search_page.html specific sets-grid */
+body.search-page .sets-grid {
+    gap: 1.5rem;
+    padding: 0 1rem;
+    /* Padding inside the grid */
+}
+
+.set-card {
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--card-border-color);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 3px 7px rgba(0, 0, 0, 0.07);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.set-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.set-card h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+    font-size: 1.3em;
+    font-weight: 600;
+}
+
+/* search_page.html specific set-card h3 */
+body.search-page .set-card h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+body.search-page .set-card h3 a {
+    text-decoration: none;
+    color: var(--primary-color);
+    transition: color 0.2s ease;
+}
+
+body.search-page .set-card h3 a:hover {
+    color: var(--primary-hover-color);
+}
+
+.set-card p {
+    font-size: 0.95em;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+/* search_page.html specific set-card p */
+body.search-page .set-card p {
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    margin-bottom: 0.75rem;
+}
+
+.set-card .set-meta {
+    font-size: 0.85em;
+    color: var(--text-light);
+    margin-top: auto;
+}
+
+/* search_page.html specific set-card meta */
+body.search-page .set-card .set-meta {
+    font-size: 0.85rem;
+}
+
+.create-new-set-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 25px;
+    transition: background-color 0.2s ease;
+}
+
+.create-new-set-btn:hover {
+    background-color: var(--primary-hover-color);
+}
+
+
+/* Login/Signup Form Styles */
+.form-page-wrapper {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 1rem;
+}
+
+.form-container {
+    background-color: rgba(255, 255, 255, 0.9);
+    /* Semi-transparent white background for readability */
+    padding: 2.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 450px;
+    text-align: center;
+}
+
+.form-container h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-dark);
+}
+
+.form-group {
+    margin-bottom: 1.2rem;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    /* Include padding in element's total width and height */
+}
+
+.form-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.9rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 600;
+    width: 100%;
+    transition: background-color 0.2s ease;
+    margin-top: 1rem;
+}
+
+.form-button:hover {
+    background-color: var(--primary-hover-color);
+}
+
+.form-link {
+    display: block;
+    margin-top: 1rem;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.form-link:hover {
+    color: var(--primary-hover-color);
+}
+
+/* Search page specific */
+.search-bar-container {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 2rem;
+}
+
+.search-bar-container input[type="text"] {
+    flex-grow: 1;
+    padding: 0.8rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.search-bar-container button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.search-bar-container button:hover {
+    background-color: var(--primary-hover-color);
+}
+
+.search-results-info {
+    margin-bottom: 2rem;
+    text-align: center;
+    color: var(--text-light);
+    font-size: 1rem;
+}
+
+
+/* Home page specific (#home-section) */
+#home-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem;
+    max-width: 900px;
+    margin: 0 auto;
+    /* Center the section */
+    text-align: center;
+    width: 100%;
+    background-color: var(--bg-color);
+    /* Use background color variable */
+    box-shadow: 0 4px 15px var(--shadow-color);
+    /* Use shadow color variable */
+    border-radius: 10px;
+}
+
+#home-section .logo-center {
+    height: 250px;
+    /* Kept original size for this logo */
+    width: 250px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    /* Specific shadow for logo */
+}
+
+#home-section h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+    /* Use primary color */
+    transition: color 0.3s ease;
+}
+
+#home-section p.lead {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    /* Use general text color */
+    margin-bottom: 2rem;
+    max-width: 600px;
+    transition: color 0.3s ease;
+}
+
+/* Quiz mode styles */
+.quiz-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#quiz-choices button {
+    display: block;
+    margin: 10px 0;
+    width: 100%;
+}
+
+/* Message Box */
+.message-box {
+    position: fixed;
+    /* Default position, overridden for signup */
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--warning-color);
+    color: var(--text-dark);
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    display: none;
+    font-size: 16px;
+    font-weight: 500;
+    animation: fadeInOut 3s ease-in-out;
+    border: 2px solid var(--danger-color);
+    max-width: 90%;
+    text-align: center;
+}
+
+/* Overwrite for signup.html */
+body.signup-page .message-box {
+    position: relative;
+    /* Changed from fixed to relative for flow within form-container */
+    margin-top: 1rem;
+    /* Space from other form elements */
+    padding: 10px 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-size: 0.9rem;
+    border: 1px solid var(--warning-color);
+    top: auto;
+    left: auto;
+    transform: none;
+}
+
+
+.message-box.success {
+    background-color: var(--success-color);
+    color: white;
+    border: 2px solid var(--success-color);
+}
+
+/* Overwrite for signup.html */
+body.signup-page .message-box.success {
+    border: 1px solid var(--success-color);
+}
+
+.message-box.error {
+    background-color: var(--danger-color);
+    color: white;
+    border: 2px solid var(--danger-color);
+}
+
+/* Overwrite for signup.html */
+body.signup-page .message-box.error {
+    border: 1px solid var(--danger-color);
+}
+
+
+@keyframes fadeInOut {
+    0%,
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+    10%,
+    90% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* Adjustments for general button styling to match modal */
+.btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+}
+
+/* Basic styling for the modal for set title input */
+.modal {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1000;
+    /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Black w/ opacity */
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+    color: #4a5fc4;
+}
+
+.modal-content input[type="text"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+.modal-content .modal-buttons {
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+}
+
+.modal-content .modal-buttons button {
+    flex: 1;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    transition: background-color 0.2s;
+    font-family: 'Poppins', sans-serif;
+}
+
+.modal-content .modal-buttons .save-btn-modal {
+    background-color: #4CAF50;
+    /* Green */
+    color: white;
+}
+
+.modal-content .modal-buttons .save-btn-modal:hover {
+    background-color: #45a049;
+}
+
+.modal-content .modal-buttons .cancel-btn-modal {
+    background-color: #f44336;
+    /* Red */
+    color: white;
+}
+
+.modal-content .modal-buttons .cancel-btn-modal:hover {
+    background-color: #da190b;
+}
+
+/* Print styles (from create.html and flashcard_set.html) */
+.print-page-title {
+    display: none;
+}
+
+#print-view {
+    display: none;
+}
+
+@media print {
+    html,
+    body {
+        height: auto;
+        background-color: #fff !important;
+        font-family: Arial, sans-serif;
+        font-size: 10pt;
+        color: #000 !important;
+        padding: 0;
+        margin: 0;
+    }
+
+    .top-nav {
+        display: none !important;
+    }
+
+    .main-content-wrapper {
+        padding-top: 0;
+    }
+
+    #flashcard-maker-section {
+        display: block !important;
+        padding: 0;
+        margin: 0;
+        background-color: #fff !important;
+    }
+
+    .container-fc {
+        box-shadow: none;
+        padding: 0;
+        margin: 0 auto;
+        width: 98%;
+        max-width: 7.8in;
+        gap: 2.5mm;
+        border-radius: 0;
+        background-color: #fff !important;
+    }
+
+    .container-fc>h1,
+    .container-fc .logo-center-small {
+        display: none !important;
+    }
+
+    .input-area,
+    .controls:not(#print-controls-in-print-mode),
+    #page-info,
+    .message-box,
+    #add-row,
+    #start-flashcards,
+    #back-to-input,
+    #prev-page,
+    #next-page,
+    #print-cards,
+    #parse-bulk-data,
+    #show-manual-input,
+    #show-bulk-input {
+        display: none !important;
+    }
+
+    .display-area {
+        border: none;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        box-shadow: none;
+        background-color: #fff !important;
+    }
+
+    @page {
+        size: letter;
+        margin: 0.3in;
+    }
+
+    .print-page-title {
+        display: block !important;
+        text-align: center;
+        font-size: 9pt;
+        margin-bottom: 2mm;
+        font-weight: bold;
+        color: #000;
+    }
+
+    .flashcard-grid {
+        display: grid !important;
+        page-break-after: always;
+        grid-template-columns: repeat(2, 1fr) !important;
+        grid-gap: 2.5mm !important;
+        height: auto;
+        min-height: 0;
+        background-color: #fff !important;
+        grid-auto-rows: 1fr;
+        border: none;
+    }
+
+    .card-item {
+        border: 0.8pt solid #333 !important;
+        font-size: 8pt !important;
+        min-height: 1.7in !important;
+        background-color: #fdfdfd !important;
+        padding: 2mm !important;
+        page-break-inside: avoid !important;
+        box-shadow: none !important;
+        white-space: pre-wrap !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        overflow: hidden !important;
+        border-radius: 4px !important;
+        color: #000 !important;
+        text-align: center;
+        /* Ensure text is centered in print */
+    }
+
+    .card-item .label {
+        font-size: 7pt !important;
+        color: #000 !important;
+        font-weight: bold !important;
+        margin-bottom: 1.5mm !important;
+        text-transform: uppercase;
+    }
+
+    /* Print specific for flashcard_set.html */
+    body.flashcard-set-page .top-nav,
+    body.flashcard-set-page .main-container>header,
+    /* Hide main header in print */
+    body.flashcard-set-page .study-modes,
+    body.flashcard-set-page .flashcard-viewer-container,
+    body.flashcard-set-page .card-navigation-wrapper,
+    body.flashcard-set-page .quiz-mode-container,
+    body.flashcard-set-page .list-view-controls,
+    body.flashcard-set-page .creator-info,
+    body.flashcard-set-page .hidden:not(#print-view) {
+        /* Keep original hidden behavior, but allow #print-view */
+        display: none !important;
+    }
+
+    body.flashcard-set-page #print-view {
+        display: block !important;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .top-nav-inner {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+    }
+
+    .top-nav ul {
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 0.5rem;
+    }
+
+    .top-nav .auth-buttons,
+    .top-nav .user-status {
+        margin-top: 0.5rem;
+        justify-content: center;
+    }
+
+    .feature-grid {
+        grid-template-columns: 1fr;
+        /* Stack cards on smaller screens */
+    }
+
+    .feature-item .card-image-wrapper {
+        height: 200px;
+        /* Slightly larger image height for stacked cards */
+    }
+
+    /* About page responsive */
+    #about-section h1 {
+        font-size: 2rem;
+    }
+
+    #about-section .logo-center {
+        height: 200px;
+        width: 200px;
+    }
+
+    #about-section p.lead {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    #about-section section.features h2,
+    #about-section section.tutorial h2 {
+        font-size: 1.5rem;
+    }
+
+    /* Create page responsive */
+    .container-fc>h1 {
+        font-size: 1.8em;
+    }
+
+    .input-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .input-row input {
+        width: 100%;
+    }
+
+    /* Flashcard set page responsive */
+    .main-container {
+        padding: 0 0.5rem;
+        /* Reduce side padding on smaller screens */
+    }
+
+    .flashcard {
+        height: 300px;
+        /* Adjust height for smaller screens */
+        font-size: 2em;
+        /* Adjust font size for smaller screens */
+    }
+
+    .flashcard-viewer-container {
+        flex-direction: column;
+        /* Stack buttons and card vertically */
+        gap: 0.5rem;
+    }
+
+    .card-nav-button {
+        padding: 0.5rem 1rem;
+        font-size: 1.5em;
+    }
+
+    #quiz-choices-container {
+        grid-template-columns: 1fr;
+        /* Stack quiz choices vertically */
+    }
+
+    /* Dashboard page responsive */
+    .content-wrapper {
+        width: calc(100% - 20px);
+        /* Adjust padding for smaller screens */
+        margin: 15px auto;
+    }
+
+    .sets-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+    }
+
+    /* Login/Signup page responsive */
+    .form-container {
+        padding: 1.5rem;
+    }
+
+    /* Confirm email responsive */
+    body.confirm-email-page #about-section {
+        padding: 1.5rem;
+    }
+
+    body.confirm-email-page #about-section h1 {
+        font-size: 1.75rem;
+    }
+
+    body.confirm-email-page #about-section p.lead {
+        font-size: 1rem;
+    }
+
+    body.confirm-email-page #about-section .logo-center {
+        height: 80px;
+        width: 80px;
+    }
+
+    /* Search page responsive */
+    .search-bar-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .search-bar-container input[type="text"],
+    .search-bar-container button {
+        width: 100%;
+    }
+
+    .sets-grid {
+        grid-template-columns: 1fr;
+        /* Stack cards on smaller screens */
+    }
+}
