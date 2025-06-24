@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>About CramCraft</title>
+    <title>CramCraft - Master Your Learning</title>
     <link rel="stylesheet" href="stylesheet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
@@ -15,6 +15,789 @@
         window.supabase = supabase;
     </script>
 
+    <style>
+        /* Enhanced CramCraft Stylesheet */
+        :root {
+            --primary-color: #6366f1;
+            --primary-hover: #5855eb;
+            --primary-light: #818cf8;
+            --secondary-color: #f59e0b;
+            --secondary-hover: #d97706;
+            --accent-color: #06b6d4;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --text-light: #9ca3af;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-tertiary: #f3f4f6;
+            --border-color: #e5e7eb;
+            --border-focus: #3b82f6;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Base Reset & Typography */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--bg-secondary);
+            font-size: 16px;
+            overflow-x: hidden;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+
+        h1 { font-size: 3rem; }
+        h2 { font-size: 2.25rem; }
+        h3 { font-size: 1.875rem; }
+        h4 { font-size: 1.5rem; }
+        h5 { font-size: 1.25rem; }
+        h6 { font-size: 1.125rem; }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-secondary);
+        }
+
+        /* Navigation */
+        .top-nav {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .top-nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .nav-logo a {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .top-nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .top-nav ul li a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .top-nav ul li a:hover,
+        .top-nav ul li a.active {
+            color: var(--primary-color);
+            background-color: rgba(99, 102, 241, 0.1);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .user-status {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border: none;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-hover), var(--primary-color));
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9)), url('cramcraft.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Keeps background image fixed during scroll */
+            color: white;
+            text-align: center;
+            padding: 6rem 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content h1 {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-content p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Main Content */
+        .home-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Features Section */
+        .features {
+            margin-bottom: 4rem;
+        }
+
+        .features h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--text-primary);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .feature-item {
+            background: var(--bg-primary);
+            padding: 1.5rem; /* Adjusted padding to accommodate image */
+            border-radius: var(--radius-lg);
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+            display: flex; /* Use flexbox for vertical alignment */
+            flex-direction: column;
+            align-items: center; /* Center content horizontally */
+        }
+
+        .feature-item:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-light);
+        }
+
+        .feature-item h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .feature-item p {
+            margin-bottom: 1.5rem;
+            flex-grow: 1; /* Allow paragraph to take available space */
+        }
+
+        .feature-item img {
+            width: 100%; /* Make image fill the width of the card */
+            height: 180px; /* Fixed height for consistency, adjust as needed */
+            object-fit: cover; /* Cover the area, cropping if necessary */
+            border-radius: var(--radius-md); /* Rounded corners for the image */
+            margin-bottom: 1.5rem; /* Space below image */
+        }
+
+        /* Removed image-overlay styles as they won't be used in this combined approach */
+        /*
+        .feature-item .image-overlay { ... }
+        .feature-item:hover .image-overlay { ... }
+        */
+
+        /* About Preview with background image */
+        .about-preview {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(249, 250, 251, 0.9)), url('study.jpg');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            padding: 3rem;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+        }
+
+        .about-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8); /* Added a lighter overlay for text readability */
+            border-radius: var(--radius-lg);
+            z-index: 0; /* Ensures content is above this overlay */
+        }
+
+        .about-preview .content {
+            position: relative;
+            z-index: 1; /* Ensures content is above the pseudo-element overlay */
+        }
+
+        .about-preview h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Image Gallery Section - REMOVED */
+        /* All .image-gallery, .gallery-item, .gallery-item img, .gallery-item .overlay styles are removed */
+
+
+        /* Flashcard Maker Section */
+        #flashcard-maker-section {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--bg-primary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+            display: flex; /* Ensure flex is applied for layout inside */
+            flex-direction: column; /* Organize content vertically */
+            align-items: center; /* Center items horizontally */
+        }
+        /* Override initial inline style from JS if needed */
+        #flashcard-maker-section.hidden {
+            display: none !important;
+        }
+
+
+        #flashcard-maker-section h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+        }
+
+        /* Input Areas */
+        .input-area {
+            margin-bottom: 2rem;
+            width: 100%; /* Make input areas take full width */
+            max-width: 600px; /* Limit max width for readability */
+        }
+
+        .input-area h3 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .input-toggle {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        .input-toggle .btn {
+            padding: 0.75rem 2rem;
+        }
+
+        /* Manual Input */
+        #term-def-inputs {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .input-row input {
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            transition: var(--transition);
+            background: var(--bg-secondary);
+        }
+
+        .input-row input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            background: var(--bg-primary);
+        }
+
+        /* Bulk Input */
+        #bulk-data-input {
+            width: 100%;
+            min-height: 200px;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-size: 1rem;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            transition: var(--transition);
+            background: var(--bg-secondary);
+        }
+
+        #bulk-data-input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            background: var(--bg-primary);
+        }
+
+        /* Delimiter Options */
+        .delimiter-options {
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: var(--bg-tertiary);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            width: 100%; /* Make delimiters take full width */
+            max-width: 600px; /* Limit max width for readability */
+        }
+
+        .delimiter-options h4 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .delimiter-group {
+            margin-bottom: 1rem;
+        }
+
+        .delimiter-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+            transition: var(--transition);
+        }
+
+        .delimiter-group label:hover {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .delimiter-group input[type="radio"] {
+            accent-color: var(--primary-color);
+        }
+
+        .custom-delimiter-input {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            width: 100px;
+        }
+
+        /* Flashcard Display */
+        #flashcard-display {
+            text-align: center;
+            width: 100%; /* Make display area take full width */
+        }
+
+        #page-info {
+            margin-bottom: 2rem;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .flashcard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card-item {
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-light);
+        }
+
+        .card-item .label {
+            position: absolute;
+            top: 0.5rem;
+            left: 0.5rem;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .card-item-content {
+            margin-top: 1rem;
+            line-height: 1.5;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .controls .btn {
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Print Page Titles */
+        .print-page-title {
+            text-align: center;
+            margin: 2rem 0 1rem 0;
+            color: var(--primary-color);
+            font-weight: 600;
+            page-break-before: always;
+        }
+
+        .print-page-title:first-child {
+            page-break-before: auto;
+        }
+
+        /* Message Box */
+        .message-box {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-md);
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+            display: none;
+            animation: slideInRight 0.3s ease-out;
+        }
+
+        .message-box.success {
+            background: var(--success-color);
+        }
+
+        .message-box.warning {
+            background: var(--warning-color);
+        }
+
+        .message-box.error {
+            background: var(--error-color);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--text-primary);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-1 { margin-top: 0.25rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-3 { margin-top: 0.75rem; }
+        .mt-4 { margin-top: 1rem; }
+
+        .mb-1 { margin-bottom: 0.25rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-3 { margin-bottom: 0.75rem; }
+        .mb-4 { margin-bottom: 1rem; }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .top-nav-inner {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem;
+            }
+            
+            .top-nav ul {
+                gap: 1rem;
+            }
+            
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-content p {
+                font-size: 1.125rem;
+            }
+            
+            .home-content {
+                padding: 2rem 1rem;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .feature-item img {
+                height: 150px; /* Adjusted for smaller screens */
+            }
+
+            /* No image gallery styles here anymore */
+            
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .flashcard-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 1rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .controls .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .message-box {
+                right: 1rem;
+                left: 1rem;
+                top: 1rem;
+            }
+            
+            #flashcard-maker-section {
+                margin: 1rem;
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+            
+            .card-item {
+                min-height: 120px;
+                padding: 1rem;
+            }
+            
+            .input-toggle {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .top-nav,
+            .controls,
+            .message-box,
+            .footer {
+                display: none !important;
+            }
+            
+            .flashcard-grid {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            
+            .card-item {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                border: 2px solid #000;
+                box-shadow: none;
+            }
+            
+            .print-page-title {
+                page-break-before: always;
+            }
+            
+            .print-page-title:first-child {
+                page-break-before: avoid;
+            }
+            
+            body {
+                background: white;
+            }
+            
+            #flashcard-maker-section {
+                box-shadow: none;
+                border: none;
+            }
+        }
+
+        /* Dark mode support (optional) */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --text-primary: #f9fafb;
+                --text-secondary: #d1d5db;
+                --text-light: #9ca3af;
+                --bg-primary: #1f2937;
+                --bg-secondary: #111827;
+                --bg-tertiary: #374151;
+                --border-color: #374151;
+            }
+            
+            .top-nav {
+                background: rgba(31, 41, 55, 0.95);
+            }
+            
+            .hero-section {
+                background: linear-gradient(135deg, rgba(79, 70, 229, 0.9), rgba(124, 58, 237, 0.9)), url('cramcraft.jpg');
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+            }
+
+            .about-preview {
+                background: linear-gradient(135deg, rgba(31, 41, 55, 0.9), rgba(17, 24, 39, 0.9)), url('study.jpg');
+                background-size: cover;
+                background-position: center;
+            }
+            .about-preview::before {
+                background: rgba(31, 41, 55, 0.8);
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -26,8 +809,6 @@
             <ul>
                 <li><a href="index.html" class="active">Home</a></li>
                 <li><a href="user_dashboard.html">Dashboard</a></li>
-                <!-- <li><a href="create.html">Create</a></li> --> 
-                <!-- <li><a href="search_page.html">Search</a></li> -->
                 <li><a href="about.html">About</a></li>
             </ul>
             <div class="auth-buttons">
@@ -46,33 +827,37 @@
         </div>
     </header>
 
-    <!-- basic home page layout -->
     <main class="home-content">
         <section class="features">
             <h2>Why Choose CramCraft?</h2>
             <div class="feature-grid">
                 <div class="feature-item">
+                    <img src="create.jpg" alt="Create Flashcards">
                     <h3>Create Flashcards</h3> 
-                    <p>Quickly create flashcards with our intuitive interface.</p>
+                    <p>Quickly create flashcards with our intuitive interface. Design custom study materials that fit your learning style.</p>
                     <a href="create.html" class="btn">Learn More</a>
                 </div>
                 <div class="feature-item">
+                    <img src="study.jpg" alt="Organize Your Study">
                     <h3>Organize Your Study</h3>
-                    <p>Keep your flashcards organized and accessible anytime.</p>
+                    <p>Keep your flashcards organized and accessible anytime. Track your progress and optimize your learning sessions.</p>
                     <a href="user_dashboard.html" class="btn">Learn More</a>
                 </div>
                 <div class="feature-item">
+                    <img src="search.jpg" alt="Search and Discover">
                     <h3>Search and Discover</h3>
-                    <p>Find flashcards created by others and expand your knowledge.</p>
+                    <p>Find flashcards created by others and expand your knowledge. Access a vast library of study materials.</p>
                     <a href="search_page.html" class="btn">Learn More</a>
                 </div>
             </div>
         </section>
 
         <section class="about-preview">
-            <h2>About CramCraft</h2>
-            <p>CramCraft is designed to help students and professionals alike to study smarter, not harder. Learn more about our mission and features.</p>
-            <a href="about.html" class="btn">Read More</a>
+            <div class="content">
+                <h2>About CramCraft</h2>
+                <p>CramCraft is designed to help students and professionals alike to study smarter, not harder. Our platform combines cutting-edge technology with proven learning methodologies to create the ultimate flashcard experience.</p>
+                <a href="about.html" class="btn">Read More</a>
+            </div>
         </section>
     </main>
 
@@ -82,17 +867,74 @@
 
     <div class="message-box" id="custom-alert"></div>
 
+    <section id="flashcard-maker-section" class="hidden">
+        <h2>Create Your Flashcards</h2>
+        
+        <div class="input-toggle">
+            <button id="show-manual-input" class="btn btn-primary">Manual Input</button>
+            <button id="show-bulk-input" class="btn">Bulk Input</button>
+        </div>
+
+        <div id="manual-input-area" class="input-area">
+            <h3>Manual Input Mode</h3>
+            <div id="term-def-inputs">
+                <div class="input-row">
+                    <input type="text" placeholder="Term 1" class="term">
+                    <input type="text" placeholder="Definition 1" class="definition">
+                </div>
+            </div>
+            <div style="text-align: center; margin: 1rem 0;">
+                <button id="add-row" class="btn">Add Row</button>
+                <button id="start-flashcards" class="btn btn-primary">Create Flashcards</button>
+            </div>
+        </div>
+
+        <div id="bulk-input-area" class="input-area hidden">
+            <h3>Bulk Input Mode</h3>
+            <textarea id="bulk-data-input" placeholder="Enter your flashcard data here..."></textarea>
+            
+            <div class="delimiter-options">
+                <h4>Term/Definition Separator</h4>
+                <div class="delimiter-group">
+                    <label><input type="radio" name="termDefDelimiter" value="tab" checked> Tab</label>
+                    <label><input type="radio" name="termDefDelimiter" value="comma"> Comma (,)</label>
+                    <label><input type="radio" name="termDefDelimiter" value="tilde"> Tilde (~)</label>
+                    <label><input type="radio" name="termDefDelimiter" value="customTermDef"> Custom:</label>
+                    <input type="text" id="custom-term-def-delimiter-input" class="custom-delimiter-input hidden" placeholder="Enter character" maxlength="1">
+                </div>
+                
+                <h4>Card Separator</h4>
+                <div class="delimiter-group">
+                    <label><input type="radio" name="cardDelimiter" value="newline" checked> New Line</label>
+                    <label><input type="radio" name="cardDelimiter" value="semicolon"> Semicolon (;)</label>
+                    <label><input type="radio" name="cardDelimiter" value="customCard"> Custom:</label>
+                    <input type="text" id="custom-card-delimiter-input" class="custom-delimiter-input hidden" placeholder="Enter separator">
+                </div>
+            </div>
+            
+            <div style="text-align: center;">
+                <button id="parse-bulk-data" class="btn btn-primary">Parse & Create Flashcards</button>
+            </div>
+        </div>
+
+        <div id="flashcard-display" class="hidden">
+            <div id="page-info" class="hidden"></div>
+            <div id="cards-container"></div>
+            <div class="controls hidden">
+                <button id="prev-page" class="btn">← Previous</button>
+                <button id="next-page" class="btn">Next →</button>
+                <button id="print-cards" class="btn">Print Cards</button>
+                <button id="back-to-input" class="btn">Back to Input</button>
+            </div>
+        </div>
+    </section>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // --- Page Swapping Logic (Simplified) ---
-            // Since "About" is its own page, we primarily ensure the create section is visible.
             const flashcardMakerSection = document.getElementById('flashcard-maker-section');
-            
-            // Default view: show flashcard maker section
-            flashcardMakerSection.classList.remove('hidden');
-            flashcardMakerSection.style.display = 'flex';
+            flashcardMakerSection.classList.add('hidden'); 
+            flashcardMakerSection.style.display = 'none'; // Ensure it's hidden
 
-            // --- Flashcard Maker JS ---
             const addRowBtn = document.getElementById('add-row');
             const startManualBtn = document.getElementById('start-flashcards');
             const termDefInputs = document.getElementById('term-def-inputs');
@@ -225,9 +1067,9 @@
                         if (currentCardBlockLines.length > 0) {
                             if (trimmedCurrentLine === "") isNewCardBoundary = true;
                             else if (!isOptionLine(currentLine) && (currentCardBlockLines.length > 0 && !isOptionLine(currentCardBlockLines[currentCardBlockLines.length-1]))) {
-                                 if(!isOptionLine(currentLine) && !isOptionLine(currentCardBlockLines[currentCardBlockLines.length-1])) {
-                                     isNewCardBoundary = true;
-                                 }
+                                   if(!isOptionLine(currentLine) && !isOptionLine(currentCardBlockLines[currentCardBlockLines.length-1])) {
+                                       isNewCardBoundary = true;
+                                   }
                             }
                         }
                         if (isNewCardBoundary && currentCardBlockLines.length > 0) { cardStrings.push(currentCardBlockLines.join('\n')); currentCardBlockLines = []; }
@@ -264,7 +1106,8 @@
                         flashcardData.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` });
                     }
                 } else { showMessage('No data to display.', 'error'); return; }
-                manualInputArea.classList.add('hidden'); bulkInputArea.classList.add('hidden');
+                manualInputArea.classList.add('hidden');
+                bulkInputArea.classList.add('hidden');
                 displayArea.classList.remove('hidden');
                 currentPage = 0;
                 const actualCards = flashcardData.filter(c => c.term !== '(Empty Slot)').length;
@@ -387,7 +1230,5 @@
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
-
 </body>
 </html>
