@@ -174,6 +174,7 @@
 
             // Initial Load
             populateCategoryFilter();
+            showCard(0);
 
         })();
         document.addEventListener('DOMContentLoaded', () => {
@@ -204,8 +205,7 @@
             const termListContainer = document.getElementById('term-list-container');
             let currentCardIndex = 0;
             let currentQuizIndex = 0;
-            showCard(0);
-            
+
             // --- All other functions (shuffle, switchView, showCard, quiz, list view) remain the same ---
             function shuffleArray(array) {
                 for (let i = array.length - 1; i > 0; i--) {
