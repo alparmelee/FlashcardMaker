@@ -149,7 +149,7 @@
             flashcardData = cards.filter(card =>
                 (card.term && card.term.trim()) || (card.definition && card.definition.trim())
             );
-            
+
             if (flashcardData.length === 0) {
                 document.querySelector('.main-container').innerHTML = '<p>No flashcards found for this set.</p>';
                 return;
@@ -172,8 +172,6 @@
                 document.querySelector('.creator-info strong').textContent = creatorUsername;
             }
 
-
-            showCard(0);
             populateCategoryFilter();
         })();
         document.addEventListener('DOMContentLoaded', () => {
@@ -378,6 +376,7 @@
 
             // Initial Load
             populateCategoryFilter();
+            showCard(0);
         });
     </script>
 </body>
