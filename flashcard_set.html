@@ -150,6 +150,8 @@
                 (card.term && card.term.trim()) || (card.definition && card.definition.trim())
             );
 
+            showCard(0);
+
             if (flashcardData.length === 0) {
                 document.querySelector('.main-container').innerHTML = '<p>No flashcards found for this set.</p>';
                 return;
@@ -392,7 +394,6 @@
             modePrintBtn.addEventListener('click', prepareAndPrintAdvanced); // Changed to call advanced function
             categoryFilter.addEventListener('change', (e) => renderListView(e.target.value));
         });
-        showCard(0);
     </script>
 </body>
 
