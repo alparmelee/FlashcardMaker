@@ -137,6 +137,26 @@
                 return;
             }
 
+            const setTitleElement = document.querySelector('.set-header h1');
+
+            try {
+                const {data: setData, error: setError} = await supabase
+                    .from('flashcard_sets')
+                    .select('title')
+                    .eq('id', setId)
+                    .single();
+
+                if (setError) {
+                    console.error('Error fetching set title:', setError.message);
+                    setTitleElement.textContent = 'Untitled Set';
+                } else {
+                    setTitleElement.textContent = setData.title || 'Untitled Set';
+                }
+            } catch (error) {
+                console.error('Unexpected error fetching set title:', error);
+                setTitleElement.textContent = 'Untitled Set';
+            }
+
             const sessionResult = await supabase.auth.getSession();
             const user = sessionResult.data.session?.user;
 
