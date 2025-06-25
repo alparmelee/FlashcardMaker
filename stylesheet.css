@@ -237,12 +237,6 @@ body.home-page .auth-buttons .btn:hover {
     gap: 1rem;
 }
 
-/* flashcard_set.html specific user status color */
-body.flashcard-set-page .top-nav .user-status {
-    color: #222;
-}
-
-
 .top-nav .user-status .logout-button {
     color: #222;
     /* Default for most pages */
@@ -253,12 +247,6 @@ body.flashcard-set-page .top-nav .user-status {
     border-radius: 5px;
     border: 1px solid #222;
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-}
-
-/* flashcard_set.html specific logout button color */
-body.flashcard-set-page .top-nav .user-status .logout-button {
-    color: #222;
-    border: 1px solid #f8f9fa;
 }
 
 .top-nav .user-status .logout-button:hover {
