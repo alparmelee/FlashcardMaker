@@ -93,6 +93,33 @@
         const supabase = createClient(supabaseUrl, supabaseKey, {
 
         });
+
+        window.supabase = supabase; // Make supabase globally accessible
+
+        async function updateAuthUI() {
+            const {data: {session}} = await supabase.auth.getSession();
+            const authButtonsDiv = document.querySelector('.auth-buttons');
+
+            if (session?.user) {
+                const savedUsername = localStorage.getItem("username");
+                const username = savedUsername || session.user.email;
+                authButtonsDiv.innerHTML = `
+        <div class="user-status">
+          <span>Welcome, ${username}!</span>
+          <a href="#" id="logout-btn" class="logout-button btn">Logout</a>
+        </div>`;
+                document.getElementById('logout-btn').addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await supabase.auth.signOut();
+                    window.location.href = 'login.html';
+                });
+            } else {
+                authButtonsDiv.innerHTML = `
+        <a href="login.html" class="btn">Login</a>
+        <a href="signup.html" class="btn">Signup</a>`;
+            }
+        }
+            updateAuthUI();
         const urlParams = new URLSearchParams(window.location.search);
         const setId = urlParams.get('set_id');
         if (!setId) {
