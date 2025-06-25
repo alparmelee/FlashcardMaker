@@ -102,7 +102,7 @@
 
     <div class="message-box" id="custom-alert"></div>
 
-    <script>
+    <script type="module">
         import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
@@ -118,29 +118,39 @@
 
         window.supabase = supabase; // Make supabase globally accessible
 
+
+        // Update Auth buttons in top nav based on session on page load
         async function updateAuthUI() {
-            const {data: {session}} = await supabase.auth.getSession();
+            const {data: {session}} = await window.supabase.auth.getSession();
             const authButtonsDiv = document.querySelector('.auth-buttons');
 
-            if (session?.user) {
-                const savedUsername = localStorage.getItem("username");
-                const username = savedUsername || session.user.email;
+            if (session) {
+                const {data: profile, error: profileError} = await window.supabase
+                    .from('profiles')
+                    .select('username')
+                    .eq('user_id', session.user.id)
+                    .single();
+
+                const username = (profile && !profileError) ? profile.username : session.user.email;
                 authButtonsDiv.innerHTML = `
-        <div class="user-status">
-          <span>Welcome, ${username}!</span>
-          <a href="#" id="logout-btn" class="logout-button btn">Logout</a>
-        </div>`;
+                        <div class="user-status">
+                            <span>Welcome, ${username}!</span>
+                            <a href="#" id="logout-btn" class="logout-button btn">Logout</a>
+                        </div>`;
+
                 document.getElementById('logout-btn').addEventListener('click', async (e) => {
                     e.preventDefault();
-                    await supabase.auth.signOut();
+                    await window.supabase.auth.signOut();
                     window.location.href = 'login.html';
                 });
+
             } else {
                 authButtonsDiv.innerHTML = `
-        <a href="login.html" class="btn">Login</a>
-        <a href="signup.html" class="btn">Signup</a>`;
+                        <a href="login.html" class="btn">Login</a>
+                        <a href="signup.html" class="btn">Signup</a>`;
             }
         }
+
         updateAuthUI();
 
         document.addEventListener('DOMContentLoaded', function () {
