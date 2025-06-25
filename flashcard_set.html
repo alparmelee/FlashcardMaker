@@ -177,6 +177,37 @@
                 });
             }
 
+            const creatorNameElement = document.getElementById("creator-name");
+
+            try {
+                const {data: setMeta, error: setMetaError} = await supabase
+                    .from('flashcard_sets')
+                    .select('user_id')
+                    .eq('id', setId)
+                    .single();
+
+                if (setMetaError || !setMeta?.user_id) {
+                    console.error("Error fetching set creator ID:", setMetaError?.message);
+                    creatorNameElement.textContent = "Unknown";
+                } else {
+                    const {data: profileData, error: profileError} = await supabase
+                        .from("profiles")
+                        .select("username")
+                        .eq("user_id", setMeta.user_id)
+                        .single();
+
+                    if (profileError || !profileData?.username) {
+                        console.error("Error fetching creator username:", profileError?.message);
+                        creatorNameElement.textContent = "Unknown";
+                    } else {
+                        creatorNameElement.textContent = profileData.username;
+                    }
+                }
+            } catch (e) {
+                console.error("Unexpected error getting creator name:", e);
+                creatorNameElement.textContent = "Unknown";
+            }
+
             const {data, error} = await supabase
                 .from("flashcards")
                 .select("term, definition")
