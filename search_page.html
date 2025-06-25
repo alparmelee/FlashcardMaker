@@ -1,21 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="stylesheet.css" />
     <title>Search Flashcards - CramCraft</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-        const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co'; // Database URL
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8'; // API Key
-        const supabase = createClient(supabaseUrl, supabaseKey);
-        window.supabase = supabase;
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
 </head>
+
 <body class="search-page">
     <nav class="top-nav">
         <div class="top-nav-inner">
@@ -38,12 +33,14 @@
     <div class="content-wrapper">
         <h1>Search Flashcard Sets</h1>
         <div class="search-bar-container">
-            <input type="text" placeholder="Search for sets (e.g., 'Photosynthesis', 'Calculus 101')..." id="search-input">
+            <input type="text" placeholder="Search for sets (e.g., 'Photosynthesis', 'Calculus 101')..."
+                id="search-input">
             <button onclick="performSearch()">Search</button>
         </div>
 
         <div class="search-results-info">
-            <p>Showing placeholder results. Try searching for "chemistry" or "history" (no actual search implemented).</p>
+            <p>Showing placeholder results. Try searching for "chemistry" or "history" (no actual search implemented).
+            </p>
         </div>
 
         <div class="sets-grid" id="search-results-grid">
@@ -69,17 +66,68 @@
             </div>
         </div>
     </div>
-<script>
-    function performSearch() {
-        const query = document.getElementById('search-input').value;
-        const resultsGrid = document.getElementById('search-results-grid');
-        const resultsInfo = document.querySelector('.search-results-info p');
+    
+    <script type="module">
+        import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-        resultsGrid.innerHTML = ''; 
+        const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
+        const supabase = createClient(supabaseUrl, supabaseKey, {
+            auth: {
+                storage: localStorage,
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: false
+            }
+        });
 
-        if (query.toLowerCase().includes("chemistry")) {
-            resultsInfo.textContent = `Showing placeholder results for "${query}"...`;
-            resultsGrid.innerHTML = `
+        window.supabase = supabase; // Make supabase globally accessible
+
+
+        // Update Auth buttons in top nav based on session on page load
+        async function updateAuthUI() {
+            const {data: {session}} = await window.supabase.auth.getSession();
+            const authButtonsDiv = document.querySelector('.auth-buttons');
+
+            if (session) {
+                const {data: profile, error: profileError} = await window.supabase
+                    .from('profiles')
+                    .select('username')
+                    .eq('user_id', session.user.id)
+                    .single();
+
+                const username = (profile && !profileError) ? profile.username : session.user.email;
+                authButtonsDiv.innerHTML = `
+                        <div class="user-status">
+                            <span>Welcome, ${username}!</span>
+                            <a href="#" id="logout-btn" class="logout-button btn">Logout</a>
+                        </div>`;
+
+                document.getElementById('logout-btn').addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await window.supabase.auth.signOut();
+                    window.location.href = 'login.html';
+                });
+
+            } else {
+                authButtonsDiv.innerHTML = `
+                        <a href="login.html" class="btn">Login</a>
+                        <a href="signup.html" class="btn">Signup</a>`;
+            }
+        }
+
+        updateAuthUI();
+
+        function performSearch() {
+            const query = document.getElementById('search-input').value;
+            const resultsGrid = document.getElementById('search-results-grid');
+            const resultsInfo = document.querySelector('.search-results-info p');
+
+            resultsGrid.innerHTML = '';
+
+            if (query.toLowerCase().includes("chemistry")) {
+                resultsInfo.textContent = `Showing placeholder results for "${query}"...`;
+                resultsGrid.innerHTML = `
                 <div class="set-card">
                     <h3>Organic Chemistry Basics</h3>
                     <p>Fundamental concepts of organic chemistry...</p>
@@ -90,9 +138,9 @@
                     <p>Learn the first 50 elements, their symbols, and atomic numbers.</p>
                     <p class="set-meta">50 Terms &nbsp;&bull;&nbsp; By: ScienceGeek</p>
                 </div>`;
-        } else if (query.toLowerCase().includes("history")) {
-            resultsInfo.textContent = `Showing placeholder results for "${query}"...`;
-            resultsGrid.innerHTML = `
+            } else if (query.toLowerCase().includes("history")) {
+                resultsInfo.textContent = `Showing placeholder results for "${query}"...`;
+                resultsGrid.innerHTML = `
                 <div class="set-card">
                     <h3>World History: Ancient Civilizations</h3>
                     <p>Explore Mesopotamia, Egypt, Greece, and Rome.</p>
@@ -103,17 +151,17 @@
                     <p>Key battles and their significance.</p>
                     <p class="set-meta">40 Terms &nbsp;&bull;&nbsp; By: USHistoryFan</p>
                 </div>`;
-        } else if (query.trim() !== "") {
-            resultsInfo.textContent = `No specific placeholder results for "${query}". Showing general placeholders.`;
-            resultsGrid.innerHTML = `
+            } else if (query.trim() !== "") {
+                resultsInfo.textContent = `No specific placeholder results for "${query}". Showing general placeholders.`;
+                resultsGrid.innerHTML = `
                 <div class="set-card">
                     <h3>Placeholder Set Alpha</h3>
                     <p>This is a general placeholder set related to your query.</p>
                     <p class="set-meta">30 Terms &nbsp;&bull;&nbsp; By: System</p>
                 </div>`;
-        } else {
-            resultsInfo.textContent = "Please enter a search term. Showing general placeholders.";
-            resultsGrid.innerHTML = `
+            } else {
+                resultsInfo.textContent = "Please enter a search term. Showing general placeholders.";
+                resultsGrid.innerHTML = `
                 <div class="set-card">
                     <h3>Organic Chemistry Basics</h3>
                     <p>Fundamental concepts of organic chemistry, including alkanes, alkenes, and alkynes.</p>
@@ -124,13 +172,14 @@
                     <p>Explore Mesopotamia, Egypt, Greece, and Rome.</p>
                     <p class="set-meta">75 Terms &nbsp;&bull;&nbsp; By: HistoryBuff22 &nbsp;&bull;&nbsp; Rating: 4.8/5</p>
                 </div>`;
+            }
         }
-    }
-    document.getElementById('search-input').addEventListener('keypress', function(event) {
-        if (event.key === 'Enter') {
-            performSearch();
-        }
-    });
-</script>
+        document.getElementById('search-input').addEventListener('keypress', function (event) {
+            if (event.key === 'Enter') {
+                performSearch();
+            }
+        });
+    </script>
 </body>
+
 </html>
