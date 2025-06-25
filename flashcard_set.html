@@ -174,7 +174,6 @@
 
             // Initial Load
             populateCategoryFilter();
-            showCard(0);
 
         })();
         document.addEventListener('DOMContentLoaded', () => {
@@ -227,6 +226,7 @@
                 if (activeView === 'list') renderListView();
             }
             function showCard(index) {
+                showCard(0);
                 if (!flashcardData || !flashcardData.length || index >= flashcardData.length) {
                     cardFront.textContent = "(No card)";
                     cardBack.textContent = "(No content)";
@@ -375,8 +375,18 @@
 
             // Event Listeners
             flashcard.addEventListener('click', () => flashcard.classList.toggle('flipped'));
-            nextCardBtn.addEventListener('click', () => {if (currentCardIndex < flashcardData.length - 1) {currentCardIndex++; showCard(currentCardIndex);} });
-            prevCardBtn.addEventListener('click', () => {if (currentCardIndex > 0) {currentCardIndex--; showCard(currentCardIndex);} });
+            nextCardBtn.addEventListener('click', () => {
+                if (currentCardIndex < flashcardData.length - 1) {
+                    currentCardIndex++;
+                    showCard(currentCardIndex);
+                }
+            });
+            prevCardBtn.addEventListener('click', () => {
+                if (currentCardIndex > 0) {
+                    currentCardIndex--;
+                    showCard(currentCardIndex);
+                }
+            });
             modeFlashcardsBtn.addEventListener('click', () => switchView('flashcard'));
             modeQuizBtn.addEventListener('click', () => switchView('quiz'));
             modeListBtn.addEventListener('click', () => switchView('list'));
