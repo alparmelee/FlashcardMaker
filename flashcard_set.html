@@ -100,12 +100,17 @@
         async function updateAuthUI() {
             const {data: {session}} = await supabase.auth.getSession();
             const welcomeMsg = document.getElementById("welcome-msg");
-            document.getElementById("creator-name").textContent = creatorUsername;
 
 
             if (session?.user) {
-                const savedUsername = localStorage.getItem("username") || session.user.email;
-                welcomeMsg.textContent = `Welcome, ${savedUsername}!`;
+                const {data: profile, error: profileError} = await supabase
+                    .from("profiles")
+                    .select("username")
+                    .eq("user_id", session.user.id)
+                    .single();
+
+                const username = profile?.username || session.user.email || "User";
+                welcomeMsg.textContent = `Welcome, ${username}!`;
                 document.querySelector('.user-status').style.display = 'block';
 
                 document.getElementById('logout-btn').addEventListener('click', async (e) => {
