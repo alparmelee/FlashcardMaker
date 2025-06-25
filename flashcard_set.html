@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intro to Biology - CramCraft</title>
+    <title>Flashcards - CramCraft</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -23,9 +23,9 @@
                 <li><a href="search_page.html">Search</a></li>
                 <li><a href="about.html">About</a></li>
             </ul>
-            <div class="user-status">
-                <span>Welcome, DemoUser!</span>
-                <a href="index.html" class="logout-button">Logout</a>
+            <div class="user-status" style="display: none;">
+                <span id="welcome-msg">Welcome, DemoUser!</span>
+                <a href="#" id="logout-btn" class="logout-button">Logout</a>
             </div>
         </div>
     </nav>
@@ -80,7 +80,7 @@
                 alt="Creator's profile picture">
             <div class="details">
                 <span>Created by</span>
-                <strong>DemoUser!</strong>
+                <strong id="creator-name"></strong>
             </div>
         </div>
     </div>
@@ -88,70 +88,25 @@
     <div id="print-view"></div>
 
     <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
         const supabase = createClient(supabaseUrl, supabaseKey, {
 
         });
-        const urlParams = new URLSearchParams(window.location.search);
-        const setId = urlParams.get('set_id');
-        if (!setId) {
-            alert("No set selected.");
-            window.location.href = "user_dashboard.html";
-        }
 
-        let flashcardData = [];
+        window.supabase = supabase; // Make supabase globally accessible
 
-        (async () => {
-            const { data: cards, error } = await supabase
-                .from('flashcards')
-                .select('term, definition')
-                .eq('set_id', setId);
-
-            if (error) {
-                console.error('Error fetching flashcards:', error);
-                return;
-            }
-
-            flashcardData = cards;
-            if (flashcardData.length === 0) {
-                document.querySelector('.main-container').innerHTML = '<p>No flashcards found for this set.</p>';
-                return;
-            }
-
-            // Fetch set title and creator's username
-            const { data: setDetails, error: setDetailsError } = await supabase
-                .from('flashcard_sets')
-                .select('title, profiles(username)')
-                .eq('id', setId)
-                .single();
-
-            if (setDetailsError) {
-                console.error('Error fetching set details:', setDetailsError);
-                // Fallback to default title if fetch fails
-                document.querySelector('.set-header h1').textContent = "Flashcard Set";
-            } else {
-                document.querySelector('.set-header h1').textContent = setDetails.title;
-                const creatorUsername = setDetails.profiles ? setDetails.profiles.username : 'Unknown Creator';
-                document.querySelector('.creator-info strong').textContent = creatorUsername;
-            }
-
-
-            showCard(0);
-            populateCategoryFilter();
-        })();
-        document.addEventListener('DOMContentLoaded', () => {
-
+        document.addEventListener('DOMContentLoaded', async () => {
+            const flashcardFront = document.getElementById("flashcard-front");
+            const flashcardBack = document.getElementById("flashcard-back");
+            const prevBtn = document.getElementById("prev-card");
+            const nextBtn = document.getElementById("next-card");
+            const welcomeMsg = document.getElementById("welcome-msg");
             const modePrintBtn = document.getElementById('mode-print');
             const printViewContainer = document.getElementById('print-view');
-            // ... all other existing element variables ...
             const flashcard = document.getElementById('flashcard');
-            const cardFront = document.getElementById('flashcard-front');
-            const cardBack = document.getElementById('flashcard-back');
             const cardProgress = document.getElementById('card-progress');
-            const prevCardBtn = document.getElementById('prev-card');
-            const nextCardBtn = document.getElementById('next-card');
 
             const modeFlashcardsBtn = document.getElementById('mode-flashcards');
             const modeQuizBtn = document.getElementById('mode-quiz');
@@ -167,52 +122,172 @@
 
             const categoryFilter = document.getElementById('category-filter');
             const termListContainer = document.getElementById('term-list-container');
-            let currentCardIndex = 0;
+
+            let flashcards = [];
+            let flashcardData = [];
+            let currentIndex = 0;
+            let showFront = true;
             let currentQuizIndex = 0;
 
-            // --- All other functions (shuffle, switchView, showCard, quiz, list view) remain the same ---
-            function shuffleArray(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
-            function switchView(activeView) { const views = { flashcard: flashcardView, quiz: quizView, list: listView }; const buttons = { flashcard: modeFlashcardsBtn, quiz: modeQuizBtn, list: modeListBtn }; for (const view in views) { views[view].classList.add('hidden'); buttons[view].classList.remove('active'); } views[activeView].classList.remove('hidden'); buttons[activeView].classList.add('active'); if (activeView === 'quiz') startQuiz(); if (activeView === 'list') renderListView(); }
-            function showCard(index) { cardFront.textContent = flashcardData[index].term; cardBack.textContent = flashcardData[index].definition; cardProgress.textContent = `${index + 1} / ${flashcardData.length}`; flashcard.classList.remove('flipped'); updateNavButtons(); }
-            function updateNavButtons() { prevCardBtn.disabled = currentCardIndex === 0; nextCardBtn.disabled = currentCardIndex === flashcardData.length - 1; }
-            function startQuiz() { currentQuizIndex = 0; showQuizQuestion(currentQuizIndex); }
-            function showQuizQuestion(index) {
-                const currentCard = flashcardData[index];
-                quizQuestion.textContent = `What is the definition of "${currentCard.term}"?`;
-                quizProgress.textContent = `Question ${index + 1} of ${flashcardData.length}`;
-                const correctAnswer = currentCard.definition;
-                const incorrectAnswers = [];
-                while (incorrectAnswers.length < 3 && flashcardData.length > 3) {
-                    const randomIndex = Math.floor(Math.random() * flashcardData.length);
-                    const randomDefinition = flashcardData[randomIndex].definition;
-                    if (randomDefinition !== correctAnswer && !incorrectAnswers.includes(randomDefinition)) {
-                        incorrectAnswers.push(randomDefinition);
-                    }
+            const urlParams = new URLSearchParams(window.location.search);
+            const setId = urlParams.get('set_id');
+            if (!setId) {
+                alert("No set ID provided.");
+                window.location.href = "user_dashboard.html";
+                return;
+            }
+
+            const setTitleElement = document.querySelector('.set-header h1');
+
+            try {
+                const {data: setData, error: setError} = await supabase
+                    .from('flashcard_sets')
+                    .select('title')
+                    .eq('id', setId)
+                    .single();
+
+                if (setError) {
+                    console.error('Error fetching set title:', setError.message);
+                    setTitleElement.textContent = 'Untitled Set';
+                } else {
+                    setTitleElement.textContent = setData.title || 'Untitled Set';
                 }
-                const choices = shuffleArray([correctAnswer, ...incorrectAnswers]);
-                quizChoicesContainer.innerHTML = '';
-                choices.forEach(choice => {
-                    const button = document.createElement('button');
-                    button.className = 'choice-button';
-                    button.textContent = choice;
-                    button.addEventListener('click', handleChoiceClick);
-                    quizChoicesContainer.appendChild(button);
+            } catch (error) {
+                console.error('Unexpected error fetching set title:', error);
+                setTitleElement.textContent = 'Untitled Set';
+            }
+
+            const sessionResult = await supabase.auth.getSession();
+            const user = sessionResult.data.session?.user;
+
+            if (user) {
+                const {data: profile} = await supabase
+                    .from("profiles")
+                    .select("username")
+                    .eq("user_id", user.id)
+                    .single();
+
+                const username = profile?.username || user.email || "User";
+                welcomeMsg.textContent = `Welcome, ${username}!`;
+                document.querySelector(".user-status").style.display = "block";
+                document.getElementById('logout-btn').addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await supabase.auth.signOut();
+                    window.location.href = 'login.html';
                 });
             }
-            function handleChoiceClick(event) {
-                const selectedButton = event.target;
-                const chosenAnswer = selectedButton.textContent;
-                const correctAnswer = flashcardData[currentQuizIndex].definition;
-                const buttons = quizChoicesContainer.querySelectorAll('.choice-button');
-                buttons.forEach(button => button.disabled = true);
-                if (chosenAnswer === correctAnswer) {
-                    selectedButton.classList.add('correct');
+
+            const creatorNameElement = document.getElementById("creator-name");
+
+            try {
+                const {data: setMeta, error: setMetaError} = await supabase
+                    .from('flashcard_sets')
+                    .select('user_id')
+                    .eq('id', setId)
+                    .single();
+
+                if (setMetaError || !setMeta?.user_id) {
+                    console.error("Error fetching set creator ID:", setMetaError?.message);
+                    creatorNameElement.textContent = "Unknown";
                 } else {
-                    selectedButton.classList.add('incorrect');
-                    buttons.forEach(button => { if (button.textContent === correctAnswer) { button.classList.add('correct'); } });
+                    const {data: profileData, error: profileError} = await supabase
+                        .from("profiles")
+                        .select("username")
+                        .eq("user_id", setMeta.user_id)
+                        .single();
+
+                    if (profileError || !profileData?.username) {
+                        console.error("Error fetching creator username:", profileError?.message);
+                        creatorNameElement.textContent = "Unknown";
+                    } else {
+                        creatorNameElement.textContent = profileData.username;
+                    }
                 }
-                setTimeout(() => { if (currentQuizIndex < flashcardData.length - 1) { currentQuizIndex++; showQuizQuestion(currentQuizIndex); } else { quizQuestion.textContent = "Quiz Complete!"; quizProgress.textContent = ""; quizChoicesContainer.innerHTML = ''; } }, 2500);
+            } catch (e) {
+                console.error("Unexpected error getting creator name:", e);
+                creatorNameElement.textContent = "Unknown";
             }
+
+            const {data, error} = await supabase
+                .from("flashcards")
+                .select("term, definition")
+                .eq("set_id", setId);
+
+            if (error) {
+                console.error("Error fetching flashcards:", error.message);
+                flashcardFront.textContent = "Failed to load flashcards.";
+                return;
+            }
+
+            flashcards = (data || []).filter(card => card.term?.trim() && card.definition?.trim());
+            flashcardData = [...flashcards];
+
+
+            if (flashcardData.length === 0) {
+                document.querySelector('.main-container').innerHTML = '<p>No flashcards found for this set.</p>';
+                return;
+            }
+
+            if (flashcards.length === 0) {
+                flashcardFront.textContent = "No flashcards found.";
+                flashcardBack.textContent = "";
+                return;
+            }
+
+            function renderCard() {
+                const card = flashcards[currentIndex];
+                if (!card) return;
+
+                flashcardFront.textContent = showFront ? card.term : "";
+                flashcardBack.textContent = showFront ? "" : card.definition;
+
+                document.getElementById("card-progress").textContent =
+                    `Card ${currentIndex + 1} of ${flashcards.length}`;
+            }
+
+            // Attach event listeners once
+            nextBtn.addEventListener("click", () => {
+                if (currentIndex < flashcards.length - 1) {
+                    currentIndex++;
+                    showFront = true;
+                    renderCard();
+                }
+            });
+
+            prevBtn.addEventListener("click", () => {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    showFront = true;
+                    renderCard();
+                }
+            });
+
+            document.getElementById("flashcard").addEventListener("click", () => {
+                showFront = !showFront;
+                renderCard();
+            });
+
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+            // Fetch flashcard data with categories if available
+            function switchView(activeView) {
+                const views = {flashcard: flashcardView, quiz: quizView, list: listView};
+                const buttons = {flashcard: modeFlashcardsBtn, quiz: modeQuizBtn, list: modeListBtn};
+                for (const view in views) {
+                    views[view].classList.add('hidden');
+                    buttons[view].classList.remove('active');
+                }
+                views[activeView].classList.remove('hidden');
+                buttons[activeView].classList.add('active');
+                if (activeView === 'quiz') startQuiz();
+                if (activeView === 'list') renderListView();
+            }
+
             function populateCategoryFilter() {
                 // Assuming categories might be stored in flashcardData if applicable,
                 // or fetched separately if categories are a separate entity.
@@ -226,6 +301,7 @@
                     categoryFilter.appendChild(option);
                 });
             }
+            // Render list view with optional category filtering
             function renderListView(category = 'All') {
                 termListContainer.innerHTML = '';
                 const filteredData = category === 'All' ? flashcardData : flashcardData.filter(card => card.category === category);
@@ -236,6 +312,64 @@
                     termListContainer.appendChild(row);
                 });
             }
+            // Quiz functionality
+            function startQuiz() {
+                currentQuizIndex = 0;
+                showQuizQuestion(currentQuizIndex);
+            }
+            // Show a quiz question based on the current index
+            function showQuizQuestion(index) {
+                const currentCard = flashcardData[index];
+                quizQuestion.textContent = `What is the definition of "${currentCard.term}"?`;
+                quizProgress.textContent = `Question ${index + 1} of ${flashcardData.length}`;
+                const correctAnswer = currentCard.definition;
+                const incorrectAnswers = [];
+                while (incorrectAnswers.length < 3 && flashcardData.length > 3) {
+                    const randomIndex = Math.floor(Math.random() * flashcardData.length);
+                    const randomDefinition = flashcardData[randomIndex].definition;
+                    if (randomDefinition !== correctAnswer && !incorrectAnswers.includes(randomDefinition)) {
+                        incorrectAnswers.push(randomDefinition);
+                    }
+                }
+                // If not enough unique incorrect answers, fill with placeholders
+                const choices = shuffleArray([correctAnswer, ...incorrectAnswers]);
+                quizChoicesContainer.innerHTML = '';
+                choices.forEach(choice => {
+                    const button = document.createElement('button');
+                    button.className = 'choice-button';
+                    button.textContent = choice;
+                    button.addEventListener('click', handleChoiceClick);
+                    quizChoicesContainer.appendChild(button);
+                });
+            }
+
+            function handleChoiceClick(event) { // Handle choice button clicks
+                const selectedButton = event.target;
+                const chosenAnswer = selectedButton.textContent;
+                const correctAnswer = flashcardData[currentQuizIndex].definition;
+                const buttons = quizChoicesContainer.querySelectorAll('.choice-button');
+                buttons.forEach(button => button.disabled = true);
+                if (chosenAnswer === correctAnswer) {
+                    selectedButton.classList.add('correct');
+                } else {
+                    selectedButton.classList.add('incorrect');
+                    buttons.forEach(button => {if (button.textContent === correctAnswer) {button.classList.add('correct');} });
+                }
+                setTimeout(() => {
+                    if (currentQuizIndex < flashcardData.length - 1) {
+                        currentQuizIndex++; showQuizQuestion(currentQuizIndex);
+
+                    } else {
+                        quizQuestion.textContent = "Quiz Complete!";
+                        quizProgress.textContent = "";
+                        quizChoicesContainer.innerHTML = '';
+                    }
+                }, 2500);
+            }
+            // Initial Load
+            populateCategoryFilter();
+            // Initial render
+            renderCard();
 
             // --- UPDATED: Advanced Print Function ---
             function prepareAndPrintAdvanced() {
@@ -244,7 +378,7 @@
 
                 // Pad the data with empty slots
                 while (dataToPrint.length % CARDS_PER_PRINT_PAGE !== 0) {
-                    dataToPrint.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` });
+                    dataToPrint.push({term: `(Empty Slot)`, definition: `(Empty Slot)`});
                 }
 
                 const printTotalPages = (dataToPrint.length / CARDS_PER_PRINT_PAGE) * 2;
@@ -298,19 +432,25 @@
                 window.print();
             }
 
-            // Event Listeners
             flashcard.addEventListener('click', () => flashcard.classList.toggle('flipped'));
-            nextCardBtn.addEventListener('click', () => { if (currentCardIndex < flashcardData.length - 1) { currentCardIndex++; showCard(currentCardIndex); } });
-            prevCardBtn.addEventListener('click', () => { if (currentCardIndex > 0) { currentCardIndex--; showCard(currentCardIndex); } });
+            nextBtn.addEventListener('click', () => {
+                if (currentIndex < flashcardData.length - 1) {
+                    currentIndex++;
+                    renderCard(currentIndex);
+                }
+            });
+            prevBtn.addEventListener('click', () => {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    renderCard(currentIndex);
+                }
+            });
+
             modeFlashcardsBtn.addEventListener('click', () => switchView('flashcard'));
             modeQuizBtn.addEventListener('click', () => switchView('quiz'));
             modeListBtn.addEventListener('click', () => switchView('list'));
             modePrintBtn.addEventListener('click', prepareAndPrintAdvanced); // Changed to call advanced function
             categoryFilter.addEventListener('change', (e) => renderListView(e.target.value));
-
-            // Initial Load
-            showCard(currentCardIndex);
-            populateCategoryFilter();
         });
     </script>
 </body>

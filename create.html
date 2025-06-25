@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="stylesheet.css" />
 
     <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
@@ -23,38 +23,50 @@
             }
         });
 
-        async function updateAuthUI() {
-            const { data: { session } } = await supabase.auth.getSession();
-            const authButtonsDiv = document.querySelector('.auth-buttons');
+        window.supabase = supabase; // Make supabase globally accessible
 
-            if (session?.user) {
-                const savedUsername = localStorage.getItem("username");
-                const username = savedUsername || session.user.email;
-                authButtonsDiv.innerHTML = `
-        <div class="user-status">
-          <span>Welcome, ${username}!</span>
-          <a href="#" id="logout-btn" class="logout-button btn">Logout</a>
-        </div>`;
-                document.getElementById('logout-btn').addEventListener('click', async (e) => {
-                    e.preventDefault();
-                    await supabase.auth.signOut();
-                    window.location.href = 'login.html';
-                });
-            } else {
-                authButtonsDiv.innerHTML = `
-        <a href="login.html" class="btn">Login</a>
-        <a href="signup.html" class="btn">Signup</a>`;
+
+            // Update Auth buttons in top nav based on session on page load
+            async function updateAuthUI() {
+                const {data: {session}} = await window.supabase.auth.getSession();
+                const authButtonsDiv = document.querySelector('.auth-buttons');
+
+                if (session) {
+                    const {data: profile, error: profileError} = await window.supabase
+                        .from('profiles')
+                        .select('username')
+                        .eq('user_id', session.user.id)
+                        .single();
+
+                    const username = (profile && !profileError) ? profile.username : session.user.email;
+                    authButtonsDiv.innerHTML = `
+                        <div class="user-status">
+                            <span>Welcome, ${username}!</span>
+                            <a href="#" id="logout-btn" class="logout-button btn">Logout</a>
+                        </div>`;
+
+                    document.getElementById('logout-btn').addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        await window.supabase.auth.signOut();
+                        window.location.href = 'login.html';
+                    });
+
+                } else {
+                    authButtonsDiv.innerHTML = `
+                        <a href="login.html" class="btn">Login</a>
+                        <a href="signup.html" class="btn">Signup</a>`;
+                }
             }
-        }
+
+            updateAuthUI();
 
         document.addEventListener('DOMContentLoaded', () => {
-            updateAuthUI();
 
             const saveBtn = document.getElementById('save-flashcards');
             if (!saveBtn) return;
 
             saveBtn.addEventListener('click', async () => {
-                const { data: { user }, error } = await supabase.auth.getUser();
+                const {data: {user}, error} = await supabase.auth.getUser();
                 if (!user) {
                     alert('You must be logged in to save flashcards. Redirecting...');
                     return window.location.href = 'login.html';
@@ -70,7 +82,7 @@
                     const category = row.querySelector('.category-input')?.value.trim() || null;
 
                     if (term && definition) {
-                        flashcards.push({ term, definition, category });
+                        flashcards.push({term, definition, category});
                     }
                 });
 
@@ -79,9 +91,9 @@
                     return;
                 }
 
-                const { data: set, error: setError } = await supabase
+                const {data: set, error: setError} = await supabase
                     .from('flashcard_sets')
-                    .insert([{ title: setTitle, user_id: user.id, terms_count: flashcards.length }])
+                    .insert([{title: setTitle, user_id: user.id, terms_count: flashcards.length}])
                     .select()
                     .single();
 
@@ -95,7 +107,7 @@
                     set_id: set.id
                 }));
 
-                const { error: cardError } = await supabase
+                const {error: cardError} = await supabase
                     .from('flashcards')
                     .insert(cardsToInsert);
 
@@ -108,128 +120,7 @@
                 window.location.href = 'user_dashboard.html';
             });
         });
-    </script>
 
-
-</head>
-
-<body class="create-page">
-
-    <nav class="top-nav">
-        <div class="top-nav-inner">
-            <div class="nav-logo">
-                <a href="index.html">CramCraft</a>
-            </div>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="user_dashboard.html">Dashboard</a></li>
-            </ul>
-            <div class="auth-buttons">
-                <div class="user-status" style="display: none;"></div>
-                <a href="login.html" class="btn">Login</a>
-                <a href="signup.html" class="btn">Signup</a>
-            </div>
-        </div>
-    </nav>
-
-    <div class="main-content-wrapper">
-        <div id="flashcard-maker-section">
-            <div class="container-fc">
-                <img src="images/Cramcraft.png" alt="CramCraft Mini Logo" class="logo-center-small">
-
-                <div class="input-area" id="manual-input-area">
-                    <h2>Enter Terms and Definitions Manually</h2>
-                    <div id="term-def-inputs">
-                        <div class="input-row">
-                            <input type="text" placeholder="Term 1" class="term">
-                            <input type="text" placeholder="Definition 1" class="definition">
-                            <button type="button" class="delete-row-btn">Delete</button>
-                        </div>
-                    </div>
-                    <button id="add-row">Add Another Term/Definition</button>
-                    <button id="start-flashcards">Generate Flashcards from Manual Input</button>
-                    <button id="show-bulk-input">Switch to Bulk Input</button>
-                </div>
-
-                <div class="input-area hidden" id="bulk-input-area">
-                    <h2>Enter Bulk Flashcard Data</h2>
-                    <div class="delimiter-group">
-                        <p class="delimiter-group-title"><strong>1. Separate Term and Definition with:</strong></p>
-                        <div class="delimiter-options" id="term-def-separator-options">
-                            <label><input type="radio" name="termDefDelimiter" value="tab" checked> Tab</label>
-                            <label><input type="radio" name="termDefDelimiter" value="comma"> Comma (,)</label>
-                            <label><input type="radio" name="termDefDelimiter" value="tilde"> Tilde (~)</label>
-                            <label>
-                                <input type="radio" name="termDefDelimiter" value="customTermDef"> Custom:
-                                <input type="text" id="custom-term-def-delimiter-input" maxlength="1" class="hidden">
-                            </label>
-                        </div>
-                    </div>
-                    <div class="delimiter-group">
-                        <p class="delimiter-group-title"><strong>2. Separate Cards (Rows) with:</strong></p>
-                        <div class="delimiter-options" id="card-separator-options">
-                            <label><input type="radio" name="cardDelimiter" value="newline" checked> New Line</label>
-                            <label><input type="radio" name="cardDelimiter" value="semicolon"> Semicolon (;)</label>
-                            <label>
-                                <input type="radio" name="cardDelimiter" value="customCard"> Custom:
-                                <input type="text" id="custom-card-delimiter-input" class="hidden"
-                                    placeholder="e.g. ---">
-                            </label>
-                        </div>
-                    </div>
-                    <div class="input-instructions">
-                        <p>Paste your flashcard data below using your chosen separators.</p>
-                        <p>A <strong>Term</strong> can span multiple lines (if "New Line" is NOT your card separator and
-                            your term/def separator is not also a newline).</p>
-                        <p>The <strong>Definition</strong> is typically the part after the <i>last</i> instance of your
-                            term/definition separator on a line (or within a card block if using "New Line" as card
-                            separator).</p>
-                        <hr>
-                        <p><strong>Example 1 (Tab for Term/Def, New Line for Cards):</strong></p>
-                        <p><code>Term A&lt;TAB&gt;Definition A</code><br><code>Term B&lt;TAB&gt;Definition B</code></p>
-                        <p><strong>Example 2 (Comma for Term/Def, Semicolon for Cards):</strong></p>
-                        <p><code>Capital of France,Paris;What is 2+2?,4</code></p>
-                        <p><strong>Example 3 (Custom '|' for Term/Def, Custom '---' for Cards):</strong></p>
-                        <p><code>Question 1|Answer 1---Question 2|Answer 2</code></p>
-                    </div>
-                    <textarea id="bulk-data-input" rows="10" placeholder="Example (Tab between term/def, New Line between cards):
-Term1\tDefinition1
-Term2\tDefinition2..."></textarea>
-                    <button id="parse-bulk-data">Parse Bulk Data & Generate Flashcards</button>
-                    <button id="show-manual-input">Switch to Manual Row Input</button>
-                </div>
-
-                <div class="display-area hidden" id="flashcard-display">
-                    <div id="page-info"></div>
-                    <div id="cards-container"></div>
-                    <div class="controls">
-                        <button id="prev-page">Previous Page</button>
-                        <button id="next-page">Next Page</button>
-                        <button id="print-cards">Print Flashcards</button>
-                        <button id="save-cards">Save to Database</button> <button id="back-to-input">Back to Input Methods</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="message-box" id="custom-alert"></div>
-
-    <div id="setTitleModal" class="modal">
-        <div class="modal-content">
-            <h3>Enter Set Title</h3>
-            <input type="text" id="modal-set-name-input" placeholder="Enter your flashcard set title" required>
-            <div class="modal-buttons">
-                <button class="save-btn-modal" id="modal-save-set">Save Set</button>
-                <button class="cancel-btn-modal" id="modal-cancel-save">Cancel</button>
-            </div>
-            <p id="modal-error-message" style="color: red; margin-top: 10px; display: none;"></p>
-        </div>
-    </div>
-
-    <script>
         document.addEventListener('DOMContentLoaded', function () {
             // --- Page Swapping Logic (Simplified) ---
             const flashcardMakerSection = document.getElementById('flashcard-maker-section');
@@ -297,7 +188,7 @@ Term2\tDefinition2..."></textarea>
                 }, 3000);
             }
 
-            function isOptionLine(line) { return /^\s*[a-zA-Z]\.\s/.test(line.trim()); }
+            function isOptionLine(line) {return /^\s*[a-zA-Z]\.\s/.test(line.trim());}
 
             termDefDelimiterRadios.forEach(radio => {
                 radio.addEventListener('change', function () {
@@ -392,7 +283,7 @@ Term2\tDefinition2..."></textarea>
                         showMessage('Custom Term/Definition separator must be a single character.', 'error');
                         customTermDefDelimiterInput.focus(); return false;
                     }
-                } else { showMessage('Invalid Term/Definition separator.', 'error'); return false; }
+                } else {showMessage('Invalid Term/Definition separator.', 'error'); return false;}
 
                 let cardStrings = [];
                 const selectedCardDOption = document.querySelector('input[name="cardDelimiter"]:checked').value;
@@ -410,17 +301,17 @@ Term2\tDefinition2..."></textarea>
                                 }
                             }
                         }
-                        if (isNewCardBoundary && currentCardBlockLines.length > 0) { cardStrings.push(currentCardBlockLines.join('\n')); currentCardBlockLines = []; }
+                        if (isNewCardBoundary && currentCardBlockLines.length > 0) {cardStrings.push(currentCardBlockLines.join('\n')); currentCardBlockLines = [];}
                         if (trimmedCurrentLine !== "") currentCardBlockLines.push(currentLine);
-                        else if (currentCardBlockLines.length > 0) { cardStrings.push(currentCardBlockLines.join('\n')); currentCardBlockLines = []; }
+                        else if (currentCardBlockLines.length > 0) {cardStrings.push(currentCardBlockLines.join('\n')); currentCardBlockLines = [];}
                     }
                     if (currentCardBlockLines.length > 0) cardStrings.push(currentCardBlockLines.join('\n'));
                 } else if (selectedCardDOption === 'semicolon') cardStrings = bulkText.split(';');
                 else if (selectedCardDOption === 'customCard') {
                     const customCardSep = customCardDelimiterInput.value;
-                    if (!customCardSep) { showMessage('Custom card separator is empty.', 'error'); customCardDelimiterInput.focus(); return false; }
+                    if (!customCardSep) {showMessage('Custom card separator is empty.', 'error'); customCardDelimiterInput.focus(); return false;}
                     cardStrings = bulkText.split(customCardSep);
-                } else { showMessage('Invalid card separator.', 'error'); return false; }
+                } else {showMessage('Invalid card separator.', 'error'); return false;}
 
                 cardStrings.forEach(cardStr => {
                     const trimmedCardStr = cardStr.trim(); if (!trimmedCardStr) return;
@@ -429,12 +320,12 @@ Term2\tDefinition2..."></textarea>
                     if (lastDelimiterIndex !== -1) {
                         term = trimmedCardStr.substring(0, lastDelimiterIndex).trim();
                         definition = trimmedCardStr.substring(lastDelimiterIndex + termDefSeparator.length).trim();
-                    } else { term = trimmedCardStr; definition = `(No definition: '${termDefSeparator}' not found)`; }
+                    } else {term = trimmedCardStr; definition = `(No definition: '${termDefSeparator}' not found)`;}
                     if (term || definition !== `(No definition: '${termDefSeparator}' not found)`) {
-                        flashcardData.push({ term: term || `(No Term ${flashcardData.length + 1})`, definition: definition || `(No Definition ${flashcardData.length + 1})` });
+                        flashcardData.push({term: term || `(No Term ${flashcardData.length + 1})`, definition: definition || `(No Definition ${flashcardData.length + 1})`});
                     }
                 });
-                if (flashcardData.length === 0) { showMessage('No valid flashcards parsed.', 'error'); return false; }
+                if (flashcardData.length === 0) {showMessage('No valid flashcards parsed.', 'error'); return false;}
                 return true;
             }
 
@@ -448,9 +339,9 @@ Term2\tDefinition2..."></textarea>
                         localStorage.setItem("flashcardGroups", JSON.stringify(existing));
                     }
                     while (flashcardData.length % CARDS_PER_PAGE !== 0 && flashcardData.length < 500) {
-                        flashcardData.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` });
+                        flashcardData.push({term: `(Empty Slot)`, definition: `(Empty Slot)`});
                     }
-                } else { showMessage('No data to display.', 'error'); return; }
+                } else {showMessage('No data to display.', 'error'); return;}
 
                 // MODIFIED: Removed validation for set name here. It will now only be validated on save.
                 manualInputArea.classList.add('hidden'); bulkInputArea.classList.add('hidden');
@@ -466,8 +357,8 @@ Term2\tDefinition2..."></textarea>
                 else showMessage('No flashcards were generated.', 'error');
             }
 
-            startManualBtn.addEventListener('click', () => { if (collectManualFlashcards()) proceedToFlashcardDisplay(); });
-            parseBulkDataBtn.addEventListener('click', () => { if (parseBulkFlashcards()) proceedToFlashcardDisplay(); });
+            startManualBtn.addEventListener('click', () => {if (collectManualFlashcards()) proceedToFlashcardDisplay();});
+            parseBulkDataBtn.addEventListener('click', () => {if (parseBulkFlashcards()) proceedToFlashcardDisplay();});
 
             function updateDisplay() {
                 cardsContainer.innerHTML = '';
@@ -499,7 +390,7 @@ Term2\tDefinition2..."></textarea>
                         let count = 0;
                         for (let k = 0; k < flashcardData.length; k++) {
                             if (flashcardData[k].term !== '(Empty Slot)') count++;
-                            if (k === itemIndex) { displayIndex = count; break; }
+                            if (k === itemIndex) {displayIndex = count; break;}
                         }
                     } else {
                         displayIndex = itemIndex + 1;
@@ -517,14 +408,14 @@ Term2\tDefinition2..."></textarea>
                 saveBtn.disabled = actualCardCount === 0;
             }
 
-            nextBtn.addEventListener('click', () => { if (currentPage < totalPages - 1) { currentPage++; updateDisplay(); } });
-            prevBtn.addEventListener('click', () => { if (currentPage > 0) { currentPage--; updateDisplay(); } });
+            nextBtn.addEventListener('click', () => {if (currentPage < totalPages - 1) {currentPage++; updateDisplay();} });
+            prevBtn.addEventListener('click', () => {if (currentPage > 0) {currentPage--; updateDisplay();} });
 
             printBtn.addEventListener('click', () => {
                 const actualCardsForPrint = flashcardData.filter(c => c.term !== '(Empty Slot)');
-                if (actualCardsForPrint.length === 0) { showMessage('No actual flashcards to print.', 'error'); return; }
+                if (actualCardsForPrint.length === 0) {showMessage('No actual flashcards to print.', 'error'); return;}
                 const dataToPrint = [...actualCardsForPrint];
-                while (dataToPrint.length % CARDS_PER_PAGE !== 0) { dataToPrint.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` }); }
+                while (dataToPrint.length % CARDS_PER_PAGE !== 0) {dataToPrint.push({term: `(Empty Slot)`, definition: `(Empty Slot)`});}
                 const printTotalPages = (dataToPrint.length / CARDS_PER_PAGE) * 2;
                 const originalPageInfoClass = pageInfo.className;
                 const originalControlsClass = controlsDiv ? controlsDiv.className : '';
@@ -542,8 +433,8 @@ Term2\tDefinition2..."></textarea>
                         let indexToFetchDataFrom = startIdxForPrint + j; if (indexToFetchDataFrom >= dataToPrint.length) break;
                         if (!isTermPageForPrint) {
                             const numColumns = 2; const col = j % numColumns;
-                            if (col === 0) { if (indexToFetchDataFrom + 1 < dataToPrint.length && (j + 1) < CARDS_PER_PAGE) indexToFetchDataFrom = startIdxForPrint + j + 1; }
-                            else { if (indexToFetchDataFrom - 1 >= startIdxForPrint) indexToFetchDataFrom = startIdxForPrint + j - 1; }
+                            if (col === 0) {if (indexToFetchDataFrom + 1 < dataToPrint.length && (j + 1) < CARDS_PER_PAGE) indexToFetchDataFrom = startIdxForPrint + j + 1;}
+                            else {if (indexToFetchDataFrom - 1 >= startIdxForPrint) indexToFetchDataFrom = startIdxForPrint + j - 1;}
                         }
                         const itemToDisplay = dataToPrint[indexToFetchDataFrom];
                         const card = document.createElement('div'); card.className = 'card-item';
@@ -556,7 +447,7 @@ Term2\tDefinition2..."></textarea>
                                 }
                             }
                             if (originalItemIndex === -1) originalItemIndex = indexToFetchDataFrom + 1;
-                        } else { originalItemIndex = indexToFetchDataFrom + 1; }
+                        } else {originalItemIndex = indexToFetchDataFrom + 1;}
                         const labelText = isTermPageForPrint ? `TERM ${originalItemIndex}` : `DEFINITION ${originalItemIndex}`;
                         const contentText = isTermPageForPrint ? itemToDisplay.term : itemToDisplay.definition;
                         card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`;
@@ -608,16 +499,16 @@ Term2\tDefinition2..."></textarea>
                 try {
                     const actualFlashcards = flashcardData.filter(card => card.term !== '(Empty Slot)');
                     // 1. Get the current user
-                    const { data: { user }, error: userError } = await window.supabase.auth.getUser();
+                    const {data: {user}, error: userError} = await window.supabase.auth.getUser();
 
                     if (userError || !user) {
                         showMessage('You must be logged in to save flashcards. Redirecting to login...', 'error');
-                        setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+                        setTimeout(() => {window.location.href = 'login.html';}, 2000);
                         return;
                     }
 
                     // 2. Insert the flashcard set information
-                    const { data: newSet, error: setInsertError } = await window.supabase
+                    const {data: newSet, error: setInsertError} = await window.supabase
                         .from('flashcard_sets')
                         .insert([
                             {
@@ -644,7 +535,7 @@ Term2\tDefinition2..."></textarea>
                     }));
 
                     // 4. Insert the individual flashcards
-                    const { error: cardsInsertError } = await window.supabase
+                    const {error: cardsInsertError} = await window.supabase
                         .from('flashcards')
                         .insert(cardsToInsert);
 
@@ -671,44 +562,128 @@ Term2\tDefinition2..."></textarea>
                 modalErrorMessage.style.display = 'none'; // Clear any error message
                 showMessage('Save operation cancelled.', 'info');
             });
-
-
-            // Update Auth buttons in top nav based on session on page load
-            async function updateAuthUI() {
-                const { data: { session } } = await window.supabase.auth.getSession();
-                const authButtonsDiv = document.querySelector('.auth-buttons');
-
-                if (session) {
-                    const { data: profile, error: profileError } = await window.supabase
-                        .from('profiles')
-                        .select('username')
-                        .eq('user_id', session.user.id)
-                        .single();
-
-                    const username = (profile && !profileError) ? profile.username : session.user.email;
-                    authButtonsDiv.innerHTML = `
-                        <div class="user-status">
-                            <span>Welcome, ${username}!</span>
-                            <a href="#" id="logout-btn" class="logout-button btn">Logout</a>
-                        </div>`;
-
-                    document.getElementById('logout-btn').addEventListener('click', async (e) => {
-                        e.preventDefault();
-                        await window.supabase.auth.signOut();
-                        window.location.href = 'login.html';
-                    });
-
-                } else {
-                    authButtonsDiv.innerHTML = `
-                        <a href="login.html" class="btn">Login</a>
-                        <a href="signup.html" class="btn">Signup</a>`;
-                }
-            }
-
-            updateAuthUI();
         });
-    </script>
 
+    </script>
+</head>
+
+<body class="create-page">
+    <nav class="top-nav">
+        <div class="top-nav-inner">
+            <div class="nav-logo">
+                <a href="index.html">CramCraft</a>
+            </div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="create.html">Create</a></li>
+                <li><a href="user_dashboard.html">Dashboard</a></li>
+                <li><a href="search_page.html">Search</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <div class="user-status" style="display: none;"></div>
+                <a href="login.html" class="btn">Login</a>
+                <a href="signup.html" class="btn">Signup</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content-wrapper">
+        <div id="flashcard-maker-section">
+            <div class="container-fc">
+                <img src="images/Cramcraft.png" alt="CramCraft Mini Logo" class="logo-center-small">
+
+                <div class="input-area" id="manual-input-area">
+                    <h2>Enter Terms and Definitions Manually</h2>
+                    <div id="term-def-inputs">
+                        <div class="input-row">
+                            <input type="text" placeholder="Term 1" class="term">
+                            <input type="text" placeholder="Definition 1" class="definition">
+                            <button type="button" class="delete-row-btn">Delete</button>
+                        </div>
+                    </div>
+                    <button id="add-row">Add Another Term/Definition</button>
+                    <button id="start-flashcards">Generate Flashcards from Manual Input</button>
+                    <button id="show-bulk-input">Switch to Bulk Input</button>
+                </div>
+
+                <div class="input-area hidden" id="bulk-input-area">
+                    <h2>Enter Bulk Flashcard Data</h2>
+                    <div class="delimiter-group">
+                        <p class="delimiter-group-title"><strong>1. Separate Term and Definition with:</strong></p>
+                        <div class="delimiter-options" id="term-def-separator-options">
+                            <label><input type="radio" name="termDefDelimiter" value="tab" checked> Tab</label>
+                            <label><input type="radio" name="termDefDelimiter" value="comma"> Comma (,)</label>
+                            <label><input type="radio" name="termDefDelimiter" value="tilde"> Tilde (~)</label>
+                            <label>
+                                <input type="radio" name="termDefDelimiter" value="customTermDef"> Custom:
+                                <input type="text" id="custom-term-def-delimiter-input" maxlength="1" class="hidden">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="delimiter-group">
+                        <p class="delimiter-group-title"><strong>2. Separate Cards (Rows) with:</strong></p>
+                        <div class="delimiter-options" id="card-separator-options">
+                            <label><input type="radio" name="cardDelimiter" value="newline" checked> New Line</label>
+                            <label><input type="radio" name="cardDelimiter" value="semicolon"> Semicolon (;)</label>
+                            <label>
+                                <input type="radio" name="cardDelimiter" value="customCard"> Custom:
+                                <input type="text" id="custom-card-delimiter-input" class="hidden"
+                                    placeholder="e.g. ---">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="input-instructions">
+                        <p>Paste your flashcard data below using your chosen separators.</p>
+                        <p>A <strong>Term</strong> can span multiple lines (if "New Line" is NOT your card separator and
+                            your term/def separator is not also a newline).</p>
+                        <p>The <strong>Definition</strong> is typically the part after the <i>last</i> instance of your
+                            term/definition separator on a line (or within a card block if using "New Line" as card
+                            separator).</p>
+                        <hr>
+                        <p><strong>Example 1 (Tab for Term/Def, New Line for Cards):</strong></p>
+                        <p><code>Term A&lt;TAB&gt;Definition A</code><br><code>Term B&lt;TAB&gt;Definition B</code></p>
+                        <p><strong>Example 2 (Comma for Term/Def, Semicolon for Cards):</strong></p>
+                        <p><code>Capital of France,Paris;What is 2+2?,4</code></p>
+                        <p><strong>Example 3 (Custom '|' for Term/Def, Custom '---' for Cards):</strong></p>
+                        <p><code>Question 1|Answer 1---Question 2|Answer 2</code></p>
+                    </div>
+                    <textarea id="bulk-data-input" rows="10" placeholder="Example (Tab between term/def, New Line between cards):
+Term1\tDefinition1
+Term2\tDefinition2..."></textarea>
+                    <button id="parse-bulk-data">Parse Bulk Data & Generate Flashcards</button>
+                    <button id="show-manual-input">Switch to Manual Row Input</button>
+                </div>
+
+                <div class="display-area hidden" id="flashcard-display">
+                    <div id="page-info"></div>
+                    <div id="cards-container"></div>
+                    <div class="controls">
+                        <button id="prev-page">Previous Page</button>
+                        <button id="next-page">Next Page</button>
+                        <button id="print-cards">Print Flashcards</button>
+                        <button id="save-cards">Save to Database</button> <button id="back-to-input">Back to Input
+                            Methods</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="message-box" id="custom-alert"></div>
+
+    <div id="setTitleModal" class="modal">
+        <div class="modal-content">
+            <h3>Enter Set Title</h3>
+            <input type="text" id="modal-set-name-input" placeholder="Enter your flashcard set title" required>
+            <div class="modal-buttons">
+                <button class="save-btn-modal" id="modal-save-set">Save Set</button>
+                <button class="cancel-btn-modal" id="modal-cancel-save">Cancel</button>
+            </div>
+            <p id="modal-error-message" style="color: red; margin-top: 10px; display: none;"></p>
+        </div>
+    </div>
 </body>
 
 </html>
