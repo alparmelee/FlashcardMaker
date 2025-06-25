@@ -146,6 +146,10 @@
             }
 
             flashcardData = cards;
+            flashcardData = cards.filter(card =>
+                (card.term && card.term.trim()) || (card.definition && card.definition.trim())
+            );
+            
             if (flashcardData.length === 0) {
                 document.querySelector('.main-container').innerHTML = '<p>No flashcards found for this set.</p>';
                 return;
@@ -202,11 +206,44 @@
             let currentQuizIndex = 0;
 
             // --- All other functions (shuffle, switchView, showCard, quiz, list view) remain the same ---
-            function shuffleArray(array) {for (let i = array.length - 1; i > 0; i--) {const j = Math.floor(Math.random() * (i + 1));[array[i], array[j]] = [array[j], array[i]];} return array;}
-            function switchView(activeView) {const views = {flashcard: flashcardView, quiz: quizView, list: listView}; const buttons = {flashcard: modeFlashcardsBtn, quiz: modeQuizBtn, list: modeListBtn}; for (const view in views) {views[view].classList.add('hidden'); buttons[view].classList.remove('active');} views[activeView].classList.remove('hidden'); buttons[activeView].classList.add('active'); if (activeView === 'quiz') startQuiz(); if (activeView === 'list') renderListView();}
-            function showCard(index) {cardFront.textContent = flashcardData[index].term; cardBack.textContent = flashcardData[index].definition; cardProgress.textContent = `${index + 1} / ${flashcardData.length}`; flashcard.classList.remove('flipped'); updateNavButtons();}
-            function updateNavButtons() {prevCardBtn.disabled = currentCardIndex === 0; nextCardBtn.disabled = currentCardIndex === flashcardData.length - 1;}
-            function startQuiz() {currentQuizIndex = 0; showQuizQuestion(currentQuizIndex);}
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
+                }
+                return array;
+            }
+            function switchView(activeView) {
+                const views = {flashcard: flashcardView, quiz: quizView, list: listView};
+                const buttons = {flashcard: modeFlashcardsBtn, quiz: modeQuizBtn, list: modeListBtn};
+                for (const view in views) {
+                    views[view].classList.add('hidden');
+                    buttons[view].classList.remove('active');
+                }
+                views[activeView].classList.remove('hidden');
+                buttons[activeView].classList.add('active');
+                if (activeView === 'quiz') startQuiz();
+                if (activeView === 'list') renderListView();
+            }
+            function showCard(index) {
+                const card = flashcardData[index] || {};
+                const term = card.term?.trim() || "(No term provided)";
+                const definition = card.definition?.trim() || "(No definition provided)";
+
+                cardFront.textContent = term;
+                cardBack.textContent = definition;
+                cardProgress.textContent = `${index + 1} / ${flashcardData.length}`;
+                flashcard.classList.remove('flipped');
+                updateNavButtons();
+            }
+            function updateNavButtons() {
+                prevCardBtn.disabled = currentCardIndex === 0;
+                nextCardBtn.disabled = currentCardIndex === flashcardData.length - 1;
+            }
+            function startQuiz() {
+                currentQuizIndex = 0;
+                showQuizQuestion(currentQuizIndex);
+            }
             function showQuizQuestion(index) {
                 const currentCard = flashcardData[index];
                 quizQuestion.textContent = `What is the definition of "${currentCard.term}"?`;
