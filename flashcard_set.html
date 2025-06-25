@@ -172,7 +172,10 @@
                 document.querySelector('.creator-info strong').textContent = creatorUsername;
             }
 
+            // Initial Load
             populateCategoryFilter();
+            showCard(0);
+            
         })();
         document.addEventListener('DOMContentLoaded', () => {
 
@@ -374,9 +377,6 @@
             modePrintBtn.addEventListener('click', prepareAndPrintAdvanced); // Changed to call advanced function
             categoryFilter.addEventListener('change', (e) => renderListView(e.target.value));
 
-            // Initial Load
-            populateCategoryFilter();
-            showCard(0);
         });
     </script>
 </body>
