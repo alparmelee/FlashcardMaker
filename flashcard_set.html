@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intro to Biology - CramCraft</title>
+    <title>Flashcards - CramCraft</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -124,6 +124,7 @@
             const termListContainer = document.getElementById('term-list-container');
 
             let flashcards = [];
+            let flashcardData = [];
             let currentIndex = 0;
             let showFront = true;
             let currentQuizIndex = 0;
@@ -215,7 +216,7 @@
                 }
                 return array;
             }
-
+            // Fetch flashcard data with categories if available
             function switchView(activeView) {
                 const views = {flashcard: flashcardView, quiz: quizView, list: listView};
                 const buttons = {flashcard: modeFlashcardsBtn, quiz: modeQuizBtn, list: modeListBtn};
@@ -242,7 +243,7 @@
                     categoryFilter.appendChild(option);
                 });
             }
-
+            // Render list view with optional category filtering
             function renderListView(category = 'All') {
                 termListContainer.innerHTML = '';
                 const filteredData = category === 'All' ? flashcardData : flashcardData.filter(card => card.category === category);
@@ -253,11 +254,12 @@
                     termListContainer.appendChild(row);
                 });
             }
-
+            // Quiz functionality
             function startQuiz() {
                 currentQuizIndex = 0;
                 showQuizQuestion(currentQuizIndex);
             }
+            // Show a quiz question based on the current index
             function showQuizQuestion(index) {
                 const currentCard = flashcardData[index];
                 quizQuestion.textContent = `What is the definition of "${currentCard.term}"?`;
@@ -271,7 +273,7 @@
                         incorrectAnswers.push(randomDefinition);
                     }
                 }
-
+                // If not enough unique incorrect answers, fill with placeholders
                 const choices = shuffleArray([correctAnswer, ...incorrectAnswers]);
                 quizChoicesContainer.innerHTML = '';
                 choices.forEach(choice => {
@@ -283,7 +285,7 @@
                 });
             }
 
-            function handleChoiceClick(event) {
+            function handleChoiceClick(event) { // Handle choice button clicks
                 const selectedButton = event.target;
                 const chosenAnswer = selectedButton.textContent;
                 const correctAnswer = flashcardData[currentQuizIndex].definition;
@@ -297,7 +299,8 @@
                 }
                 setTimeout(() => {if (currentQuizIndex < flashcardData.length - 1) {currentQuizIndex++; showQuizQuestion(currentQuizIndex);} else {quizQuestion.textContent = "Quiz Complete!"; quizProgress.textContent = ""; quizChoicesContainer.innerHTML = '';} }, 2500);
             }
-
+            // Initial Load
+            populateCategoryFilter();
             // Initial render
             renderCard();
 
