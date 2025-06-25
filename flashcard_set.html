@@ -225,8 +225,30 @@
                 if (activeView === 'quiz') startQuiz();
                 if (activeView === 'list') renderListView();
             }
+            function populateCategoryFilter() {
+                // Assuming categories might be stored in flashcardData if applicable,
+                // or fetched separately if categories are a separate entity.
+                // For this example, assuming 'category' field might be present or null.
+                const categories = ['All', ...new Set(flashcardData.map(card => card.category).filter(Boolean))]; // Filter out null/undefined categories
+                categoryFilter.innerHTML = '';
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category;
+                    categoryFilter.appendChild(option);
+                });
+            }
+            function renderListView(category = 'All') {
+                termListContainer.innerHTML = '';
+                const filteredData = category === 'All' ? flashcardData : flashcardData.filter(card => card.category === category);
+                filteredData.forEach(card => {
+                    const row = document.createElement('div');
+                    row.className = 'term-row';
+                    row.innerHTML = `<div class="term">${card.term}</div><div class="definition">${card.definition}</div>`;
+                    termListContainer.appendChild(row);
+                });
+            }
             function showCard(index) {
-                showCard(0);
                 if (!flashcardData || !flashcardData.length || index >= flashcardData.length) {
                     cardFront.textContent = "(No card)";
                     cardBack.textContent = "(No content)";
@@ -287,29 +309,6 @@
                     buttons.forEach(button => {if (button.textContent === correctAnswer) {button.classList.add('correct');} });
                 }
                 setTimeout(() => {if (currentQuizIndex < flashcardData.length - 1) {currentQuizIndex++; showQuizQuestion(currentQuizIndex);} else {quizQuestion.textContent = "Quiz Complete!"; quizProgress.textContent = ""; quizChoicesContainer.innerHTML = '';} }, 2500);
-            }
-            function populateCategoryFilter() {
-                // Assuming categories might be stored in flashcardData if applicable,
-                // or fetched separately if categories are a separate entity.
-                // For this example, assuming 'category' field might be present or null.
-                const categories = ['All', ...new Set(flashcardData.map(card => card.category).filter(Boolean))]; // Filter out null/undefined categories
-                categoryFilter.innerHTML = '';
-                categories.forEach(category => {
-                    const option = document.createElement('option');
-                    option.value = category;
-                    option.textContent = category;
-                    categoryFilter.appendChild(option);
-                });
-            }
-            function renderListView(category = 'All') {
-                termListContainer.innerHTML = '';
-                const filteredData = category === 'All' ? flashcardData : flashcardData.filter(card => card.category === category);
-                filteredData.forEach(card => {
-                    const row = document.createElement('div');
-                    row.className = 'term-row';
-                    row.innerHTML = `<div class="term">${card.term}</div><div class="definition">${card.definition}</div>`;
-                    termListContainer.appendChild(row);
-                });
             }
 
             // --- UPDATED: Advanced Print Function ---
@@ -392,8 +391,8 @@
             modeListBtn.addEventListener('click', () => switchView('list'));
             modePrintBtn.addEventListener('click', prepareAndPrintAdvanced); // Changed to call advanced function
             categoryFilter.addEventListener('change', (e) => renderListView(e.target.value));
-
         });
+        showCard(0);
     </script>
 </body>
 
