@@ -169,10 +169,8 @@
             }
 
             flashcards = (data || []).filter(card => card.term?.trim() && card.definition?.trim());
-            flashcardData = cards;
-            flashcardData = cards.filter(card =>
-                (card.term && card.term.trim()) || (card.definition && card.definition.trim())
-            );
+            flashcardData = [...flashcards];
+
 
             if (flashcardData.length === 0) {
                 document.querySelector('.main-container').innerHTML = '<p>No flashcards found for this set.</p>';
@@ -384,16 +382,16 @@
             }
 
             flashcard.addEventListener('click', () => flashcard.classList.toggle('flipped'));
-            nextCardBtn.addEventListener('click', () => {
-                if (currentCardIndex < flashcardData.length - 1) {
-                    currentCardIndex++;
-                    showCard(currentCardIndex);
+            nextBtn.addEventListener('click', () => {
+                if (currentIndex < flashcardData.length - 1) {
+                    currentIndex++;
+                    renderCard(currentIndex);
                 }
             });
-            prevCardBtn.addEventListener('click', () => {
-                if (currentCardIndex > 0) {
-                    currentCardIndex--;
-                    showCard(currentCardIndex);
+            prevBtn.addEventListener('click', () => {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    renderCard(currentIndex);
                 }
             });
 
