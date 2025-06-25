@@ -239,7 +239,7 @@ body.home-page .auth-buttons .btn:hover {
 
 /* flashcard_set.html specific user status color */
 body.flashcard-set-page .top-nav .user-status {
-    color: #e0eafc;
+    color: #222;
 }
 
 
@@ -257,7 +257,7 @@ body.flashcard-set-page .top-nav .user-status {
 
 /* flashcard_set.html specific logout button color */
 body.flashcard-set-page .top-nav .user-status .logout-button {
-    color: #f8f9fa;
+    color: #222;
     border: 1px solid #f8f9fa;
 }
 
