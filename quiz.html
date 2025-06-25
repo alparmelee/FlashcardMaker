@@ -2,26 +2,137 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Quiz Mode</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background: linear-gradient(to right, #a1c4fd, #c2e9fb);
+      color: #333;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .btn {
+      background: linear-gradient(145deg, #ffffff, #e6e6e6);
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 500;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      margin: 10px 5px;
+      transition: background 0.3s ease;
+    }
+    .btn:hover {
+      background: #dcdcdc;
+    }
+    .quiz-container {
+      width: 100%;
+      max-width: 850px;
+      margin: auto;
+      padding: 40px;
+      background-color: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      transition: all 0.5s ease;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .fade-out {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    .fade-in {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2.2rem;
+      color: #2d3748;
+    }
+    label, select {
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
+    select {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    #quiz-question {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: #1a202c;
+    }
+    #quiz-choices button {
+      background: #f0f0f0;
+      border: 1px solid #ccc;
+      width: 90%;
+      padding: 12px;
+      margin: 10px auto;
+      border-radius: 6px;
+      transition: background 0.3s ease;
+    }
+    #quiz-choices button:hover {
+      background: #e2e8f0;
+    }
+    #quiz-status, #timer {
+      font-size: 1rem;
+      margin-bottom: 10px;
+      color: #4a5568;
+    }
+    .option-group {
+      margin-bottom: 20px;
+    }
+    #quiz-result {
+      font-size: 1.2rem;
+      color: #2d3748;
+      margin-top: 20px;
+    }
+    #review-section {
+      margin-top: 30px;
+      text-align: left;
+      background-color: #f9fafb;
+      border-radius: 10px;
+      padding: 20px;
+    }
+    #review-section h3 {
+      color: #2b6cb0;
+    }
+    #review-section p {
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #e2e8f0;
+      margin: 15px 0;
+    }
+  </style>
 </head>
 <body>
   <div class="quiz-container" id="quiz-container">
     <h1>Quiz Mode</h1>
 
-    <label for="topic-select">Choose a flashcard set:</label><br />
+    <label for="topic-select">Choose a flashcard set:</label>
     <select id="topic-select" class="btn"></select>
 
-    <div style="margin: 20px 0;">
-      <label><input type="checkbox" id="shuffle-toggle" checked> 🔀 Shuffle Questions</label><br />
+    <div class="option-group">
+      <label><input type="checkbox" id="shuffle-toggle" checked> 🔀 Shuffle Questions</label><br>
       <label><input type="checkbox" id="retry-toggle"> 🔁 Retry Missed Questions at End</label>
     </div>
 
     <div id="quiz-screen">
       <p id="quiz-status"></p>
       <p id="timer">⏱️ 30s</p>
-      <h2 id="quiz-question">Select a flashcard set and press Start Quiz</h2>
+      <h2 id="quiz-question">Loading...</h2>
       <div id="quiz-choices"></div>
       <button id="quiz-next" class="btn" style="display:none;">Next</button>
       <div id="quiz-result" style="display:none;"></div>
@@ -32,222 +143,6 @@
   </div>
 
   <script>
-    let selectedFlashcards = [];
-    let quizQuestions = [];
-    let quizIndex = 0;
-    let quizScore = 0;
-    let correctList = [];
-    let incorrectList = [];
-    let retryQueue = [];
-    let timer, timeLeft = 30;
-    let reviewData = [];
-
-    function shuffle(array) {
-      return array.sort(() => Math.random() - 0.5);
-    }
-
-    function fadeTransition(element, callback) {
-      element.classList.add("fade-out");
-      setTimeout(() => {
-        callback();
-        element.classList.remove("fade-out");
-        element.classList.add("fade-in");
-        setTimeout(() => {
-          element.classList.remove("fade-in");
-        }, 400);
-      }, 300);
-    }
-
-    function generateQuizQuestions() {
-      quizQuestions = selectedFlashcards.map((card, i, arr) => {
-        const correct = card.definition;
-        const incorrect = arr.filter(c => c.definition !== correct)
-                              .sort(() => 0.5 - Math.random())
-                              .slice(0, 3)
-                              .map(c => c.definition);
-
-        const choices = shuffle([...incorrect, correct]);
-        return {
-          question: `What is "${card.term}"?`,
-          choices: choices,
-          answer: correct,
-          term: card.term
-        };
-      });
-
-      const shuffleToggle = document.getElementById("shuffle-toggle");
-      if (shuffleToggle.checked) {
-        shuffle(quizQuestions);
-      }
-    }
-
-    function startQuiz() {
-      const topic = document.getElementById("topic-select").value;
-      selectedFlashcards = window.flashcardGroups[topic] || [];
-
-      if (selectedFlashcards.length === 0) {
-        alert("No flashcards found for this set.");
-        return;
-      }
-
-      generateQuizQuestions();
-      quizIndex = 0;
-      quizScore = 0;
-      correctList = [];
-      incorrectList = [];
-      retryQueue = [];
-      reviewData = [];
-
-      document.getElementById("quiz-result").style.display = "none";
-      document.getElementById("review-section").style.display = "none";
-      document.getElementById("quiz-question").style.display = "block";
-      document.getElementById("quiz-choices").style.display = "block";
-      document.getElementById("quiz-status").style.display = "block";
-      document.getElementById("timer").style.display = "block";
-
-      showQuizQuestion();
-    }
-
-    function showQuizQuestion() {
-      clearInterval(timer);
-      timeLeft = 30;
-      startTimer();
-
-      const container = document.getElementById("quiz-container");
-      fadeTransition(container, () => {
-        const q = quizQuestions[quizIndex];
-        document.getElementById("quiz-question").textContent = q.question;
-        document.getElementById("quiz-status").textContent = `Question ${quizIndex + 1} of ${quizQuestions.length}`;
-
-        const choicesDiv = document.getElementById("quiz-choices");
-        choicesDiv.innerHTML = "";
-
-        q.choices.forEach(choice => {
-          const btn = document.createElement("button");
-          btn.textContent = choice;
-          btn.className = "btn";
-          btn.onclick = () => handleQuizChoice(btn, choice, q);
-          choicesDiv.appendChild(btn);
-        });
-
-        document.getElementById("quiz-next").style.display = "none";
-      });
-    }
-
-    function startTimer() {
-      const timerEl = document.getElementById("timer");
-      timerEl.textContent = `⏱️ ${timeLeft}s`;
-      timer = setInterval(() => {
-        timeLeft--;
-        timerEl.textContent = `⏱️ ${timeLeft}s`;
-        if (timeLeft <= 0) {
-          clearInterval(timer);
-          handleQuizChoice(null, null, quizQuestions[quizIndex]);
-        }
-      }, 1000);
-    }
-
-    function handleQuizChoice(button, selected, questionObj) {
-      clearInterval(timer);
-      const buttons = document.getElementById("quiz-choices").children;
-      for (let btn of buttons) {
-        btn.disabled = true;
-        if (btn.textContent === questionObj.answer) {
-          btn.classList.add("correct");
-        } else if (btn.textContent === selected) {
-          btn.classList.add("incorrect");
-        }
-      }
-
-      let wasCorrect = false;
-      if (selected === questionObj.answer) {
-        quizScore++;
-        correctList.push(questionObj);
-        wasCorrect = true;
-      } else {
-        incorrectList.push(questionObj);
-        const retryToggle = document.getElementById("retry-toggle");
-        if (retryToggle.checked) {
-          retryQueue.push(questionObj);
-        }
-      }
-
-      reviewData.push({
-        question: questionObj.question,
-        correctAnswer: questionObj.answer,
-        userAnswer: selected,
-        wasCorrect: wasCorrect
-      });
-
-      document.getElementById("quiz-next").style.display = "inline-block";
-    }
-
-    function showQuizResults() {
-      document.getElementById("quiz-question").style.display = "none";
-      document.getElementById("quiz-choices").style.display = "none";
-      document.getElementById("quiz-next").style.display = "none";
-      document.getElementById("quiz-status").style.display = "none";
-      document.getElementById("timer").style.display = "none";
-
-      const resultDiv = document.getElementById("quiz-result");
-      resultDiv.style.display = "block";
-
-      let feedback = "";
-      const percent = (quizScore / (quizQuestions.length + retryQueue.length)) * 100;
-      if (percent === 100) feedback = "🌟 Perfect score!";
-      else if (percent >= 75) feedback = "👍 Great job!";
-      else if (percent >= 50) feedback = "🙂 Good effort!";
-      else feedback = "😅 Keep practicing!";
-
-      let summary = `<h2>Quiz Complete!</h2><p>You scored ${quizScore} out of ${quizQuestions.length + retryQueue.length}.</p><p>${feedback}</p><hr>`;
-      resultDiv.innerHTML = summary + `<button onclick="startQuiz()" class="btn">Try Again</button><button onclick="showReview()" class="btn">Review Answers</button>`;
-    }
-
-    function showReview() {
-      const reviewDiv = document.getElementById("review-section");
-      reviewDiv.style.display = "block";
-      reviewDiv.innerHTML = `<h3>Review</h3>`;
-
-      reviewData.forEach((item, index) => {
-        reviewDiv.innerHTML += `
-          <p><strong>Q${index + 1}: ${item.question}</strong><br>
-          Your answer: ${item.userAnswer || "No answer"} <br>
-          Correct answer: ${item.correctAnswer} <br>
-          <span style="color: ${item.wasCorrect ? 'green' : 'red'}">${item.wasCorrect ? 'Correct' : 'Incorrect'}</span></p>
-          <hr>
-        `;
-      });
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const nextBtn = document.getElementById("quiz-next");
-      nextBtn.onclick = () => {
-        quizIndex++;
-        if (quizIndex < quizQuestions.length) {
-          showQuizQuestion();
-        } else if (retryQueue.length > 0) {
-          quizQuestions = [...retryQueue];
-          retryQueue = [];
-          quizIndex = 0;
-          showQuizQuestion();
-        } else {
-          showQuizResults();
-        }
-      };
-
-      // Load flashcard groups from localStorage only — no predefined sets
-      const saved = JSON.parse(localStorage.getItem("flashcardGroups") || "{}");
-      window.flashcardGroups = saved;
-
-      const select = document.getElementById("topic-select");
-      select.innerHTML = '<option value="" disabled selected>Select a set</option>';
-      for (const key in window.flashcardGroups) {
-        const opt = document.createElement("option");
-        opt.value = key;
-        opt.textContent = key;
-        select.appendChild(opt);
-      }
-    });
   </script>
 </body>
 </html>
