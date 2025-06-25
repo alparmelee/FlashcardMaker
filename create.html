@@ -1,22 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CramCraft - Create Flashcards</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
     <link rel="stylesheet" href="stylesheet.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
     <script type="module">
-        import { createClient } from '@supabase/supabase-js';
-        const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co'; // Database URL
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjvbuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8'; // API Key
-        const supabase = createClient(supabaseUrl, supabaseKey);
-        window.supabase = supabase;
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+        const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
+        const supabase = createClient(supabaseUrl, supabaseKey, {
+            auth: {
+                storage: localStorage,
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: false
+            }
+        });
+
+        async function updateAuthUI() {
+            const { data: { session } } = await supabase.auth.getSession();
+            const authButtonsDiv = document.querySelector('.auth-buttons');
+
+            if (session?.user) {
+                const savedUsername = localStorage.getItem("username");
+                const username = savedUsername || session.user.email;
+                authButtonsDiv.innerHTML = `
+        <div class="user-status">
+          <span>Welcome, ${username}!</span>
+          <a href="#" id="logout-btn" class="logout-button btn">Logout</a>
+        </div>`;
+                document.getElementById('logout-btn').addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await supabase.auth.signOut();
+                    window.location.href = 'login.html';
+                });
+            } else {
+                authButtonsDiv.innerHTML = `
+        <a href="login.html" class="btn">Login</a>
+        <a href="signup.html" class="btn">Signup</a>`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateAuthUI();
+
+            const saveBtn = document.getElementById('save-flashcards');
+            if (!saveBtn) return;
+
+            saveBtn.addEventListener('click', async () => {
+                const { data: { user }, error } = await supabase.auth.getUser();
+                if (!user) {
+                    alert('You must be logged in to save flashcards. Redirecting...');
+                    return window.location.href = 'login.html';
+                }
+
+                const setTitle = document.getElementById('set-name').value.trim();
+                const rows = document.querySelectorAll('.flashcard-row');
+                const flashcards = [];
+
+                rows.forEach(row => {
+                    const term = row.querySelector('.term-input')?.value.trim();
+                    const definition = row.querySelector('.definition-input')?.value.trim();
+                    const category = row.querySelector('.category-input')?.value.trim() || null;
+
+                    if (term && definition) {
+                        flashcards.push({ term, definition, category });
+                    }
+                });
+
+                if (!setTitle || flashcards.length === 0) {
+                    alert('Please enter a title and at least one flashcard.');
+                    return;
+                }
+
+                const { data: set, error: setError } = await supabase
+                    .from('flashcard_sets')
+                    .insert([{ title: setTitle, user_id: user.id, terms_count: flashcards.length }])
+                    .select()
+                    .single();
+
+                if (setError) {
+                    console.error('Set creation error:', setError);
+                    return alert('Error creating flashcard set.');
+                }
+
+                const cardsToInsert = flashcards.map(card => ({
+                    ...card,
+                    set_id: set.id
+                }));
+
+                const { error: cardError } = await supabase
+                    .from('flashcards')
+                    .insert(cardsToInsert);
+
+                if (cardError) {
+                    console.error('Flashcard insert error:', cardError);
+                    return alert('Flashcards failed to save.');
+                }
+
+                alert('Flashcard set saved!');
+                window.location.href = 'user_dashboard.html';
+            });
+        });
     </script>
+
+
 </head>
 
-<body>
+<body class="create-page">
 
     <nav class="top-nav">
         <div class="top-nav-inner">
@@ -24,8 +121,9 @@
                 <a href="index.html">CramCraft</a>
             </div>
             <ul>
-                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="index.html">Home</a></li>
                 <li><a href="about.html">About</a></li>
+                <li><a href="user_dashboard.html">Dashboard</a></li>
             </ul>
             <div class="auth-buttons">
                 <div class="user-status" style="display: none;"></div>
@@ -36,9 +134,9 @@
     </nav>
 
     <div class="main-content-wrapper">
-        <div id="flashcard-maker-section"> 
+        <div id="flashcard-maker-section">
             <div class="container-fc">
-                <img src="Cramcraft.png" alt="CramCraft Mini Logo" class="logo-center-small">
+                <img src="images/Cramcraft.png" alt="CramCraft Mini Logo" class="logo-center-small">
 
                 <div class="input-area" id="manual-input-area">
                     <h2>Enter Terms and Definitions Manually</h2>
@@ -75,14 +173,18 @@
                             <label><input type="radio" name="cardDelimiter" value="semicolon"> Semicolon (;)</label>
                             <label>
                                 <input type="radio" name="cardDelimiter" value="customCard"> Custom:
-                                <input type="text" id="custom-card-delimiter-input" class="hidden" placeholder="e.g. ---">
+                                <input type="text" id="custom-card-delimiter-input" class="hidden"
+                                    placeholder="e.g. ---">
                             </label>
                         </div>
                     </div>
                     <div class="input-instructions">
                         <p>Paste your flashcard data below using your chosen separators.</p>
-                        <p>A <strong>Term</strong> can span multiple lines (if "New Line" is NOT your card separator and your term/def separator is not also a newline).</p>
-                        <p>The <strong>Definition</strong> is typically the part after the <i>last</i> instance of your term/definition separator on a line (or within a card block if using "New Line" as card separator).</p>
+                        <p>A <strong>Term</strong> can span multiple lines (if "New Line" is NOT your card separator and
+                            your term/def separator is not also a newline).</p>
+                        <p>The <strong>Definition</strong> is typically the part after the <i>last</i> instance of your
+                            term/definition separator on a line (or within a card block if using "New Line" as card
+                            separator).</p>
                         <hr>
                         <p><strong>Example 1 (Tab for Term/Def, New Line for Cards):</strong></p>
                         <p><code>Term A&lt;TAB&gt;Definition A</code><br><code>Term B&lt;TAB&gt;Definition B</code></p>
@@ -105,23 +207,32 @@ Term2\tDefinition2..."></textarea>
                         <button id="prev-page">Previous Page</button>
                         <button id="next-page">Next Page</button>
                         <button id="print-cards">Print Flashcards</button>
-                        <button id="back-to-input">Back to Input Methods</button>
+                        <button id="save-cards">Save to Database</button> <button id="back-to-input">Back to Input Methods</button>
                     </div>
                 </div>
             </div>
         </div>
-        </div>
+    </div>
 
 
     <div class="message-box" id="custom-alert"></div>
 
+    <div id="setTitleModal" class="modal">
+        <div class="modal-content">
+            <h3>Enter Set Title</h3>
+            <input type="text" id="modal-set-name-input" placeholder="Enter your flashcard set title" required>
+            <div class="modal-buttons">
+                <button class="save-btn-modal" id="modal-save-set">Save Set</button>
+                <button class="cancel-btn-modal" id="modal-cancel-save">Cancel</button>
+            </div>
+            <p id="modal-error-message" style="color: red; margin-top: 10px; display: none;"></p>
+        </div>
+    </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // --- Page Swapping Logic (Simplified) ---
-            // Since "About" is its own page, we primarily ensure the create section is visible.
             const flashcardMakerSection = document.getElementById('flashcard-maker-section');
-            
-            // Default view: show flashcard maker section
             flashcardMakerSection.classList.remove('hidden');
             flashcardMakerSection.style.display = 'flex';
 
@@ -136,6 +247,7 @@ Term2\tDefinition2..."></textarea>
             const nextBtn = document.getElementById('next-page');
             const printBtn = document.getElementById('print-cards');
             const backBtn = document.getElementById('back-to-input');
+            const saveBtn = document.getElementById('save-cards');
 
             const manualInputArea = document.getElementById('manual-input-area');
             const bulkInputArea = document.getElementById('bulk-input-area');
@@ -149,10 +261,24 @@ Term2\tDefinition2..."></textarea>
             const cardDelimiterRadios = document.querySelectorAll('input[name="cardDelimiter"]');
             const customCardDelimiterInput = document.getElementById('custom-card-delimiter-input');
 
+            // NEW: References for set name and category inputs (these are commented out in HTML as they are no longer visible inputs)
+            // This is just to ensure the JS variables don't cause errors if not removed.
+            const setInput = document.getElementById('set-name-input'); // This will refer to the hidden input if not removed from HTML
+            const categoryInput = document.getElementById('set-category-input'); // This will refer to the hidden input if not removed from HTML
+
+
             const customAlertBox = document.getElementById('custom-alert');
             const controlsDiv = document.querySelector('#flashcard-maker-section .controls');
 
-            let rowCount = 1; // Start with 1, as there's already one row in HTML
+            // NEW: Modal elements
+            const setTitleModal = document.getElementById('setTitleModal');
+            const modalSetNameInput = document.getElementById('modal-set-name-input');
+            const modalSaveSetBtn = document.getElementById('modal-save-set');
+            const modalCancelSaveBtn = document.getElementById('modal-cancel-save');
+            const modalErrorMessage = document.getElementById('modal-error-message');
+
+
+            let rowCount = 1;
             let flashcardData = [];
             let currentPage = 0;
             let totalPages = 0;
@@ -174,14 +300,14 @@ Term2\tDefinition2..."></textarea>
             function isOptionLine(line) { return /^\s*[a-zA-Z]\.\s/.test(line.trim()); }
 
             termDefDelimiterRadios.forEach(radio => {
-                radio.addEventListener('change', function() {
+                radio.addEventListener('change', function () {
                     customTermDefDelimiterInput.classList.toggle('hidden', this.value !== 'customTermDef');
                     if (this.value === 'customTermDef') customTermDefDelimiterInput.focus();
                 });
             });
 
             cardDelimiterRadios.forEach(radio => {
-                radio.addEventListener('change', function() {
+                radio.addEventListener('change', function () {
                     customCardDelimiterInput.classList.toggle('hidden', this.value !== 'customCard');
                     if (this.value === 'customCard') customCardDelimiterInput.focus();
                 });
@@ -207,21 +333,18 @@ Term2\tDefinition2..."></textarea>
                 termDefInputs.appendChild(newRow);
             });
 
-            // Event listener for deleting individual rows
-            termDefInputs.addEventListener('click', function(event) {
+            termDefInputs.addEventListener('click', function (event) {
                 if (event.target.classList.contains('delete-row-btn')) {
                     const rowToRemove = event.target.closest('.input-row');
                     if (rowToRemove) {
-                        // Ensure at least one row remains
                         if (termDefInputs.children.length > 1) {
                             rowToRemove.remove();
-                            // Re-index placeholders if needed, though not strictly necessary for functionality
                             let currentInputRows = termDefInputs.querySelectorAll('.input-row');
                             currentInputRows.forEach((row, index) => {
                                 row.querySelector('.term').placeholder = `Term ${index + 1}`;
                                 row.querySelector('.definition').placeholder = `Definition ${index + 1}`;
                             });
-                            rowCount = currentInputRows.length; // Update rowCount to reflect actual number of rows
+                            rowCount = currentInputRows.length;
                             showMessage('Term/Definition deleted.', 'success');
                         } else {
                             showMessage('Cannot delete the last term/definition. Please add another first.', 'warning');
@@ -281,14 +404,14 @@ Term2\tDefinition2..."></textarea>
                         let isNewCardBoundary = false;
                         if (currentCardBlockLines.length > 0) {
                             if (trimmedCurrentLine === "") isNewCardBoundary = true;
-                            else if (!isOptionLine(currentLine) && (currentCardBlockLines.length > 0 && !isOptionLine(currentCardBlockLines[currentCardBlockLines.length-1]))) {
-                                 if(!isOptionLine(currentLine) && !isOptionLine(currentCardBlockLines[currentCardBlockLines.length-1])) {
-                                     isNewCardBoundary = true;
-                                 }
+                            else if (!isOptionLine(currentLine) && (currentCardBlockLines.length > 0 && !isOptionLine(currentCardBlockLines[currentCardBlockLines.length - 1]))) {
+                                if (!isOptionLine(currentLine) && !isOptionLine(currentCardBlockLines[currentCardBlockLines.length - 1])) {
+                                    isNewCardBoundary = true;
+                                }
                             }
                         }
                         if (isNewCardBoundary && currentCardBlockLines.length > 0) { cardStrings.push(currentCardBlockLines.join('\n')); currentCardBlockLines = []; }
-                        if(trimmedCurrentLine !== "") currentCardBlockLines.push(currentLine);
+                        if (trimmedCurrentLine !== "") currentCardBlockLines.push(currentLine);
                         else if (currentCardBlockLines.length > 0) { cardStrings.push(currentCardBlockLines.join('\n')); currentCardBlockLines = []; }
                     }
                     if (currentCardBlockLines.length > 0) cardStrings.push(currentCardBlockLines.join('\n'));
@@ -328,6 +451,8 @@ Term2\tDefinition2..."></textarea>
                         flashcardData.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` });
                     }
                 } else { showMessage('No data to display.', 'error'); return; }
+
+                // MODIFIED: Removed validation for set name here. It will now only be validated on save.
                 manualInputArea.classList.add('hidden'); bulkInputArea.classList.add('hidden');
                 displayArea.classList.remove('hidden');
                 currentPage = 0;
@@ -337,7 +462,7 @@ Term2\tDefinition2..."></textarea>
 
                 updateDisplay();
                 if (actualCards > 0) showMessage(`Generated ${actualCards} flashcards!`, 'success');
-                else if (flashcardData.length > 0 && actualCards === 0) showMessage('Generated empty slots.', 'warning');
+                else if (actualCards === 0 && flashcardData.length > 0) showMessage('Generated empty slots.', 'warning');
                 else showMessage('No flashcards were generated.', 'error');
             }
 
@@ -354,6 +479,7 @@ Term2\tDefinition2..."></textarea>
                     pageInfo.textContent = 'No flashcards to display.';
                     if (controlsDiv) controlsDiv.classList.add('hidden');
                     prevBtn.disabled = true; nextBtn.disabled = true; printBtn.disabled = true;
+                    saveBtn.disabled = true;
                     return;
                 }
                 if (controlsDiv) controlsDiv.classList.remove('hidden');
@@ -371,12 +497,12 @@ Term2\tDefinition2..."></textarea>
                     let displayIndex = 0;
                     if (itemToDisplay.term !== '(Empty Slot)') {
                         let count = 0;
-                        for(let k=0; k < flashcardData.length; k++) {
-                            if(flashcardData[k].term !== '(Empty Slot)') count++;
-                            if(k === itemIndex) { displayIndex = count; break; }
+                        for (let k = 0; k < flashcardData.length; k++) {
+                            if (flashcardData[k].term !== '(Empty Slot)') count++;
+                            if (k === itemIndex) { displayIndex = count; break; }
                         }
                     } else {
-                        displayIndex = itemIndex + 1; 
+                        displayIndex = itemIndex + 1;
                     }
 
                     const labelText = isTermPage ? `TERM ${displayIndex}` : `DEFINITION ${displayIndex}`;
@@ -388,6 +514,7 @@ Term2\tDefinition2..."></textarea>
                 prevBtn.disabled = currentPage === 0;
                 nextBtn.disabled = currentPage >= totalPages - 1;
                 printBtn.disabled = actualCardCount === 0;
+                saveBtn.disabled = actualCardCount === 0;
             }
 
             nextBtn.addEventListener('click', () => { if (currentPage < totalPages - 1) { currentPage++; updateDisplay(); } });
@@ -397,7 +524,7 @@ Term2\tDefinition2..."></textarea>
                 const actualCardsForPrint = flashcardData.filter(c => c.term !== '(Empty Slot)');
                 if (actualCardsForPrint.length === 0) { showMessage('No actual flashcards to print.', 'error'); return; }
                 const dataToPrint = [...actualCardsForPrint];
-                while (dataToPrint.length % CARDS_PER_PAGE !== 0) { dataToPrint.push({ term: `(Empty Slot)`, definition: `(Empty Slot)`}); }
+                while (dataToPrint.length % CARDS_PER_PAGE !== 0) { dataToPrint.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` }); }
                 const printTotalPages = (dataToPrint.length / CARDS_PER_PAGE) * 2;
                 const originalPageInfoClass = pageInfo.className;
                 const originalControlsClass = controlsDiv ? controlsDiv.className : '';
@@ -415,21 +542,21 @@ Term2\tDefinition2..."></textarea>
                         let indexToFetchDataFrom = startIdxForPrint + j; if (indexToFetchDataFrom >= dataToPrint.length) break;
                         if (!isTermPageForPrint) {
                             const numColumns = 2; const col = j % numColumns;
-                            if (col === 0) { if (indexToFetchDataFrom + 1 < dataToPrint.length && (j+1) < CARDS_PER_PAGE) indexToFetchDataFrom = startIdxForPrint + j + 1; }
+                            if (col === 0) { if (indexToFetchDataFrom + 1 < dataToPrint.length && (j + 1) < CARDS_PER_PAGE) indexToFetchDataFrom = startIdxForPrint + j + 1; }
                             else { if (indexToFetchDataFrom - 1 >= startIdxForPrint) indexToFetchDataFrom = startIdxForPrint + j - 1; }
                         }
                         const itemToDisplay = dataToPrint[indexToFetchDataFrom];
                         const card = document.createElement('div'); card.className = 'card-item';
                         let originalItemIndex = -1;
                         if (itemToDisplay.term !== '(Empty Slot)') {
-                           let count = 0;
-                            for(let k=0; k < actualCardsForPrint.length; k++) {
-                                if(actualCardsForPrint[k].term === itemToDisplay.term && actualCardsForPrint[k].definition === itemToDisplay.definition) {
+                            let count = 0;
+                            for (let k = 0; k < actualCardsForPrint.length; k++) {
+                                if (actualCardsForPrint[k].term === itemToDisplay.term && actualCardsForPrint[k].definition === itemToDisplay.definition) {
                                     originalItemIndex = k + 1; break;
                                 }
                             }
-                            if(originalItemIndex === -1) originalItemIndex = indexToFetchDataFrom + 1; 
-                        } else { originalItemIndex = indexToFetchDataFrom + 1; } 
+                            if (originalItemIndex === -1) originalItemIndex = indexToFetchDataFrom + 1;
+                        } else { originalItemIndex = indexToFetchDataFrom + 1; }
                         const labelText = isTermPageForPrint ? `TERM ${originalItemIndex}` : `DEFINITION ${originalItemIndex}`;
                         const contentText = isTermPageForPrint ? itemToDisplay.term : itemToDisplay.definition;
                         card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`;
@@ -448,23 +575,140 @@ Term2\tDefinition2..."></textarea>
                 bulkInputArea.classList.add('hidden'); pageInfo.classList.add('hidden');
                 if (controlsDiv) controlsDiv.classList.add('hidden');
             });
+
+            // MODIFIED: Save button now opens a modal for title input
+            saveBtn.addEventListener('click', () => {
+                const actualCards = flashcardData.filter(card => card.term !== '(Empty Slot)');
+                if (actualCards.length === 0) {
+                    showMessage('No flashcards to save! Please create some first.', 'error');
+                    return;
+                }
+                modalSetNameInput.value = ''; // Clear previous input
+                modalErrorMessage.style.display = 'none'; // Hide previous errors
+                setTitleModal.style.display = 'flex'; // Show the modal
+                modalSetNameInput.focus(); // Focus on the input field in the modal
+            });
+
+            // Event listener for "Save Set" button inside the modal
+            modalSaveSetBtn.addEventListener('click', async () => {
+                const setName = modalSetNameInput.value.trim();
+                const category = ''; // No category input, so default to empty string
+
+                if (!setName) {
+                    modalErrorMessage.textContent = 'Set Title is required!';
+                    modalErrorMessage.style.display = 'block';
+                    modalSetNameInput.focus();
+                    return;
+                }
+
+                setTitleModal.style.display = 'none'; // Hide the modal
+                showMessage('Saving your flashcards...', 'warning');
+                saveBtn.disabled = true; // Disable main save button
+
+                try {
+                    const actualFlashcards = flashcardData.filter(card => card.term !== '(Empty Slot)');
+                    // 1. Get the current user
+                    const { data: { user }, error: userError } = await window.supabase.auth.getUser();
+
+                    if (userError || !user) {
+                        showMessage('You must be logged in to save flashcards. Redirecting to login...', 'error');
+                        setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+                        return;
+                    }
+
+                    // 2. Insert the flashcard set information
+                    const { data: newSet, error: setInsertError } = await window.supabase
+                        .from('flashcard_sets')
+                        .insert([
+                            {
+                                user_id: user.id,
+                                title: setName,
+                                // category: category, // Category column commented out for insertion
+                                terms_count: actualFlashcards.length
+                            }
+                        ])
+                        .select()
+                        .single();
+
+                    if (setInsertError) {
+                        throw new Error(`Failed to save set: ${setInsertError.message}`);
+                    }
+
+                    const setId = newSet.id;
+
+                    // 3. Prepare flashcards for batch insert
+                    const cardsToInsert = actualFlashcards.map(card => ({
+                        set_id: setId,
+                        term: card.term,
+                        definition: card.definition
+                    }));
+
+                    // 4. Insert the individual flashcards
+                    const { error: cardsInsertError } = await window.supabase
+                        .from('flashcards')
+                        .insert(cardsToInsert);
+
+                    if (cardsInsertError) {
+                        throw new Error(`Failed to save individual cards: ${cardsInsertError.message}`);
+                    }
+
+                    showMessage('Flashcard set saved successfully! You\'ll be redirected to your dashboard.', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'user_dashboard.html';
+                    }, 2000);
+
+                } catch (error) {
+                    console.error('Save error:', error.message);
+                    showMessage(`Failed to save flashcards: ${error.message}`, 'error');
+                } finally {
+                    saveBtn.disabled = false;
+                }
+            });
+
+            // Event listener for "Cancel" button inside the modal
+            modalCancelSaveBtn.addEventListener('click', () => {
+                setTitleModal.style.display = 'none'; // Hide the modal
+                modalErrorMessage.style.display = 'none'; // Clear any error message
+                showMessage('Save operation cancelled.', 'info');
+            });
+
+
+            // Update Auth buttons in top nav based on session on page load
+            async function updateAuthUI() {
+                const { data: { session } } = await window.supabase.auth.getSession();
+                const authButtonsDiv = document.querySelector('.auth-buttons');
+
+                if (session) {
+                    const { data: profile, error: profileError } = await window.supabase
+                        .from('profiles')
+                        .select('username')
+                        .eq('user_id', session.user.id)
+                        .single();
+
+                    const username = (profile && !profileError) ? profile.username : session.user.email;
+                    authButtonsDiv.innerHTML = `
+                        <div class="user-status">
+                            <span>Welcome, ${username}!</span>
+                            <a href="#" id="logout-btn" class="logout-button btn">Logout</a>
+                        </div>`;
+
+                    document.getElementById('logout-btn').addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        await window.supabase.auth.signOut();
+                        window.location.href = 'login.html';
+                    });
+
+                } else {
+                    authButtonsDiv.innerHTML = `
+                        <a href="login.html" class="btn">Login</a>
+                        <a href="signup.html" class="btn">Signup</a>`;
+                }
+            }
+
+            updateAuthUI();
         });
     </script>
-    <script type="module"> // Test Flashcard
-        async function testInsertFlashcard() {
-            const { data, error } = await window.supabase
-                .from('flashcards')
-                .insert([{ term: "Test Card", definition: "This was added via Supabase." }]);
-            if (error) {
-                console.error('Insert error:', error.message);
-            } else {
-                console.log('Inserted successfully:', data);
-            }
-        }
-        testInsertFlashcard(); // Call on load
-    </script>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
 </body>
+
 </html>

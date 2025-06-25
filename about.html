@@ -4,10 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>About CramCraft</title>
-    <link rel="stylesheet" href="stylesheet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="stylesheet.css" />
     <script type="module">
-        import { createClient } from '@supabase/supabase-js';
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'; /* Updated import path based on typical CDN usage for modules */
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co'; // Database URL
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8'; // API Key
         const supabase = createClient(supabaseUrl, supabaseKey);
@@ -15,8 +15,8 @@
     </script>
 
 </head>
- 
-<body>
+
+<body class="about-page">
     <nav class="top-nav">
         <div class="top-nav-inner">
             <div class="nav-logo">
@@ -25,8 +25,6 @@
             <ul>
                 <li><a href="index.html">Home</a></li>
                 <li><a href="user_dashboard.html">Dashboard</a></li>
-                <!-- <li><a href="create.html">Create</a></li> --> 
-                <!-- <li><a href="search_page.html">Search</a></li> -->
                 <li><a href="about.html" class="active">About</a></li>
             </ul>
             <div class="auth-buttons">
@@ -37,10 +35,11 @@
         </div>
     </nav>
 
- 
- <div class="main-content-wrapper">
+
+    <div class="main-content-wrapper">
         <div id="about-section">
-            <img src="Cramcraft.png" alt="CramCraft Logo" class="logo-center" /> <h1>About CramCraft</h1>
+            <img src="images\Cramcraft.png" alt="CramCraft Logo" class="logo-center" />
+            <h1>About CramCraft</h1>
             <p class="lead">Your magical flashcard companion for smarter studying and better memory retention.</p>
 
             <section class="features">
@@ -73,6 +72,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    
+
 </body>
 </html>

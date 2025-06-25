@@ -10,15 +10,15 @@
 
   <script type="module">
     import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-    const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co'; // Database URL
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8'; // API Key
+    const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
     const supabase = createClient(supabaseUrl, supabaseKey);
     window.supabase = supabase;
   </script>
 
 </head>
 
-<body>
+<body class="confirm-email-page">
   <div class="main-content-wrapper">
     <div id="about-section">
       <img src="Cramcraft.png" alt="CramCraft Logo" class="logo-center" />
@@ -29,15 +29,10 @@
     </div>
   </div>
 
-<script>
-  // Function to close the window after email confirmation
-  function closeWindow() {
-    window.close();
-  }
-      // Redirect to login page after a delay
+  <script>
     setTimeout(() => {
       window.location.href = 'login.html';
-    }, 5000); // Redirect after 5 seconds
-</script>
+    }, 5000);
+  </script>
 </body>
 </html>

@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="stylesheet.css" />
-    <title>Search Flashcards - CramCraft</title> <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Search Flashcards - CramCraft</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
@@ -15,15 +16,12 @@
     </script>
 
 </head>
-<body>
+<body class="search-page">
     <nav class="top-nav">
         <div class="top-nav-inner">
             <div class="nav-logo"><a href="index.html">CramCraft</a></div>
             <ul>
                 <li><a href="index.html" class="active">Home</a></li>
-                <!-- <li><a href="create.html">Create</a></li> --> 
-                <!-- <li><a href="user_dashboard.html">Dashboard</a></li> -->
-                <!-- <li><a href="search_page.html">Search</a></li> -->
                 <li><a href="about.html">About</a></li>
             </ul>
             <div class="auth-buttons">
@@ -61,7 +59,7 @@
                 <p>Challenging problems covering differentiation and integration techniques.</p>
                 <p class="set-meta">40 Terms &nbsp;&bull;&nbsp; By: MathWhiz &nbsp;&bull;&nbsp; Rating: 4.2/5</p>
             </div>
-             <div class="set-card">
+            <div class="set-card">
                 <h3>French Revolution Key Events</h3>
                 <p>Timeline and significant events of the French Revolution.</p>
                 <p class="set-meta">35 Terms &nbsp;&bull;&nbsp; By: EuroHist &nbsp;&bull;&nbsp; Rating: 4.6/5</p>
@@ -104,7 +102,7 @@
                 </div>`;
         } else if (query.trim() !== "") {
             resultsInfo.textContent = `No specific placeholder results for "${query}". Showing general placeholders.`;
-             resultsGrid.innerHTML = `
+            resultsGrid.innerHTML = `
                 <div class="set-card">
                     <h3>Placeholder Set Alpha</h3>
                     <p>This is a general placeholder set related to your query.</p>
