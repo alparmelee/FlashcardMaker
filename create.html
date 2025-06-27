@@ -2,116 +2,16 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard - CramCraft</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CramCraft - Create Flashcards</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
+        rel="stylesheet" />
     <link rel="stylesheet" href="stylesheet.css" />
-    <style>
-        /* Basic styles for the three-dot menu */
-        .set-card {
-            position: relative;
-            /* Needed for absolute positioning of the dropdown */
-        }
-
-        .more-options-btn {
-            background: none;
-            border: none;
-            font-size: 1.5em;
-            cursor: pointer;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 5px;
-            line-height: 0.5;
-            color: #333;
-        }
-
-        .more-options-btn:hover {
-            color: #007bff;
-        }
-
-        .options-dropdown {
-            position: absolute;
-            top: 40px;
-            right: 10px;
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            z-index: 10;
-            min-width: 120px;
-            display: none;
-            /* Hidden by default */
-        }
-
-        .options-dropdown.show {
-            display: block;
-        }
-
-        .options-dropdown button {
-            display: block;
-            width: 100%;
-            padding: 10px 15px;
-            border: none;
-            background: none;
-            text-align: left;
-            cursor: pointer;
-            font-size: 0.9em;
-            color: #333;
-        }
-
-        .options-dropdown button:hover {
-            background-color: #f0f0f0;
-            color: #007bff;
-        }
-    </style>
-</head>
-
-<body class="user-dashboard-page">
-    <nav class="top-nav">
-        <div class="top-nav-inner">
-            <div class="nav-logo"><a href="index.html">CramCraft</a></div>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="create.html">Create</a></li>
-                <li><a href="user_dashboard.html">Dashboard</a></li>
-                <li><a href="search_page.html">Search</a></li>
-                <li><a href="about.html">About</a></li>
-            </ul>
-            <div class="user-status" style="display: none;">
-                <span id="welcome-msg">Welcome, DemoUser!</span>
-                <a href="#" id="logout-btn" class="logout-button">Logout</a>
-            </div>
-        </div>
-    </nav>
-
-    <div class="content-wrapper" id="dashboard-content" style="display: none;">
-        <h1>My Dashboard</h1>
-        <p class="user-greeting" id="user-greeting-msg"></p>
-        <a href="create.html" class="create-new-set-btn">+ Create New Set</a>
-
-        <h2>Your Sets</h2>
-        <div class="sets-grid">
-        </div>
-    </div>
-
-    <div id="flashcard-set-container" class="hidden">
-        <button onclick="backToDashboard()">← Back to Sets</button>
-        <div class="study-modes">
-            <button class="mode-button active" id="mode-flashcards">Flashcards</button>
-            <button class="mode-button" id="mode-quiz">Quiz</button>
-            <button class="mode-button" id="mode-list">List</button>
-            <button class="mode-button" id="mode-print">Print</button>
-        </div>
-        <div id="flashcard-view" class="hidden">[...]</div>
-        <div id="quiz-view" class="hidden">[...]</div>
-        <div id="list-view" class="hidden">[...]</div>
-    </div>
 
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
         const supabase = createClient(supabaseUrl, supabaseKey, {
@@ -119,193 +19,713 @@
                 storage: localStorage,
                 persistSession: true,
                 autoRefreshToken: true,
-                detectSessionInUrl: false,
-            },
+                detectSessionInUrl: false
+            }
         });
 
-        async function loadUserDashboard() {
-            try {
-                let retries = 3;
-                let session = null;
+        window.supabase = supabase; // Make supabase globally accessible
 
-                while (retries-- > 0) {
-                    const { data: sessionResult } = await supabase.auth.getSession();
-                    session = sessionResult.session;
-                    if (session) break;
-                    await new Promise(res => setTimeout(res, 300));
+
+        // Update Auth buttons in top nav based on session on page load
+        async function updateAuthUI() {
+            const { data: { session } } = await window.supabase.auth.getSession();
+            const authButtonsDiv = document.querySelector('.auth-buttons');
+
+            if (session) {
+                const { data: profile, error: profileError } = await window.supabase
+                    .from('profiles')
+                    .select('username')
+                    .eq('user_id', session.user.id)
+                    .single();
+
+                const username = (profile && !profileError) ? profile.username : session.user.email;
+                authButtonsDiv.innerHTML = `
+                    <div class="user-status">
+                        <span>Welcome, ${username}!</span>
+                        <a href="#" id="logout-btn" class="logout-button btn">Logout</a>
+                    </div>`;
+
+                document.getElementById('logout-btn').addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await window.supabase.auth.signOut();
+                    window.location.href = 'login.html';
+                });
+
+            } else {
+                authButtonsDiv.innerHTML = `
+                    <a href="login.html" class="btn">Login</a>
+                    <a href="signup.html" class="btn">Signup</a>`;
+            }
+        }
+
+        updateAuthUI();
+
+        document.addEventListener('DOMContentLoaded', async () => { // Added async here
+
+            const saveBtn = document.getElementById('save-flashcards');
+            const termDefInputs = document.getElementById('term-def-inputs'); // Get the container for rows
+            const modalSetNameInput = document.getElementById('modal-set-name-input');
+            const setTitleModal = document.getElementById('setTitleModal');
+            const modalSaveSetBtn = document.getElementById('modal-save-set');
+            const modalCancelSaveBtn = document.getElementById('modal-cancel-save');
+            const modalErrorMessage = document.getElementById('modal-error-message');
+            const modalTitle = document.getElementById('modal-title'); // Added for dynamic title
+
+            let currentSetId = null; // Variable to store set_id if editing
+            let rowCount = 0; // Initialize rowCount for manual input
+
+            // Function to add a new term/definition row
+            function addRow(term = '', definition = '', category = '') {
+                rowCount++;
+                const newRow = document.createElement('div');
+                newRow.className = 'input-row flashcard-row'; // Added flashcard-row class
+                newRow.innerHTML = `
+                    <input type="text" placeholder="Term ${rowCount}" class="term-input" value="${term}">
+                    <input type="text" placeholder="Definition ${rowCount}" class="definition-input" value="${definition}">
+                    <input type="hidden" class="category-input" value="${category}">
+                    <button type="button" class="delete-row-btn">Delete</button>
+                `;
+                termDefInputs.appendChild(newRow);
+            }
+
+            // Populate form if editing an existing set
+            const urlParams = new URLSearchParams(window.location.search);
+            const setIdFromUrl = urlParams.get('set_id');
+
+            if (setIdFromUrl) {
+                currentSetId = setIdFromUrl;
+                if (modalTitle) modalTitle.textContent = 'Edit Set Title'; // Update modal title
+                try {
+                    const { data: set, error: setError } = await supabase
+                        .from('flashcard_sets')
+                        .select('title')
+                        .eq('id', currentSetId)
+                        .single();
+
+                    if (setError) {
+                        throw new Error(`Failed to fetch set details: ${setError.message}`);
+                    }
+
+                    modalSetNameInput.value = set.title; // Pre-fill set name in modal
+
+                    const { data: flashcards, error: flashcardsError } = await supabase
+                        .from('flashcards')
+                        .select('term, definition, category')
+                        .eq('set_id', currentSetId)
+                        .order('created_at', { ascending: true });
+
+                    if (flashcardsError) {
+                        throw new Error(`Failed to fetch flashcards: ${flashcardsError.message}`);
+                    }
+
+                    // Clear existing rows before adding fetched ones
+                    termDefInputs.innerHTML = '';
+                    rowCount = 0; // Reset row count before populating
+                    flashcardData = []; // Clear previous flashcardData
+
+                    flashcards.forEach(card => {
+                        addRow(card.term, card.definition, card.category || '');
+                        flashcardData.push({ term: card.term, definition: card.definition, category: card.category || '' });
+                    });
+
+                    // If no flashcards were found, add an empty row
+                    if (flashcards.length === 0) {
+                        addRow();
+                    }
+                    showMessage('Flashcard set loaded for editing.', 'success');
+
+                } catch (error) {
+                    console.error('Error loading set for editing:', error.message);
+                    showMessage(`Error loading set: ${error.message}`, 'error');
+                    // Fallback to a single empty row if loading fails
+                    termDefInputs.innerHTML = '';
+                    rowCount = 0;
+                    addRow();
+                }
+            } else {
+                // If not editing, add one initial empty row for new set creation
+                addRow();
+            }
+
+
+            if (!saveBtn) return;
+
+            saveBtn.addEventListener('click', async () => {
+                const { data: { user }, error } = await supabase.auth.getUser();
+                if (!user) {
+                    alert('You must be logged in to save flashcards. Redirecting...');
+                    return window.location.href = 'login.html';
                 }
 
-                if (!session || !session.user) {
-                    window.location.href = 'login.html';
+                const rows = document.querySelectorAll('.flashcard-row'); // Select by the class we added
+                flashcardData = []; // Clear for fresh collection
+
+                rows.forEach(row => {
+                    const term = row.querySelector('.term-input')?.value.trim();
+                    const definition = row.querySelector('.definition-input')?.value.trim();
+                    const category = row.querySelector('.category-input')?.value.trim() || null;
+
+                    if (term || definition) { // Allow saving if only one is present
+                        flashcardData.push({
+                            term: term || `(No Term Provided)`, // Placeholder if term is empty
+                            definition: definition || `(No Definition Provided)`, // Placeholder if def is empty
+                            category: category
+                        });
+                    }
+                });
+
+                // Filter out rows that were entirely empty (both term and definition)
+                const actualFlashcards = flashcardData.filter(card => card.term !== '(No Term Provided)' || card.definition !== '(No Definition Provided)');
+
+
+                if (actualFlashcards.length === 0) {
+                    showMessage('Please enter at least one flashcard with a term or definition.', 'error');
                     return;
                 }
 
-                const user = session.user;
-                const accessToken = session.access_token;
-                let edgeResp = null;
+                modalSetNameInput.value = modalSetNameInput.value || (currentSetId ? '' : 'New Flashcard Set'); // Pre-fill if editing
+                modalErrorMessage.style.display = 'none'; // Hide previous errors
+                setTitleModal.style.display = 'flex'; // Show the modal
+                modalSetNameInput.focus(); // Focus on the input field in the modal
+            });
 
-                // Call Edge Function to create profile
-                if (accessToken) {
-                    const savedUsername = localStorage.getItem('username');
-                    edgeResp = await fetch("https://uxytxzliqxpinajccvbu.supabase.co/functions/v1/user-created-handler", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Authorization": `Bearer ${accessToken}`
-                        },
-                        body: JSON.stringify({
-                            user: {
-                                id: user.id,
-                                email: user.email,
-                                username: savedUsername
-                            }
-                        })
-                    });
+            // Event listener for "Save Set" button inside the modal
+            modalSaveSetBtn.addEventListener('click', async () => {
+                const setName = modalSetNameInput.value.trim();
+                // Category is not directly collected in this form structure, so it remains null or a default
+                const category = null;
 
-                    const result = await edgeResp.json();
-                    // Optionally handle result/error
+                if (!setName) {
+                    modalErrorMessage.textContent = 'Set Title is required!';
+                    modalErrorMessage.style.display = 'block';
+                    modalSetNameInput.focus();
+                    return;
                 }
 
-                // Fetch user profile
-                let profile, profileError;
-                ({ data: profile, error: profileError } = await supabase
-                    .from('profiles')
-                    .select('username')
-                    .eq('user_id', user.id)
-                    .single());
+                setTitleModal.style.display = 'none'; // Hide the modal
+                showMessage('Saving your flashcards...', 'warning');
+                saveBtn.disabled = true; // Disable main save button
 
-                if (profileError) {
-                    await new Promise(res => setTimeout(res, 800));
-                    ({ data: profile, error: profileError } = await supabase
-                        .from('profiles')
-                        .select('username')
-                        .eq('user_id', user.id)
-                        .single());
+                try {
+                    const { data: { user }, error: userError } = await window.supabase.auth.getUser();
+
+                    if (userError || !user) {
+                        showMessage('You must be logged in to save flashcards. Redirecting to login...', 'error');
+                        setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+                        return;
+                    }
+
+                    const actualFlashcards = flashcardData.filter(card => card.term !== '(Empty Slot)' && card.definition !== '(Empty Slot)');
+
+
+                    let setIdToUse = currentSetId;
+
+                    if (currentSetId) {
+                        // This is an UPDATE operation
+                        // 1. Update the flashcard set title and terms_count
+                        const { error: updateSetError } = await window.supabase
+                            .from('flashcard_sets')
+                            .update({ title: setName, terms_count: actualFlashcards.length })
+                            .eq('id', currentSetId)
+                            .eq('user_id', user.id); // Ensure user owns the set
+
+                        if (updateSetError) {
+                            throw new Error(`Failed to update set details: ${updateSetError.message}`);
+                        }
+
+                        // 2. Delete existing flashcards for this set
+                        const { error: deleteCardsError } = await window.supabase
+                            .from('flashcards')
+                            .delete()
+                            .eq('set_id', currentSetId);
+
+                        if (deleteCardsError) {
+                            throw new Error(`Failed to delete old flashcards: ${deleteCardsError.message}`);
+                        }
+
+                    } else {
+                        // This is an INSERT operation (new set)
+                        const { data: newSet, error: setInsertError } = await window.supabase
+                            .from('flashcard_sets')
+                            .insert([
+                                {
+                                    user_id: user.id,
+                                    title: setName,
+                                    terms_count: actualFlashcards.length
+                                }
+                            ])
+                            .select()
+                            .single();
+
+                        if (setInsertError) {
+                            throw new Error(`Failed to save new set: ${setInsertError.message}`);
+                        }
+                        setIdToUse = newSet.id;
+                    }
+
+                    // 3. Insert the individual flashcards (for both new and updated sets)
+                    const cardsToInsert = actualFlashcards.map(card => ({
+                        set_id: setIdToUse,
+                        term: card.term,
+                        definition: card.definition,
+                        category: card.category // Include category if available
+                    }));
+
+                    const { error: cardsInsertError } = await window.supabase
+                        .from('flashcards')
+                        .insert(cardsToInsert);
+
+                    if (cardsInsertError) {
+                        throw new Error(`Failed to save individual cards: ${cardsInsertError.message}`);
+                    }
+
+                    showMessage('Flashcard set saved successfully! You\'ll be redirected to your dashboard.', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'user_dashboard.html';
+                    }, 2000);
+
+                } catch (error) {
+                    console.error('Save error:', error.message);
+                    showMessage(`Failed to save flashcards: ${error.message}`, 'error');
+                } finally {
+                    saveBtn.disabled = false;
                 }
+            });
 
-                if (profileError) {
-                    document.getElementById('welcome-msg').textContent = `Welcome, ${user.email}`;
-                    document.getElementById('user-greeting-msg').textContent = `Here are your flashcard sets, ${user.email}.`;
-                } else {
-                    document.getElementById('welcome-msg').textContent = `Welcome, ${profile.username}!`;
-                    document.getElementById('user-greeting-msg').textContent = `Here are your flashcard sets, ${profile.username}.`;
-                }
+            // Event listener for "Cancel" button inside the modal
+            modalCancelSaveBtn.addEventListener('click', () => {
+                setTitleModal.style.display = 'none'; // Hide the modal
+                modalErrorMessage.style.display = 'none'; // Clear any error message
+                showMessage('Save operation cancelled.', 'info');
+            });
 
-                document.querySelector('.user-status').style.display = 'flex';
-                document.getElementById('dashboard-content').style.display = 'block';
 
-                const { data: sets, error: setsError } = await supabase
-                    .from('flashcard_sets')
-                    .select('id, title, terms_count')
-                    .eq('user_id', user.id)
-                    .order('created_at', { ascending: false });
+            // --- Rest of your existing JavaScript for flashcard creation/display ---
+            // Ensure these functions use `flashcardData` which is now populated from Supabase or manual input
 
-                if (setsError) {
-                    // Optionally show error to user
-                    console.error("Error fetching sets:", setsError.message);
-                } else {
-                    const grid = document.querySelector('.sets-grid');
-                    grid.innerHTML = '';
-                    sets.forEach(set => {
-                        const card = document.createElement('div');
-                        card.className = 'set-card';
-                        card.innerHTML = `
-                            <h3>${set.title}</h3>
-                            <p>${set.terms_count} terms</p>
-                            <div class="set-actions">
-                                <button class="more-options-btn" data-set-id="${set.id}">⋮</button>
-                                <div class="options-dropdown" data-set-id="${set.id}">
-                                    <button class="edit-set-btn" data-set-id="${set.id}">Edit</button>
-                                    <button class="delete-set-btn" data-set-id="${set.id}">Delete</button>
-                                </div>
-                            </div>
-                        `;
-                        // Event listener for the whole card to navigate to flashcard_set.html
-                        card.addEventListener('click', (e) => {
-                            // Prevent navigation if any button within set-actions is clicked
-                            if (e.target.closest('.set-actions')) {
-                                e.stopPropagation(); // Stop event from bubbling up to the card
-                                return;
-                            }
-                            window.location.href = `flashcard_set.html?set_id=${set.id}`;
-                        });
-                        grid.appendChild(card);
-                    });
-                }
-            } catch (err) {
-                console.error("Error loading dashboard:", err);
-                window.location.href = 'login.html';
+            const startManualBtn = document.getElementById('start-flashcards');
+            const displayArea = document.getElementById('flashcard-display');
+            const cardsContainer = document.getElementById('cards-container');
+            const pageInfo = document.getElementById('page-info');
+            const prevBtn = document.getElementById('prev-page');
+            const nextBtn = document.getElementById('next-page');
+            const printBtn = document.getElementById('print-cards');
+            const backBtn = document.getElementById('back-to-input');
+
+            const manualInputArea = document.getElementById('manual-input-area');
+            const bulkInputArea = document.getElementById('bulk-input-area');
+            const showBulkInputBtn = document.getElementById('show-bulk-input');
+            const showManualInputBtn = document.getElementById('show-manual-input');
+            const bulkDataInput = document.getElementById('bulk-data-input');
+            const parseBulkDataBtn = document.getElementById('parse-bulk-data');
+
+            const termDefDelimiterRadios = document.querySelectorAll('input[name="termDefDelimiter"]');
+            const customTermDefDelimiterInput = document.getElementById('custom-term-def-delimiter-input');
+            const cardDelimiterRadios = document.querySelectorAll('input[name="cardDelimiter"]');
+            const customCardDelimiterInput = document.getElementById('custom-card-delimiter-input');
+
+            const customAlertBox = document.getElementById('custom-alert');
+            const controlsDiv = document.querySelector('#flashcard-maker-section .controls');
+
+
+            let flashcardData = []; // This will be populated from Supabase if editing, or manually
+            let currentPage = 0;
+            let totalPages = 0;
+            const CARDS_PER_PAGE = 10;
+
+            // Initial manual row if no set_id is present
+            if (!setIdFromUrl) {
+                addRow(); // Add one empty row for new set creation
             }
-        }
 
-        // Call the dashboard load function on page load
-        document.addEventListener('DOMContentLoaded', loadUserDashboard);
 
-        // Event listener for "more options" button (delegation)
-        document.addEventListener('click', (e) => {
-            if (e.target && e.target.classList.contains('more-options-btn')) {
-                const dropdown = e.target.nextElementSibling; // Get the dropdown div
-                if (dropdown && dropdown.classList.contains('options-dropdown')) {
-                    dropdown.classList.toggle('show');
-                }
-            } else {
-                // Close any open dropdowns if clicked outside
-                document.querySelectorAll('.options-dropdown.show').forEach(dropdown => {
-                    dropdown.classList.remove('show');
+            function showMessage(message, type = 'warning') {
+                customAlertBox.textContent = message;
+                customAlertBox.className = 'message-box';
+                if (type === 'success') customAlertBox.classList.add('success');
+                else if (type === 'error') customAlertBox.classList.add('error');
+                else customAlertBox.classList.add('warning');
+                customAlertBox.style.display = 'block';
+                if (customAlertBox.animationTimeout) clearTimeout(customAlertBox.animationTimeout);
+                customAlertBox.animationTimeout = setTimeout(() => {
+                    customAlertBox.style.display = 'none';
+                }, 3000);
+            }
+
+            function isOptionLine(line) { return /^\s*[a-zA-Z]\.\s/.test(line.trim()); }
+
+            termDefDelimiterRadios.forEach(radio => {
+                radio.addEventListener('change', function () {
+                    customTermDefDelimiterInput.classList.toggle('hidden', this.value !== 'customTermDef');
+                    if (this.value === 'customTermDef') customTermDefDelimiterInput.focus();
                 });
-            }
-        });
+            });
 
+            cardDelimiterRadios.forEach(radio => {
+                radio.addEventListener('change', function () {
+                    customCardDelimiterInput.classList.toggle('hidden', this.value !== 'customCard');
+                    if (this.value === 'customCard') customCardDelimiterInput.focus();
+                });
+            });
 
-        // Logout button event listener
-        document.addEventListener('click', async (e) => {
-            if (e.target && e.target.id === 'logout-btn') {
-                e.preventDefault();
-                await supabase.auth.signOut();
-                window.location.href = 'login.html';
-            }
-        });
+            document.getElementById('add-row').addEventListener('click', () => addRow()); // Use the new addRow function
 
-        // Delete set button event listener (event delegation)
-        document.addEventListener('click', async (e) => {
-            if (e.target && e.target.classList.contains('delete-set-btn')) {
-                e.preventDefault();
-                const setId = e.target.getAttribute('data-set-id');
-                if (!setId) return;
-                const confirmed = confirm('Are you sure you want to delete this set? This action cannot be undone.');
-                if (!confirmed) return;
-                // Delete from Supabase, will only succeed if user_id matches auth.uid() due to RLS policy
-                const { error } = await supabase
-                    .from('flashcard_sets')
-                    .delete()
-                    .eq('id', setId);
-                if (error) {
-                    alert('Failed to delete set: ' + error.message);
-                } else {
-                    // Remove card from DOM
-                    e.target.closest('.set-card').remove();
+            termDefInputs.addEventListener('click', function (event) {
+                if (event.target.classList.contains('delete-row-btn')) {
+                    const rowToRemove = event.target.closest('.input-row');
+                    if (rowToRemove) {
+                        if (termDefInputs.children.length > 1) {
+                            rowToRemove.remove();
+                            // Re-index placeholders and update rowCount
+                            let currentInputRows = termDefInputs.querySelectorAll('.input-row');
+                            rowCount = currentInputRows.length; // Update global rowCount
+                            currentInputRows.forEach((row, index) => {
+                                row.querySelector('.term-input').placeholder = `Term ${index + 1}`;
+                                row.querySelector('.definition-input').placeholder = `Definition ${index + 1}`;
+                            });
+                            showMessage('Term/Definition deleted.', 'success');
+                        } else {
+                            showMessage('Cannot delete the last term/definition. Please add another first.', 'warning');
+                        }
+                    }
                 }
-            }
-        });
+            });
 
-        // Edit set button event listener (event delegation)
-        document.addEventListener('click', async (e) => {
-            if (e.target && e.target.classList.contains('edit-set-btn')) {
-                e.preventDefault();
-                const setId = e.target.getAttribute('data-set-id');
-                if (setId) {
-                    window.location.href = `create.html?set_id=${setId}`;
+
+            function collectManualFlashcards() {
+                flashcardData = []; // Clear current data
+                const termInputElements = manualInputArea.querySelectorAll('.term-input'); // Select by new class
+                const defInputElements = manualInputArea.querySelectorAll('.definition-input'); // Select by new class
+
+                for (let i = 0; i < termInputElements.length; i++) {
+                    const term = termInputElements[i].value.trim();
+                    const definition = defInputElements[i].value.trim();
+                    // Category is currently not an editable input for manual, so keep it null
+                    const category = null;
+
+                    if (term || definition) { // Allow partial entries
+                        flashcardData.push({
+                            term: term || `(No Term Provided)`,
+                            definition: definition || `(No Definition Provided)`,
+                            category: category
+                        });
+                    }
                 }
+                if (flashcardData.length === 0) {
+                    showMessage('Please enter at least one term or definition.', 'error');
+                    return false;
+                }
+                return true;
             }
-        });
 
-        // Back to dashboard function
-        function backToDashboard() {
-            document.getElementById('dashboard-content').style.display = 'block';
-            document.getElementById('flashcard-set-container').classList.add('hidden');
-        }
-        window.backToDashboard = backToDashboard;
+            function parseBulkFlashcards() {
+                flashcardData = [];
+                const bulkText = bulkDataInput.value;
+                if (!bulkText.trim()) {
+                    showMessage('Please enter some data in the bulk input field.', 'error'); return false;
+                }
+                let termDefSeparator;
+                const selectedTermDefDOption = document.querySelector('input[name="termDefDelimiter"]:checked').value;
+                if (selectedTermDefDOption === 'tab') termDefSeparator = '\t';
+                else if (selectedTermDefDOption === 'comma') termDefSeparator = ',';
+                else if (selectedTermDefDOption === 'tilde') termDefSeparator = '~';
+                else if (selectedTermDefDOption === 'customTermDef') {
+                    termDefSeparator = customTermDefDelimiterInput.value;
+                    if (termDefSeparator.length !== 1) {
+                        showMessage('Custom Term/Definition separator must be a single character.', 'error');
+                        customTermDefDelimiterInput.focus(); return false;
+                    }
+                } else { showMessage('Invalid Term/Definition separator.', 'error'); return false; }
+
+                let cardStrings = [];
+                const selectedCardDOption = document.querySelector('input[name="cardDelimiter"]:checked').value;
+                if (selectedCardDOption === 'newline') {
+                    const allLines = bulkText.split('\n'); let currentCardBlockLines = [];
+                    for (let i = 0; i < allLines.length; i++) {
+                        const currentLine = allLines[i]; const trimmedCurrentLine = currentLine.trim();
+                        if (trimmedCurrentLine === "" && currentCardBlockLines.length === 0) continue;
+                        let isNewCardBoundary = false;
+                        if (currentCardBlockLines.length > 0) {
+                            if (trimmedCurrentLine === "") isNewCardBoundary = true;
+                            else if (!isOptionLine(currentLine) && (currentCardBlockLines.length > 0 && !isOptionLine(currentCardBlockLines[currentCardBlockLines.length - 1]))) {
+                                if (!isOptionLine(currentLine) && !isOptionLine(currentCardBlockLines[currentCardBlockLines.length - 1])) {
+                                    isNewCardBoundary = true;
+                                }
+                            }
+                        }
+                        if (isNewCardBoundary && currentCardBlockLines.length > 0) { cardStrings.push(currentCardBlockLines.join('\n')); currentCardBlockLines = []; }
+                        if (trimmedCurrentLine !== "") currentCardBlockLines.push(currentLine);
+                        else if (currentCardBlockLines.length > 0) { cardStrings.push(currentCardBlockLines.join('\n')); currentCardBlockLines = []; }
+                    }
+                    if (currentCardBlockLines.length > 0) cardStrings.push(currentCardBlockLines.join('\n'));
+                } else if (selectedCardDOption === 'semicolon') cardStrings = bulkText.split(';');
+                else if (selectedCardDOption === 'customCard') {
+                    const customCardSep = customCardDelimiterInput.value;
+                    if (!customCardSep) { showMessage('Custom card separator is empty.', 'error'); customCardDelimiterInput.focus(); return false; }
+                    cardStrings = bulkText.split(customCardSep);
+                } else { showMessage('Invalid card separator.', 'error'); return false; }
+
+                cardStrings.forEach(cardStr => {
+                    const trimmedCardStr = cardStr.trim(); if (!trimmedCardStr) return;
+                    let term = '', definition = '';
+                    const lastDelimiterIndex = trimmedCardStr.lastIndexOf(termDefSeparator);
+                    if (lastDelimiterIndex !== -1) {
+                        term = trimmedCardStr.substring(0, lastDelimiterIndex).trim();
+                        definition = trimmedCardStr.substring(lastDelimiterIndex + termDefSeparator.length).trim();
+                    } else { term = trimmedCardStr; definition = `(No definition: '${termDefSeparator}' not found)`; }
+                    if (term || definition !== `(No definition: '${termDefSeparator}' not found)`) {
+                        flashcardData.push({ term: term || `(No Term ${flashcardData.length + 1})`, definition: definition || `(No Definition ${flashcardData.length + 1})`, category: null });
+                    }
+                });
+                if (flashcardData.length === 0) { showMessage('No valid flashcards parsed.', 'error'); return false; }
+                return true;
+            }
+
+            function proceedToFlashcardDisplay() {
+                if (flashcardData.length > 0) {
+                    while (flashcardData.length % CARDS_PER_PAGE !== 0 && flashcardData.length < 500) {
+                        flashcardData.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` });
+                    }
+                } else { showMessage('No data to display.', 'error'); return; }
+
+                manualInputArea.classList.add('hidden'); bulkInputArea.classList.add('hidden');
+                displayArea.classList.remove('hidden');
+                currentPage = 0;
+                const actualCards = flashcardData.filter(c => c.term !== '(Empty Slot)' && c.definition !== '(Empty Slot)').length;
+                totalPages = actualCards > 0 ? Math.ceil(actualCards / CARDS_PER_PAGE) * 2 : 0;
+                totalPages = (flashcardData.length / CARDS_PER_PAGE) * 2;
+
+                updateDisplay();
+                if (actualCards > 0) showMessage(`Generated ${actualCards} flashcards!`, 'success');
+                else if (actualCards === 0 && flashcardData.length > 0) showMessage('Generated empty slots.', 'warning');
+                else showMessage('No flashcards were generated.', 'error');
+            }
+
+            startManualBtn.addEventListener('click', () => { if (collectManualFlashcards()) proceedToFlashcardDisplay(); });
+            parseBulkDataBtn.addEventListener('click', () => { if (parseBulkFlashcards()) proceedToFlashcardDisplay(); });
+
+            function updateDisplay() {
+                cardsContainer.innerHTML = '';
+                const actualCardCount = flashcardData.filter(c => c.term !== `(Empty Slot)` && c.definition !== `(Empty Slot)`).length;
+                totalPages = flashcardData.length > 0 ? (Math.ceil(flashcardData.length / CARDS_PER_PAGE)) * 2 : 0;
+
+
+                if (totalPages === 0 || actualCardCount === 0 && flashcardData.every(c => c.term === `(Empty Slot)` && c.definition === `(Empty Slot)`)) {
+                    pageInfo.textContent = 'No flashcards to display.';
+                    if (controlsDiv) controlsDiv.classList.add('hidden');
+                    prevBtn.disabled = true; nextBtn.disabled = true; printBtn.disabled = true;
+                    saveBtn.disabled = true;
+                    return;
+                }
+                if (controlsDiv) controlsDiv.classList.remove('hidden');
+
+                const isTermPage = currentPage % 2 === 0;
+                const setIndex = Math.floor(currentPage / 2);
+                const startIdx = setIndex * CARDS_PER_PAGE;
+                pageInfo.textContent = `Page ${currentPage + 1} of ${totalPages} - ${isTermPage ? 'Terms' : 'Definitions'} (Card Set ${setIndex + 1})`;
+                pageInfo.classList.remove('hidden');
+                const grid = document.createElement('div'); grid.className = 'flashcard-grid';
+                for (let i = 0; i < CARDS_PER_PAGE; i++) {
+                    const itemIndex = startIdx + i; if (itemIndex >= flashcardData.length) break;
+                    const card = document.createElement('div'); card.className = 'card-item';
+                    const itemToDisplay = flashcardData[itemIndex];
+                    let displayIndex = 0;
+                    if (itemToDisplay.term !== '(Empty Slot)') {
+                        let count = 0;
+                        for (let k = 0; k < flashcardData.length; k++) {
+                            if (flashcardData[k].term !== '(Empty Slot)') count++;
+                            if (k === itemIndex) { displayIndex = count; break; }
+                        }
+                    } else {
+                        displayIndex = itemIndex + 1;
+                    }
+
+                    const labelText = isTermPage ? `TERM ${displayIndex}` : `DEFINITION ${displayIndex}`;
+                    const contentText = isTermPage ? itemToDisplay.term : itemToDisplay.definition;
+                    card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`;
+                    grid.appendChild(card);
+                }
+                cardsContainer.appendChild(grid);
+                prevBtn.disabled = currentPage === 0;
+                nextBtn.disabled = currentPage >= totalPages - 1;
+                printBtn.disabled = actualCardCount === 0;
+                saveBtn.disabled = actualCardCount === 0;
+            }
+
+            nextBtn.addEventListener('click', () => { if (currentPage < totalPages - 1) { currentPage++; updateDisplay(); } });
+            prevBtn.addEventListener('click', () => { if (currentPage > 0) { currentPage--; updateDisplay(); } });
+
+            printBtn.addEventListener('click', () => {
+                const actualCardsForPrint = flashcardData.filter(c => c.term !== '(Empty Slot)' && c.definition !== '(Empty Slot)');
+                if (actualCardsForPrint.length === 0) { showMessage('No actual flashcards to print.', 'error'); return; }
+                const dataToPrint = [...actualCardsForPrint];
+                while (dataToPrint.length % CARDS_PER_PAGE !== 0) { dataToPrint.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` }); }
+                const printTotalPages = (dataToPrint.length / CARDS_PER_PAGE) * 2;
+                const originalPageInfoClass = pageInfo.className;
+                const originalControlsClass = controlsDiv ? controlsDiv.className : '';
+                pageInfo.classList.add('hidden'); if (controlsDiv) controlsDiv.classList.add('hidden');
+                cardsContainer.innerHTML = '';
+                for (let i = 0; i < printTotalPages; i++) {
+                    const isTermPageForPrint = i % 2 === 0;
+                    const setIndexForPrint = Math.floor(i / 2);
+                    const startIdxForPrint = setIndexForPrint * CARDS_PER_PAGE;
+                    const printPageTitleElement = document.createElement('h3'); printPageTitleElement.className = 'print-page-title';
+                    printPageTitleElement.textContent = `Page ${i + 1} / ${printTotalPages} - ${isTermPageForPrint ? 'Terms' : 'Definitions'} (Set ${setIndexForPrint + 1})`;
+                    cardsContainer.appendChild(printPageTitleElement);
+                    const grid = document.createElement('div'); grid.className = 'flashcard-grid';
+                    for (let j = 0; j < CARDS_PER_PAGE; j++) {
+                        let indexToFetchDataFrom = startIdxForPrint + j; if (indexToFetchDataFrom >= dataToPrint.length) break;
+                        if (!isTermPageForPrint) {
+                            const numColumns = 2; const col = j % numColumns;
+                            if (col === 0) { if (indexToFetchDataFrom + 1 < dataToPrint.length && (j + 1) < CARDS_PER_PAGE) indexToFetchDataFrom = startIdxForPrint + j + 1; }
+                            else { if (indexToFetchDataFrom - 1 >= startIdxForPrint) indexToFetchDataFrom = startIdxForPrint + j - 1; }
+                        }
+                        const itemToDisplay = dataToPrint[indexToFetchDataFrom];
+                        const card = document.createElement('div'); card.className = 'card-item';
+                        let originalItemIndex = -1;
+                        if (itemToDisplay.term !== '(Empty Slot)') {
+                            let count = 0;
+                            for (let k = 0; k < actualCardsForPrint.length; k++) {
+                                if (actualCardsForPrint[k].term === itemToDisplay.term && actualCardsForPrint[k].definition === itemToDisplay.definition) {
+                                    originalItemIndex = k + 1; break;
+                                }
+                            }
+                            if (originalItemIndex === -1) originalItemIndex = indexToFetchDataFrom + 1;
+                        } else { originalItemIndex = indexToFetchDataFrom + 1; }
+                        const labelText = isTermPageForPrint ? `TERM ${originalItemIndex}` : `DEFINITION ${originalItemIndex}`;
+                        const contentText = isTermPageForPrint ? itemToDisplay.term : itemToDisplay.definition;
+                        card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`;
+                        grid.appendChild(card);
+                    }
+                    cardsContainer.appendChild(grid);
+                }
+                window.print();
+                cardsContainer.innerHTML = ''; pageInfo.className = originalPageInfoClass;
+                if (controlsDiv) controlsDiv.className = originalControlsClass;
+                if (!displayArea.classList.contains('hidden')) updateDisplay();
+            });
+
+            backBtn.addEventListener('click', () => {
+                displayArea.classList.add('hidden'); manualInputArea.classList.remove('hidden');
+                bulkInputArea.classList.add('hidden'); pageInfo.classList.add('hidden');
+                if (controlsDiv) controlsDiv.classList.add('hidden');
+            });
+        });
     </script>
+</head>
+
+<body class="create-page">
+    <nav class="top-nav">
+        <div class="top-nav-inner">
+            <div class="nav-logo">
+                <a href="index.html">CramCraft</a>
+            </div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="create.html">Create</a></li>
+                <li><a href="user_dashboard.html">Dashboard</a></li>
+                <li><a href="search_page.html">Search</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <div class="user-status" style="display: none;"></div>
+                <a href="login.html" class="btn">Login</a>
+                <a href="signup.html" class="btn">Signup</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content-wrapper">
+        <div id="flashcard-maker-section">
+            <div class="container-fc">
+                <img src="images/Cramcraft.png" alt="CramCraft Mini Logo" class="logo-center-small">
+
+                <div class="input-area" id="manual-input-area">
+                    <h2>Enter Terms and Definitions Manually</h2>
+                    <div id="term-def-inputs">
+                        </div>
+                    <button id="add-row">Add Another Term/Definition</button>
+                    <button id="start-flashcards">Generate Flashcards from Manual Input</button>
+                    <button id="show-bulk-input">Switch to Bulk Input</button>
+                </div>
+
+                <div class="input-area hidden" id="bulk-input-area">
+                    <h2>Enter Bulk Flashcard Data</h2>
+                    <div class="delimiter-group">
+                        <p class="delimiter-group-title"><strong>1. Separate Term and Definition with:</strong></p>
+                        <div class="delimiter-options" id="term-def-separator-options">
+                            <label><input type="radio" name="termDefDelimiter" value="tab" checked> Tab</label>
+                            <label><input type="radio" name="termDefDelimiter" value="comma"> Comma (,)</label>
+                            <label><input type="radio" name="termDefDelimiter" value="tilde"> Tilde (~)</label>
+                            <label>
+                                <input type="radio" name="termDefDelimiter" value="customTermDef"> Custom:
+                                <input type="text" id="custom-term-def-delimiter-input" maxlength="1" class="hidden">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="delimiter-group">
+                        <p class="delimiter-group-title"><strong>2. Separate Cards (Rows) with:</strong></p>
+                        <div class="delimiter-options" id="card-separator-options">
+                            <label><input type="radio" name="cardDelimiter" value="newline" checked> New Line</label>
+                            <label><input type="radio" name="cardDelimiter" value="semicolon"> Semicolon (;)</label>
+                            <label>
+                                <input type="radio" name="cardDelimiter" value="customCard"> Custom:
+                                <input type="text" id="custom-card-delimiter-input" class="hidden"
+                                    placeholder="e.g. ---">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="input-instructions">
+                        <p>Paste your flashcard data below using your chosen separators.</p>
+                        <p>A <strong>Term</strong> can span multiple lines (if "New Line" is NOT your card separator and
+                            your term/def separator is not also a newline).</p>
+                        <p>The <strong>Definition</strong> is typically the part after the <i>last</i> instance of your
+                            term/definition separator on a line (or within a card block if using "New Line" as card
+                            separator).</p>
+                        <hr>
+                        <p><strong>Example 1 (Tab for Term/Def, New Line for Cards):</strong></p>
+                        <p><code>Term A&lt;TAB&gt;Definition A</code><br><code>Term B&lt;TAB&gt;Definition B</code></p>
+                        <p><strong>Example 2 (Comma for Term/Def, Semicolon for Cards):</strong></p>
+                        <p><code>Capital of France,Paris;What is 2+2?,4</code></p>
+                        <p><strong>Example 3 (Custom '|' for Term/Def, Custom '---' for Cards):</strong></p>
+                        <p><code>Question 1|Answer 1---Question 2|Answer 2</code></p>
+                    </div>
+                    <textarea id="bulk-data-input" rows="10" placeholder="Example (Tab between term/def, New Line between cards):
+Term1\tDefinition1
+Term2\tDefinition2..."></textarea>
+                    <button id="parse-bulk-data">Parse Bulk Data & Generate Flashcards</button>
+                    <button id="show-manual-input">Switch to Manual Row Input</button>
+                </div>
+
+                <div class="display-area hidden" id="flashcard-display">
+                    <div id="page-info"></div>
+                    <div id="cards-container"></div>
+                    <div class="controls">
+                        <button id="prev-page">Previous Page</button>
+                        <button id="next-page">Next Page</button>
+                        <button id="print-cards">Print Flashcards</button>
+                        <button id="save-cards">Save to Database</button> <button id="back-to-input">Back to Input
+                            Methods</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="message-box" id="custom-alert"></div>
+
+    <div id="setTitleModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title">Enter Set Title</h3>
+            <input type="text" id="modal-set-name-input" placeholder="Enter your flashcard set title" required>
+            <div class="modal-buttons">
+                <button class="save-btn-modal" id="modal-save-set">Save Set</button>
+                <button class="cancel-btn-modal" id="modal-cancel-save">Cancel</button>
+            </div>
+            <p id="modal-error-message" style="color: red; margin-top: 10px; display: none;"></p>
+        </div>
+    </div>
 </body>
 
 </html>
