@@ -105,6 +105,14 @@
         loadAllPublicSets();
 
         let allSets = []; // store all sets globally
+        let debounceTimer;
+        document.getElementById('search-input').addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                performSearch();
+            }, 250);
+        });
+
 
         async function loadAllPublicSets() {
             const resultsGrid = document.getElementById('search-results-grid');
@@ -179,6 +187,11 @@
 
                 resultsGrid.appendChild(card);
             });
+
+            if (filtered.length === 0) {
+                resultsInfo.textContent = `No sets found for "${query}".`;
+            }
+
         }
         document.getElementById('search-input').addEventListener('input', performSearch);
         document.getElementById('search-input').addEventListener('keypress', function (event) {
