@@ -9,6 +9,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="stylesheet.css" />
+
 </head>
 
 <body class="flashcard-set-page">
@@ -123,7 +124,7 @@
             let flashcards = [];
             let flashcardData = [];
             let currentIndex = 0;
-            let currentQuizIndex = 0; // Renamed from 'showFront' as it's not a boolean state here anymore.
+            let currentQuizIndex = 0; // This variable is for quiz mode, not flashcard display state
 
             const urlParams = new URLSearchParams(window.location.search);
             const setId = urlParams.get('set_id');
@@ -148,7 +149,7 @@
                 } else if (setData) {
                     setTitleElement.textContent = setData.title || 'Untitled Set';
                 } else {
-                    setTitleElement.textContent = 'Untitled Set';
+                    setTitleElement.textContent = 'Untitled Set'; // Fallback if no set found
                 }
             } catch (error) {
                 console.error('Unexpected error fetching set title:', error);
@@ -201,7 +202,7 @@
                         creatorNameElement.textContent = profileData.username;
                     }
                 } else {
-                    creatorNameElement.textContent = "Unknown";
+                    creatorNameElement.textContent = "Unknown"; // Fallback if no creator found
                 }
             } catch (e) {
                 console.error("Unexpected error getting creator name:", e);
@@ -223,7 +224,7 @@
             flashcardData = [...flashcards]; // Use this for Quiz/List views
 
             if (flashcardData.length === 0) {
-                document.querySelector('.main-container').innerHTML = '<p>No flashcards found for this set.</p>';
+                document.querySelector('.main-container').innerHTML = '<p>No flashcards found for this set. Please add some cards!</p>';
                 return;
             }
 
@@ -249,7 +250,7 @@
 
                 // If text still overflows at min font size, hide overflow
                 if (fontSize <= 10 && (element.scrollHeight > parent.clientHeight || element.scrollWidth > parent.clientWidth)) {
-                    element.style.overflow = 'auto'; // Or 'hidden' if you prefer
+                    element.style.overflow = 'auto'; // Or 'hidden' if you prefer scrollbars
                 } else {
                     element.style.overflow = 'visible'; // Reset if it fits
                 }
@@ -263,8 +264,8 @@
                     return;
                 }
 
-                // Ensure the card is showing the front when navigated
-                flashcard.classList.remove('flipped');
+                // **Crucial Fix:** Ensure the card is showing the front when navigated
+                flashcard.classList.remove('flipped'); // This removes the 'flipped' class, showing the front face
 
                 flashcardFront.textContent = card.term;
                 flashcardBack.textContent = card.definition;
@@ -281,18 +282,19 @@
             nextBtn.addEventListener("click", () => {
                 if (currentIndex < flashcards.length - 1) {
                     currentIndex++;
-                    renderCard(currentIndex); // Pass currentIndex to ensure proper rendering
+                    renderCard(currentIndex); // Call renderCard with the new index
                 }
             });
 
             prevBtn.addEventListener("click", () => {
                 if (currentIndex > 0) {
                     currentIndex--;
-                    renderCard(currentIndex); // Pass currentIndex to ensure proper rendering
+                    renderCard(currentIndex); // Call renderCard with the new index
                 }
             });
 
-            // Only toggle the 'flipped' class on click, don't re-render content
+            // **Crucial Fix:** Only toggle the 'flipped' class on flashcard click
+            // This is now purely for the flip animation, separate from content updates.
             document.getElementById("flashcard").addEventListener("click", () => {
                 flashcard.classList.toggle('flipped');
             });
@@ -342,8 +344,7 @@
 
             function startQuiz() {
                 currentQuizIndex = 0;
-                // Shuffle flashcardData for quiz questions
-                shuffleArray(flashcardData);
+                shuffleArray(flashcardData); // Shuffle for quiz
                 showQuizQuestion(currentQuizIndex);
             }
 
@@ -359,11 +360,10 @@
                 quizProgress.textContent = `Question ${index + 1} of ${flashcardData.length}`;
                 const correctAnswer = currentCard.definition;
                 const incorrectAnswers = [];
-                // Ensure there are enough unique incorrect answers
                 const availableDefinitions = flashcardData.map(card => card.definition).filter(def => def !== correctAnswer);
-                shuffleArray(availableDefinitions); // Shuffle available definitions
+                shuffleArray(availableDefinitions);
                 while (incorrectAnswers.length < 3 && availableDefinitions.length > 0) {
-                    const randomDefinition = availableDefinitions.shift(); // Take from shuffled array
+                    const randomDefinition = availableDefinitions.shift();
                     if (!incorrectAnswers.includes(randomDefinition)) {
                         incorrectAnswers.push(randomDefinition);
                     }
@@ -402,7 +402,7 @@
                 }, 2500);
             }
 
-            // Initial Load
+            // Initial Load: Must call renderCard after data is loaded
             populateCategoryFilter();
             renderCard(currentIndex); // Initial render of the first card
 
@@ -435,23 +435,11 @@
                         let indexToFetchDataFrom = startIdx + j;
                         if (indexToFetchDataFrom >= dataToPrint.length) break;
 
-                        // Corrected logic for definition page:
-                        // On a definition page, the terms on the left column (even 'j') correspond to
-                        // the definitions on the left column.
-                        // The terms on the right column (odd 'j') correspond to the definitions on the right column.
-                        // The terms and definitions should be printed in the original order for paired printing.
-                        // So, for definitions, we are always pulling from the original sequential index `startIdx + j`.
-                        // The previous logic was attempting to "swap" indexes which is only needed if
-                        // you were trying to print terms and definitions separately but then re-order them,
-                        // which isn't the standard for printable flashcards.
-                        // For a simple terms page then definitions page, the sequential index is fine for both.
-                        // If your print CSS uses a specific column layout where definitions are explicitly paired
-                        // with terms from a different position, this part might need further adjustment.
-                        // But for typical cut-out flashcards, maintaining sequential order is key.
-                        
-                        // Reverting the "if (!isTermPage)" index manipulation as it was causing incorrect pairing
-                        // for standard sequential printing.
-                        // The current `indexToFetchDataFrom = startIdx + j;` will work correctly for both.
+                        // This print logic expects a sequential order for paired terms/definitions.
+                        // The index manipulation for odd/even columns was removed in previous steps,
+                        // assuming standard print layout where term 1 and def 1 are adjacent.
+                        // If your print layout explicitly swaps positions for back/front, this may need adjustment.
+                        // For typical cut-out flashcards, dataToPrint[startIdx + j] for both is usually correct.
 
                         const itemToDisplay = dataToPrint[indexToFetchDataFrom];
                         const card = document.createElement('div');
@@ -470,30 +458,16 @@
                 window.print();
             }
 
-            flashcard.addEventListener('click', () => flashcard.classList.toggle('flipped'));
-            // Removed showFront logic from next/prev and flashcard click.
-            // renderCard now handles resetting flip state and content directly.
-            nextBtn.addEventListener('click', () => {
-                if (currentIndex < flashcardData.length - 1) {
-                    currentIndex++;
-                    renderCard(currentIndex);
-                }
-            });
-            prevBtn.addEventListener('click', () => {
-                if (currentIndex > 0) {
-                    currentIndex--;
-                    renderCard(currentIndex);
-                }
-            });
-
+            // Event listeners (remains largely the same, but the renderCard logic is now robust)
             modeFlashcardsBtn.addEventListener('click', () => switchView('flashcard'));
             modeQuizBtn.addEventListener('click', () => switchView('quiz'));
             modeListBtn.addEventListener('click', () => switchView('list'));
             modePrintBtn.addEventListener('click', prepareAndPrintAdvanced);
             categoryFilter.addEventListener('change', (e) => renderListView(e.target.value));
 
-            // Initial call to render the first card after data is loaded
-            renderCard(currentIndex);
+            // **Important:** Ensure your stylesheet.css contains the necessary CSS for `.flashcard`,
+            // `.flashcard-inner`, `.flashcard-front`, `.flashcard-back`, and `.flashcard.flipped .flashcard-inner`
+            // for the flip animation and correct layout.
         });
     </script>
 </body>
