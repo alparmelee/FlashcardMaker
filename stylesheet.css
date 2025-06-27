@@ -1251,6 +1251,30 @@ body.confirm-email-page #about-section button:hover {
     flex-grow: 1;
 }
 
+/* Add this to your stylesheet.css */
+
+.set-actions {
+    margin-top: 10px; /* Adjust spacing as needed */
+    display: flex;
+    justify-content: flex-end; /* Align button to the right */
+}
+
+.delete-set-btn {
+    background-color: #dc3545; /* Red background */
+    color: white; /* White text */
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px; /* Consistent rounded corners */
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: background-color 0.2s ease; /* Smooth hover effect */
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+.delete-set-btn:hover {
+    background-color: #c82333; /* Darker red on hover */
+}
+
 /* Overwrite common content-wrapper for search_page */
 body.search-page .content-wrapper {
     background-color: rgba(255, 255, 255, 0.9);
