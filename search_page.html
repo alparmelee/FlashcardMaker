@@ -8,7 +8,6 @@
     <title>Search Flashcards - CramCraft</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-
 </head>
 
 <body class="search-page">
@@ -47,11 +46,12 @@
             <div class="set-card">
                 <h3><a href="flashcard_set.html"></a></h3>
                 <p>Introduction to Biology</p>
-                <p class="set-meta">15 Terms &nbsp;&bull;&nbsp; By: <strong id="creator-name"></strong>  <strong id="rating"></strong></p>
+                <p class="set-meta">15 Terms &nbsp;&bull;&nbsp; By: <strong id="creator-name"></strong> <strong
+                        id="rating"></strong></p>
             </div>
         </div>
     </div>
-    
+
     <script type="module">
         import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
@@ -104,102 +104,83 @@
 
         loadAllPublicSets();
 
+        let allSets = []; // store all sets globally
+
         async function loadAllPublicSets() {
-    const resultsGrid = document.getElementById('search-results-grid');
-    const resultsInfo = document.querySelector('.search-results-info p');
-
-    const { data: sets, error } = await supabase
-        .from('flashcard_sets')
-        .select(`
-            id,
-            title,
-            terms_count,
-            profiles(username)
-        `)
-        .order('created_at', { ascending: false });
-
-    if (error) {
-        console.error('Error fetching sets:', error);
-        resultsInfo.textContent = 'Failed to load flashcard sets.';
-        return;
-    }
-
-    resultsInfo.textContent = `Showing ${sets.length} flashcard sets:`;
-    resultsGrid.innerHTML = '';
-
-    sets.forEach(set => {
-        const card = document.createElement('div');
-        card.classList.add('set-card');
-
-        card.innerHTML = `
-            <h3><a href="flashcard_set.html?set_id=${set.id}">${set.title}</a></h3>
-            <p>Click to view flashcards in this set.</p>
-            <p class="set-meta">
-                ${set.terms_count || 0} Terms 
-                &nbsp;&bull;&nbsp; By: ${set.profiles?.username || 'Unknown User'}
-            </p>
-        `;
-
-        resultsGrid.appendChild(card);
-    });
-}
-
-        function performSearch() {
-            const query = document.getElementById('search-input').value;
             const resultsGrid = document.getElementById('search-results-grid');
             const resultsInfo = document.querySelector('.search-results-info p');
 
+            const {data: sets, error} = await supabase
+                .from('flashcard_sets')
+                .select(`
+                    id,
+                    title,
+                    terms_count,
+                    user_id,
+                    profiles!flashcard_sets_user_id_fkey(username)
+                    `)
+                .order('created_at', {ascending: false});
+
+            allSets = sets;
+
+            if (error) {
+                console.error('Error fetching sets:', error);
+                resultsInfo.textContent = 'Failed to load flashcard sets.';
+                return;
+            }
+
+            resultsInfo.textContent = `Showing ${sets.length} flashcard sets:`;
             resultsGrid.innerHTML = '';
 
-            if (query.toLowerCase().includes("chemistry")) {
-                resultsInfo.textContent = `Showing placeholder results for "${query}"...`;
-                resultsGrid.innerHTML = `
-                <div class="set-card">
-                    <h3>Organic Chemistry Basics</h3>
-                    <p>Fundamental concepts of organic chemistry...</p>
-                    <p class="set-meta">60 Terms &nbsp;&bull;&nbsp; By: ChemMaster</p>
-                </div>
-                <div class="set-card">
-                    <h3>Periodic Table Elements</h3>
-                    <p>Learn the first 50 elements, their symbols, and atomic numbers.</p>
-                    <p class="set-meta">50 Terms &nbsp;&bull;&nbsp; By: ScienceGeek</p>
-                </div>`;
-            } else if (query.toLowerCase().includes("history")) {
-                resultsInfo.textContent = `Showing placeholder results for "${query}"...`;
-                resultsGrid.innerHTML = `
-                <div class="set-card">
-                    <h3>World History: Ancient Civilizations</h3>
-                    <p>Explore Mesopotamia, Egypt, Greece, and Rome.</p>
-                    <p class="set-meta">75 Terms &nbsp;&bull;&nbsp; By: HistoryBuff22</p>
-                </div>
-                <div class="set-card">
-                    <h3>American Civil War Battles</h3>
-                    <p>Key battles and their significance.</p>
-                    <p class="set-meta">40 Terms &nbsp;&bull;&nbsp; By: USHistoryFan</p>
-                </div>`;
-            } else if (query.trim() !== "") {
-                resultsInfo.textContent = `No specific placeholder results for "${query}". Showing general placeholders.`;
-                resultsGrid.innerHTML = `
-                <div class="set-card">
-                    <h3>Placeholder Set Alpha</h3>
-                    <p>This is a general placeholder set related to your query.</p>
-                    <p class="set-meta">30 Terms &nbsp;&bull;&nbsp; By: System</p>
-                </div>`;
-            } else {
-                resultsInfo.textContent = "Please enter a search term. Showing general placeholders.";
-                resultsGrid.innerHTML = `
-                <div class="set-card">
-                    <h3>Organic Chemistry Basics</h3>
-                    <p>Fundamental concepts of organic chemistry, including alkanes, alkenes, and alkynes.</p>
-                    <p class="set-meta">60 Terms &nbsp;&bull;&nbsp; By: ChemMaster &nbsp;&bull;&nbsp; Rating: 4.5/5</p>
-                </div>
-                <div class="set-card">
-                    <h3>World History: Ancient Civilizations</h3>
-                    <p>Explore Mesopotamia, Egypt, Greece, and Rome.</p>
-                    <p class="set-meta">75 Terms &nbsp;&bull;&nbsp; By: HistoryBuff22 &nbsp;&bull;&nbsp; Rating: 4.8/5</p>
-                </div>`;
-            }
+            sets.forEach(set => {
+                const card = document.createElement('div');
+                card.classList.add('set-card');
+                card.style.cursor = 'pointer';
+                card.onclick = () => {
+                    window.location.href = `flashcard_set.html?set_id=${set.id}`;
+                };
+
+                card.innerHTML = `
+                <h3>${set.title}</h3>
+                <p>Click to view flashcards in this set.</p>
+                <p class="set-meta">
+                 ${set.terms_count || 0} Terms &nbsp;&bull;&nbsp; By: ${set.profiles?.username || 'Unknown User'}</p>
+                `;
+
+                resultsGrid.appendChild(card);
+            });
         }
+
+        function performSearch() {
+            const query = document.getElementById('search-input').value.trim().toLowerCase();
+            const resultsGrid = document.getElementById('search-results-grid');
+            const resultsInfo = document.querySelector('.search-results-info p');
+
+            const filtered = allSets.filter(set =>
+                set.title.toLowerCase().includes(query)
+            );
+
+            resultsInfo.textContent = `Showing ${filtered.length} sets for "${query}"`;
+            resultsGrid.innerHTML = '';
+
+            filtered.forEach(set => {
+                const card = document.createElement('div');
+                card.classList.add('set-card');
+                card.style.cursor = 'pointer';
+                card.onclick = () => {
+                    window.location.href = `flashcard_set.html?set_id=${set.id}`;
+                };
+
+                card.innerHTML = `
+                    <h3>${set.title}</h3>
+                    <p>Click to view flashcards in this set.</p>
+                    <p class="set-meta">${set.terms_count || 0} Terms &nbsp;&bull;&nbsp; By: ${set.profiles?.username || 'Unknown User'}</p>
+                    `;
+
+                resultsGrid.appendChild(card);
+            });
+        }
+        document.getElementById('search-input').addEventListener('input', performSearch);
         document.getElementById('search-input').addEventListener('keypress', function (event) {
             if (event.key === 'Enter') {
                 performSearch();
