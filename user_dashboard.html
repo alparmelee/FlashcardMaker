@@ -11,14 +11,14 @@
     <style>
         /* Basic styles for the set card actions */
         .set-card {
-            position: relative; /* Needed for positioning buttons if you want them floating */
+            position: relative;
         }
 
         .set-actions {
             margin-top: 10px;
-            display: flex; /* Arrange buttons horizontally */
-            gap: 10px; /* Space between buttons */
-            justify-content: flex-end; /* Align buttons to the right */
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
         }
 
         .set-actions button {
@@ -30,12 +30,12 @@
             transition: background-color 0.2s ease;
         }
 
-        .set-actions .edit-set-btn { /* This style is still here but the button is removed in HTML below */
+        .set-actions .edit-set-btn {
             background-color: #007bff;
             color: white;
         }
 
-        .set-actions .edit-set-btn:hover { /* This style is still here but the button is removed in HTML below */
+        .set-actions .edit-set-btn:hover {
             background-color: #0056b3;
         }
 
@@ -229,31 +229,39 @@
                 e.preventDefault();
                 const setId = e.target.getAttribute('data-set-id');
                 if (!setId) return;
-                const confirmed = confirm('Are you sure you want to delete this set? This action cannot be undone.');
-                if (!confirmed) return;
-                // Delete from Supabase
-                const { error: deleteSetError } = await supabase
-                    .from('flashcard_sets')
-                    .delete()
-                    .eq('id', setId);
 
-                if (deleteSetError) {
-                    alert('Failed to delete set: ' + deleteSetError.message);
-                } else {
-                    // Also delete associated flashcards
+                const confirmed = confirm('Are you sure you want to delete this set? This action cannot be undone and will also delete all associated flashcards.');
+                if (!confirmed) return;
+
+                try {
+                    // STEP 1: Delete associated flashcards FIRST
                     const { error: deleteCardsError } = await supabase
                         .from('flashcards')
                         .delete()
                         .eq('set_id', setId);
 
                     if (deleteCardsError) {
-                        alert('Set deleted, but failed to delete associated flashcards: ' + deleteCardsError.message);
-                        // You might want to refresh here even if cards failed to delete, as the set itself is gone.
-                    } else {
-                        alert('Flashcard set and its cards deleted successfully!');
+                        console.error('Failed to delete associated flashcards:', deleteCardsError.message);
+                        alert('Could not delete all associated flashcards. Please check database permissions or try again. Attempting to delete the set itself.');
+                        // You might choose to throw an error here to stop if card deletion is critical,
+                        // but proceeding to delete the set might be acceptable depending on your app logic.
                     }
-                    // Remove card from DOM
+
+                    // STEP 2: Then delete the flashcard set itself
+                    const { error: deleteSetError } = await supabase
+                        .from('flashcard_sets')
+                        .delete()
+                        .eq('id', setId);
+
+                    if (deleteSetError) {
+                        throw new Error('Failed to delete set: ' + deleteSetError.message);
+                    }
+
+                    alert('Flashcard set and its associated cards (if any) deleted successfully!');
                     e.target.closest('.set-card').remove();
+                } catch (err) {
+                    console.error('Error during delete operation:', err.message);
+                    alert('An error occurred during deletion: ' + err.message);
                 }
             }
         });
