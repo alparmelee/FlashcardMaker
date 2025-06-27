@@ -45,24 +45,9 @@
 
         <div class="sets-grid" id="search-results-grid">
             <div class="set-card">
-                <h3><a href="flashcard_set.html">Intro to Biology</a></h3>
+                <h3><a href="flashcard_set.html"></a></h3>
                 <p>Introduction to Biology</p>
-                <p class="set-meta">15 Terms &nbsp;&bull;&nbsp; By: DemoUser1 &nbsp;&bull;&nbsp; Rating: 4.5/5</p>
-            </div>
-            <div class="set-card">
-                <h3>World History: Ancient Civilizations</h3>
-                <p>Explore Mesopotamia, Egypt, Greece, and Rome.</p>
-                <p class="set-meta">75 Terms &nbsp;&bull;&nbsp; By: HistoryBuff22 &nbsp;&bull;&nbsp; Rating: 4.8/5</p>
-            </div>
-            <div class="set-card">
-                <h3>Advanced Calculus Problems</h3>
-                <p>Challenging problems covering differentiation and integration techniques.</p>
-                <p class="set-meta">40 Terms &nbsp;&bull;&nbsp; By: MathWhiz &nbsp;&bull;&nbsp; Rating: 4.2/5</p>
-            </div>
-            <div class="set-card">
-                <h3>French Revolution Key Events</h3>
-                <p>Timeline and significant events of the French Revolution.</p>
-                <p class="set-meta">35 Terms &nbsp;&bull;&nbsp; By: EuroHist &nbsp;&bull;&nbsp; Rating: 4.6/5</p>
+                <p class="set-meta">15 Terms &nbsp;&bull;&nbsp; By: <strong id="creator-name"></strong>  <strong id="rating"></strong></p>
             </div>
         </div>
     </div>
@@ -116,7 +101,7 @@
             }
         }
         updateAuthUI();
-        
+
         loadAllPublicSets();
 
         async function loadAllPublicSets() {
