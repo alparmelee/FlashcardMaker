@@ -233,38 +233,78 @@
                 flashcardBack.textContent = "";
                 return;
             }
+            // Function to dynamically adjust font size
+            function adjustFontSize(element) {
+                const parent = element.parentElement; // flashcard-front or flashcard-back
+                let fontSize = 48; // Start with a large font size
+                element.style.fontSize = `${fontSize}px`; // Apply initial font size
+                element.style.whiteSpace = 'normal'; // Allow text to wrap initially
 
-            function renderCard() {
-                const card = flashcards[currentIndex];
-                if (!card) return;
+                // Reset overflow for accurate measurement
+                element.style.overflow = 'visible';
 
-                flashcardFront.textContent = showFront ? card.term : "";
-                flashcardBack.textContent = showFront ? "" : card.definition;
+                // Check if text overflows, and shrink if it does
+                // Loop until text fits or min font size is reached
+                while (
+                    (element.scrollHeight > parent.clientHeight || element.scrollWidth > parent.clientWidth) &&
+                    fontSize > 10
+                ) {
+                    fontSize -= 1; // Decrement by 1 for finer control
+                    element.style.fontSize = `${fontSize}px`;
+                }
+
+                // If text still overflows at min font size, hide overflow or allow scroll
+                if (fontSize <= 10 && (element.scrollHeight > parent.clientHeight || element.scrollWidth > parent.clientWidth)) {
+                    element.style.overflow = 'auto'; // Or 'hidden' if you prefer to cut it off
+                } else {
+                    element.style.overflow = 'visible'; // Reset if it fits
+                }
+            }
+
+            // Modified renderCard function to use adjustFontSize and reset flip state
+            // It now takes 'index' as a parameter to ensure it always renders the correct card.
+            function renderCard(index) { // Changed renderCard() to renderCard(index)
+                const card = flashcards[index];
+                if (!card) {
+                    flashcardFront.textContent = "";
+                    flashcardBack.textContent = "";
+                    return;
+                }
+
+                // Crucial: Ensure the card is showing the front when navigating to a new card
+                // This resolves the "skips every even numbered card" and "goes completely blank" issues.
+                flashcard.classList.remove('flipped'); // Remove 'flipped' class to show front
+
+                flashcardFront.textContent = card.term;
+                flashcardBack.textContent = card.definition;
+
+                // Apply font size adjustment to both sides
+                adjustFontSize(flashcardFront);
+                adjustFontSize(flashcardBack);
 
                 document.getElementById("card-progress").textContent =
                     `Card ${currentIndex + 1} of ${flashcards.length}`;
             }
 
-            // Attach event listeners once
+// Attach event listeners once
             nextBtn.addEventListener("click", () => {
                 if (currentIndex < flashcards.length - 1) {
                     currentIndex++;
-                    showFront = true;
-                    renderCard();
+                    renderCard(currentIndex); // Pass currentIndex and let renderCard handle flip state
                 }
             });
 
             prevBtn.addEventListener("click", () => {
                 if (currentIndex > 0) {
                     currentIndex--;
-                    showFront = true;
-                    renderCard();
+                    renderCard(currentIndex); // Pass currentIndex and let renderCard handle flip state
                 }
             });
 
+            // This event listener now *only* toggles the 'flipped' class for the animation.
+            // It no longer affects content or card index, which prevents blank cards or skips.
             document.getElementById("flashcard").addEventListener("click", () => {
-                showFront = !showFront;
-                renderCard();
+                flashcard.classList.toggle('flipped');
             });
 
             function shuffleArray(array) {
@@ -369,7 +409,7 @@
             // Initial Load
             populateCategoryFilter();
             // Initial render
-            renderCard();
+            renderCard(currentIndex);
 
             // --- UPDATED: Advanced Print Function ---
             function prepareAndPrintAdvanced() {
