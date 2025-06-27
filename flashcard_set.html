@@ -2,233 +2,233 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flashcards - CramCraft</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="stylesheet.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcards - CramCraft</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="stylesheet.css" />
 
 </head>
 
 <body class="flashcard-set-page">
-    <nav class="top-nav">
-        <div class="top-nav-inner">
-            <div class="nav-logo"><a href="index.html">CramCraft</a></div>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="create.html">Create</a></li>
-                <li><a href="user_dashboard.html">Dashboard</a></li>
-                <li><a href="search_page.html">Search</a></li>
-                <li><a href="about.html">About</a></li>
-            </ul>
-            <div class="user-status" style="display: none;">
-                <span id="welcome-msg">Welcome, DemoUser!</span>
-                <a href="#" id="logout-btn" class="logout-button">Logout</a>
-            </div>
-        </div>
-    </nav>
+    <nav class="top-nav">
+        <div class="top-nav-inner">
+            <div class="nav-logo"><a href="index.html">CramCraft</a></div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="create.html">Create</a></li>
+                <li><a href="user_dashboard.html">Dashboard</a></li>
+                <li><a href="search_page.html">Search</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+            <div class="user-status" style="display: none;">
+                <span id="welcome-msg">Welcome, DemoUser!</span>
+                <a href="#" id="logout-btn" class="logout-button">Logout</a>
+            </div>
+        </div>
+    </nav>
 
-    <div class="main-container">
-        <header class="set-header">
-            <h1>New Set</h1>
-        </header>
+    <div class="main-container">
+        <header class="set-header">
+            <h1>New Set</h1>
+        </header>
 
-        <div class="study-modes">
-            <button class="mode-button active" id="mode-flashcards"><i class="fa-solid fa-clone"></i>
-                Flashcards</button>
-            <button class="mode-button" id="mode-quiz"><i class="fa-solid fa-pen-to-square"></i> Quiz</button>
-            <button class="mode-button" id="mode-list"><i class="fa-solid fa-list-ul"></i> List</button>
-            <button class="mode-button" id="mode-print"><i class="fa-solid fa-print"></i> Print</button>
-        </div>
+        <div class="study-modes">
+            <button class="mode-button active" id="mode-flashcards"><i class="fa-solid fa-clone"></i>
+                Flashcards</button>
+            <button class="mode-button" id="mode-quiz"><i class="fa-solid fa-pen-to-square"></i> Quiz</button>
+            <button class="mode-button" id="mode-list"><i class="fa-solid fa-list-ul"></i> List</button>
+            <button class="mode-button" id="mode-print"><i class="fa-solid fa-print"></i> Print</button>
+        </div>
 
-        <div id="flashcard-view">
-            <div class="flashcard-viewer-container">
-                <button class="card-nav-button" id="prev-card"><i class="fas fa-arrow-left"></i></button>
-                <div class="flashcard" id="flashcard">
-                    <div class="flashcard-inner">
-                        <div class="flashcard-front" id="flashcard-front"></div>
-                        <div class="flashcard-back" id="flashcard-back"></div>
-                    </div>
-                </div>
-                <button class="card-nav-button" id="next-card"><i class="fas fa-arrow-right"></i></button>
-            </div>
-            <div class="card-navigation-wrapper">
-                <p class="card-progress" id="card-progress"></p>
-            </div>
-        </div>
+        <div id="flashcard-view">
+            <div class="flashcard-viewer-container">
+                <button class="card-nav-button" id="prev-card"><i class="fas fa-arrow-left"></i></button>
+                <div class="flashcard" id="flashcard">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front" id="flashcard-front"></div>
+                        <div class="flashcard-back" id="flashcard-back"></div>
+                    </div>
+                </div>
+                <button class="card-nav-button" id="next-card"><i class="fas fa-arrow-right"></i></button>
+            </div>
+            <div class="card-navigation-wrapper">
+                <p class="card-progress" id="card-progress"></p>
+            </div>
+        </div>
 
-        <div id="quiz-view" class="hidden">
-            <div class="quiz-mode-container">
-                <h2 id="quiz-progress"></h2>
-                <p class="quiz-question" id="quiz-question"></p>
-                <div id="quiz-choices-container"></div>
-            </div>
-        </div>
+        <div id="quiz-view" class="hidden">
+            <div class="quiz-mode-container">
+                <h2 id="quiz-progress"></h2>
+                <p class="quiz-question" id="quiz-question"></p>
+                <div id="quiz-choices-container"></div>
+            </div>
+        </div>
 
-        <div id="list-view" class="hidden">
-            <div class="list-view-controls">
-                <label for="category-filter">Sort by Category:</label>
-                <select id="category-filter"></select>
-            </div>
-            <div class="term-list-container" id="term-list-container"></div>
-        </div>
+        <div id="list-view" class="hidden">
+            <div class="list-view-controls">
+                <label for="category-filter">Sort by Category:</label>
+                <select id="category-filter"></select>
+            </div>
+            <div class="term-list-container" id="term-list-container"></div>
+        </div>
 
-        <div class="creator-info">
-            <img src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
-                alt="Creator's profile picture">
-            <div class="details">
-                <span>Created by</span>
-                <strong id="creator-name"></strong>
-            </div>
-        </div>
-    </div>
+        <div class="creator-info">
+            <img src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+                alt="Creator's profile picture">
+            <div class="details">
+                <span>Created by</span>
+                <strong id="creator-name"></strong>
+            </div>
+        </div>
+    </div>
 
-    <div id="print-view"></div>
+    <div id="print-view"></div>
 
-    <script type="module">
-        import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-        const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImE`X`piOiIyMDY0MTU0ODI4fQ.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
-        const supabase = createClient(supabaseUrl, supabaseKey, {});
+    <script type="module">
+        import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
+        const supabase = createClient(supabaseUrl, supabaseKey, {
 
-        window.supabase = supabase; // Make supabase globally accessible
+        });
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            const flashcardFront = document.getElementById("flashcard-front");
-            const flashcardBack = document.getElementById("flashcard-back");
-            const prevBtn = document.getElementById("prev-card");
-            const nextBtn = document.getElementById("next-card");
-            const welcomeMsg = document.getElementById("welcome-msg");
-            const modePrintBtn = document.getElementById('mode-print');
-            const printViewContainer = document.getElementById('print-view');
-            const flashcard = document.getElementById('flashcard');
-            const cardProgress = document.getElementById('card-progress');
+        window.supabase = supabase; // Make supabase globally accessible
 
-            const modeFlashcardsBtn = document.getElementById('mode-flashcards');
-            const modeQuizBtn = document.getElementById('mode-quiz');
-            const modeListBtn = document.getElementById('mode-list');
+        document.addEventListener('DOMContentLoaded', async () => {
+            const flashcardFront = document.getElementById("flashcard-front");
+            const flashcardBack = document.getElementById("flashcard-back");
+            const prevBtn = document.getElementById("prev-card");
+            const nextBtn = document.getElementById("next-card");
+            const welcomeMsg = document.getElementById("welcome-msg");
+            const modePrintBtn = document.getElementById('mode-print');
+            const printViewContainer = document.getElementById('print-view');
+            const flashcard = document.getElementById('flashcard');
+            const cardProgress = document.getElementById('card-progress');
 
-            const flashcardView = document.getElementById('flashcard-view');
-            const quizView = document.getElementById('quiz-view');
-            const listView = document.getElementById('list-view');
+            const modeFlashcardsBtn = document.getElementById('mode-flashcards');
+            const modeQuizBtn = document.getElementById('mode-quiz');
+            const modeListBtn = document.getElementById('mode-list');
 
-            const quizProgress = document.getElementById('quiz-progress');
-            const quizQuestion = document.getElementById('quiz-question');
-            const quizChoicesContainer = document.getElementById('quiz-choices-container');
+            const flashcardView = document.getElementById('flashcard-view');
+            const quizView = document.getElementById('quiz-view');
+            const listView = document.getElementById('list-view');
 
-            const categoryFilter = document.getElementById('category-filter');
-            const termListContainer = document.getElementById('term-list-container');
+            const quizProgress = document.getElementById('quiz-progress');
+            const quizQuestion = document.getElementById('quiz-question');
+            const quizChoicesContainer = document.getElementById('quiz-choices-container');
 
-            let flashcards = [];
-            let flashcardData = [];
-            let currentIndex = 0;
-            // Removed 'showFront = true;' from this scope, as its logic is handled differently now.
-            let currentQuizIndex = 0;
+            const categoryFilter = document.getElementById('category-filter');
+            const termListContainer = document.getElementById('term-list-container');
 
-            const urlParams = new URLSearchParams(window.location.search);
-            const setId = urlParams.get('set_id');
-            if (!setId) {
-                alert("No set ID provided.");
-                window.location.href = "user_dashboard.html";
-                return;
-            }
+            let flashcards = [];
+            let flashcardData = [];
+            let currentIndex = 0;
+            let showFront = true;
+            let currentQuizIndex = 0;
 
-            const setTitleElement = document.querySelector('.set-header h1');
+            const urlParams = new URLSearchParams(window.location.search);
+            const setId = urlParams.get('set_id');
+            if (!setId) {
+                alert("No set ID provided.");
+                window.location.href = "user_dashboard.html";
+                return;
+            }
 
-            try {
-                const {data: setData, error: setError} = await supabase
-                    .from('flashcard_sets')
-                    .select('title')
-                    .eq('id', setId)
-                    .single();
+            const setTitleElement = document.querySelector('.set-header h1');
 
-                if (setError && setError.code !== 'PGRST116') { // PGRST116 means "No rows found"
-                    console.error('Error fetching set title:', setError.message);
-                    setTitleElement.textContent = 'Untitled Set';
-                } else if (setData) {
-                    setTitleElement.textContent = setData.title || 'Untitled Set';
-                } else {
-                    setTitleElement.textContent = 'Untitled Set';
-                }
-            } catch (error) {
-                console.error('Unexpected error fetching set title:', error);
-                setTitleElement.textContent = 'Untitled Set';
-            }
+            try {
+                const {data: setData, error: setError} = await supabase
+                    .from('flashcard_sets')
+                    .select('title')
+                    .eq('id', setId)
+                    .single();
 
-            const sessionResult = await supabase.auth.getSession();
-            const user = sessionResult.data.session?.user;
+                if (setError) {
+                    console.error('Error fetching set title:', setError.message);
+                    setTitleElement.textContent = 'Untitled Set';
+                } else {
+                    setTitleElement.textContent = setData.title || 'Untitled Set';
+                }
+            } catch (error) {
+                console.error('Unexpected error fetching set title:', error);
+                setTitleElement.textContent = 'Untitled Set';
+            }
 
-            if (user) {
-                const {data: profile} = await supabase
-                    .from("profiles")
-                    .select("username")
-                    .eq("user_id", user.id)
-                    .single();
+            const sessionResult = await supabase.auth.getSession();
+            const user = sessionResult.data.session?.user;
 
-                const username = profile?.username || user.email || "User";
-                welcomeMsg.textContent = `Welcome, ${username}!`;
-                document.querySelector(".user-status").style.display = "block";
-                document.getElementById('logout-btn').addEventListener('click', async (e) => {
-                    e.preventDefault();
-                    await supabase.auth.signOut();
-                    window.location.href = 'login.html';
-                });
-            }
+            if (user) {
+                const {data: profile} = await supabase
+                    .from("profiles")
+                    .select("username")
+                    .eq("user_id", user.id)
+                    .single();
 
-            const creatorNameElement = document.getElementById("creator-name");
+                const username = profile?.username || user.email || "User";
+                welcomeMsg.textContent = `Welcome, ${username}!`;
+                document.querySelector(".user-status").style.display = "block";
+                document.getElementById('logout-btn').addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await supabase.auth.signOut();
+                    window.location.href = 'login.html';
+                });
+            }
 
-            try {
-                const {data: setMeta, error: setMetaError} = await supabase
-                    .from('flashcard_sets')
-                    .select('user_id')
-                    .eq('id', setId)
-                    .single();
+            const creatorNameElement = document.getElementById("creator-name");
 
-                if (setMetaError && setMetaError.code !== 'PGRST116' || !setMeta?.user_id) {
-                    console.error("Error fetching set creator ID:", setMetaError?.message);
-                    creatorNameElement.textContent = "Unknown";
-                } else if (setMeta?.user_id) {
-                    const {data: profileData, error: profileError} = await supabase
-                        .from("profiles")
-                        .select("username")
-                        .eq("user_id", setMeta.user_id)
-                        .single();
+            try {
+                const {data: setMeta, error: setMetaError} = await supabase
+                    .from('flashcard_sets')
+                    .select('user_id')
+                    .eq('id', setId)
+                    .single();
 
-                    if (profileError || !profileData?.username) {
-                        console.error("Error fetching creator username:", profileError?.message);
-                        creatorNameElement.textContent = "Unknown";
-                    } else {
-                        creatorNameElement.textContent = profileData.username;
-                    }
-                } else {
-                    creatorNameElement.textContent = "Unknown";
-                }
-            } catch (e) {
-                console.error("Unexpected error getting creator name:", e);
-                creatorNameElement.textContent = "Unknown";
-            }
+                if (setMetaError || !setMeta?.user_id) {
+                    console.error("Error fetching set creator ID:", setMetaError?.message);
+                    creatorNameElement.textContent = "Unknown";
+                } else {
+                    const {data: profileData, error: profileError} = await supabase
+                        .from("profiles")
+                        .select("username")
+                        .eq("user_id", setMeta.user_id)
+                        .single();
 
-            const {data, error} = await supabase
-                .from("flashcards")
-                .select("term, definition, category") // Added 'category' selection for populateCategoryFilter
-                .eq("set_id", setId);
+                    if (profileError || !profileData?.username) {
+                        console.error("Error fetching creator username:", profileError?.message);
+                        creatorNameElement.textContent = "Unknown";
+                    } else {
+                        creatorNameElement.textContent = profileData.username;
+                    }
+                }
+            } catch (e) {
+                console.error("Unexpected error getting creator name:", e);
+                creatorNameElement.textContent = "Unknown";
+            }
 
-            if (error) {
-                console.error("Error fetching flashcards:", error.message);
-                flashcardFront.textContent = "Failed to load flashcards.";
-                return;
-            }
+            const {data, error} = await supabase
+                .from("flashcards")
+                .select("term, definition, category") // Added category for populateCategoryFilter
+                .eq("set_id", setId);
 
-            flashcards = (data || []).filter(card => card.term?.trim() && card.definition?.trim());
-            flashcardData = [...flashcards];
+            if (error) {
+                console.error("Error fetching flashcards:", error.message);
+                flashcardFront.textContent = "Failed to load flashcards.";
+                return;
+            }
+
+            flashcards = (data || []).filter(card => card.term?.trim() && card.definition?.trim());
+            flashcardData = [...flashcards];
 
 
-            if (flashcardData.length === 0) {
-                document.querySelector('.main-container').innerHTML = '<p>No flashcards found for this set.</p>';
-                return;
-            }
+            if (flashcardData.length === 0) {
+                document.querySelector('.main-container').innerHTML = '<p>No flashcards found for this set.</p>';
+                return;
+            }
+            // Removed redundant flashcards.length === 0 check here, already handled by flashcardData.length === 0
+
 
             // --- START OF NEW/MODIFIED FUNCTIONS FOR BUG FIXES ---
 
@@ -261,7 +261,8 @@
             }
 
             // Modified renderCard function to use adjustFontSize and reset flip state
-            function renderCard(index) {
+            // Renamed function parameter to 'index' for clarity, as it expects the current card index.
+            function renderCard(index) { // Changed renderCard() to renderCard(index)
                 const card = flashcards[index];
                 if (!card) {
                     flashcardFront.textContent = "";
@@ -294,7 +295,7 @@
             nextBtn.addEventListener("click", () => {
                 if (currentIndex < flashcards.length - 1) {
                     currentIndex++;
-                    renderCard(currentIndex); 
+                    renderCard(currentIndex); // Pass currentIndex to ensure proper rendering
                 }
             });
 
@@ -303,7 +304,7 @@
             prevBtn.addEventListener("click", () => {
                 if (currentIndex > 0) {
                     currentIndex--;
-                    renderCard(currentIndex);
+                    renderCard(currentIndex); // Pass currentIndex to ensure proper rendering
                 }
             });
 
@@ -338,6 +339,8 @@
             }
 
             function populateCategoryFilter() {
+                // Ensure 'category' is selected in the Supabase fetch query for this to work correctly.
+                // It is already included in your fetch: .select("term, definition, category")
                 const categories = ['All', ...new Set(flashcardData.map(card => card.category).filter(Boolean))];
                 categoryFilter.innerHTML = '';
                 categories.forEach(category => {
@@ -420,8 +423,8 @@
             }
 
             // Initial render: Call renderCard after data is loaded
-            populateCategoryFilter(); // Populates dropdown based on fetched data
-            renderCard(currentIndex); // Renders the first card
+            populateCategoryFilter(); // This should be called before renderCard if renderCard uses categories
+            renderCard(currentIndex); // Renders the first card upon page load
 
             function prepareAndPrintAdvanced() {
                 const CARDS_PER_PRINT_PAGE = 10;
@@ -468,7 +471,6 @@
                 window.print();
             }
 
-            // Other mode buttons remain as is
             modeFlashcardsBtn.addEventListener('click', () => switchView('flashcard'));
             modeQuizBtn.addEventListener('click', () => switchView('quiz'));
             modeListBtn.addEventListener('click', () => switchView('list'));
