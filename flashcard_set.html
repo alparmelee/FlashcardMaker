@@ -422,6 +422,12 @@
             // Initial render
             renderCard(currentIndex);
 
+            function disableButtonTemporarily(button, duration = 300) { // Default duration 300ms
+    button.disabled = true;
+    setTimeout(() => {
+        button.disabled = false;
+    }, duration);
+}
             // --- UPDATED: Advanced Print Function ---
             function prepareAndPrintAdvanced() {
                 const CARDS_PER_PRINT_PAGE = 10;
@@ -482,20 +488,29 @@
 
                 window.print();
             }
+            
 
             flashcard.addEventListener('click', () => flashcard.classList.toggle('flipped'));
-            nextBtn.addEventListener('click', () => {
-                if (currentIndex < flashcardData.length - 1) {
-                    currentIndex++;
-                    renderCard(currentIndex);
-                }
-            });
-            prevBtn.addEventListener('click', () => {
-                if (currentIndex > 0) {
-                    currentIndex--;
-                    renderCard(currentIndex);
-                }
-            });
+            nextBtn.addEventListener("click", () => {
+    // Only proceed if the button is not currently disabled
+    if (!nextBtn.disabled) {
+        if (currentIndex < flashcards.length - 1) {
+            currentIndex++;
+            renderCard(currentIndex);
+        }
+        disableButtonTemporarily(nextBtn); // Disable after click
+    }
+});
+            prevBtn.addEventListener("click", () => {
+    // Only proceed if the button is not currently disabled
+    if (!prevBtn.disabled) {
+        if (currentIndex > 0) {
+            currentIndex--;
+            renderCard(currentIndex);
+        }
+        disableButtonTemporarily(prevBtn); // Disable after click
+    }
+});
 
             modeFlashcardsBtn.addEventListener('click', () => switchView('flashcard'));
             modeQuizBtn.addEventListener('click', () => switchView('quiz'));
