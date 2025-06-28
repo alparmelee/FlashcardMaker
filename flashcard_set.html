@@ -106,6 +106,18 @@
             const modePrintBtn = document.getElementById('mode-print');
             const printViewContainer = document.getElementById('print-view');
             const flashcard = document.getElementById('flashcard');
+            console.log("DOMContentLoaded event fired."); // ADD THIS
+    console.log("Flashcard element found:", flashcard); // ADD THIS
+
+    // ... (your existing code for fetching data, etc.) ...
+
+    // Locate this specific event listener:
+        document.getElementById("flashcard").addEventListener("click", () => {
+        console.log("Flashcard clicked! Attempting to toggle 'flipped' class."); // ADD THIS
+        flashcard.classList.toggle('flipped');
+        console.log("Current classes on flashcard after click:", flashcard.classList.value); // ADD THIS
+    });
+
             const cardProgress = document.getElementById('card-progress');
 
             const modeFlashcardsBtn = document.getElementById('mode-flashcards');
@@ -301,15 +313,10 @@
                 }
             });
 
-            // This event listener now *only* toggles the 'flipped' class for the animation.
-            // It no longer affects content or card index, which prevents blank cards or skips.
+            // This is the correct and simplest way to toggle the class
             document.getElementById("flashcard").addEventListener("click", () => {
-    if (flashcard.classList.contains('flipped')) {
-        flashcard.classList.remove('flipped');
-    } else {
-        flashcard.classList.add('flipped');
-    }
-});
+                flashcard.classList.toggle('flipped');
+            });
             
             function shuffleArray(array) {
                 for (let i = array.length - 1; i > 0; i--) {
