@@ -275,57 +275,43 @@
 
             // Modified renderCard function to use adjustFontSize and reset flip state
             // It now takes 'index' as a parameter to ensure it always renders the correct card.
-            function renderCard(index) {
-        console.log(`RENDER_CARD: Called for index ${index}`); // Log when renderCard is called
-        const card = flashcards[index];
-        if (!card) {
-            flashcardFront.textContent = "";
-            flashcardBack.textContent = "";
-            console.log("RENDER_CARD: No card found at this index, clearing content.");
-            return;
-        }
+            function renderCard(index) { // Changed renderCard() to renderCard(index)
+                const card = flashcards[index];
+                if (!card) {
+                    flashcardFront.textContent = "";
+                    flashcardBack.textContent = "";
+                    return;
+                }
 
-        flashcard.classList.remove('flipped'); // Keep this to ensure it starts on the front
+                // Crucial: Ensure the card is showing the front when navigating to a new card
+                // This resolves the "skips every even numbered card" and "goes completely blank" issues.
+                flashcard.classList.remove('flipped'); // Remove 'flipped' class to show front
 
-        flashcardFront.textContent = card.term;
-        flashcardBack.textContent = card.definition;
+                flashcardFront.textContent = card.term;
+                flashcardBack.textContent = card.definition;
 
-        adjustFontSize(flashcardFront);
-        adjustFontSize(flashcardBack);
+                // Apply font size adjustment to both sides
+                adjustFontSize(flashcardFront);
+                adjustFontSize(flashcardBack);
 
-        const progressText = `Card ${currentIndex + 1} of ${flashcards.length}`;
-        cardProgress.textContent = progressText; // Use the declared cardProgress element
-        console.log(`RENDER_CARD: Displaying card ${currentIndex + 1}. Progress: ${progressText}`); // Log progress
-    }
-
-    // Event listener for flipping (this should be stable now)
-    document.getElementById("flashcard").addEventListener("click", () => {
-        console.log("FLASHCARD_CLICK: Toggling 'flipped' class.");
-        flashcard.classList.toggle('flipped');
-    });
+                document.getElementById("card-progress").textContent =
+                    `Card ${currentIndex + 1} of ${flashcards.length}`;
+            }
 
 // Attach event listeners once
             nextBtn.addEventListener("click", () => {
-        console.log("NEXT_BUTTON_CLICK: Click detected. Current index before increment:", currentIndex);
-        if (currentIndex < flashcards.length - 1) {
-            currentIndex++;
-            console.log("NEXT_BUTTON_CLICK: Index incremented to:", currentIndex);
-            renderCard(currentIndex);
-        } else {
-            console.log("NEXT_BUTTON_CLICK: Already at the last card.");
-        }
-    });
+                if (currentIndex < flashcards.length - 1) {
+                    currentIndex++;
+                    renderCard(currentIndex); // Pass currentIndex and let renderCard handle flip state
+                }
+            });
 
-    prevBtn.addEventListener("click", () => {
-        console.log("PREV_BUTTON_CLICK: Click detected. Current index before decrement:", currentIndex);
-        if (currentIndex > 0) {
-            currentIndex--;
-            console.log("PREV_BUTTON_CLICK: Index decremented to:", currentIndex);
-            renderCard(currentIndex);
-        } else {
-            console.log("PREV_BUTTON_CLICK: Already at the first card.");
-        }
-    });
+            prevBtn.addEventListener("click", () => {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    renderCard(currentIndex); // Pass currentIndex and let renderCard handle flip state
+                }
+            });
 
             // This is the correct and simplest way to toggle the class
             document.getElementById("flashcard").addEventListener("click", () => {
@@ -435,14 +421,7 @@
             populateCategoryFilter();
             // Initial render
             renderCard(currentIndex);
-            console.log("INITIAL_LOAD: First card rendered at index 0.");
 
-            function disableButtonTemporarily(button, duration = 300) { // Default duration 300ms
-    button.disabled = true;
-    setTimeout(() => {
-        button.disabled = false;
-    }, duration);
-}
             // --- UPDATED: Advanced Print Function ---
             function prepareAndPrintAdvanced() {
                 const CARDS_PER_PRINT_PAGE = 10;
@@ -503,29 +482,20 @@
 
                 window.print();
             }
-            
 
             flashcard.addEventListener('click', () => flashcard.classList.toggle('flipped'));
-            nextBtn.addEventListener("click", () => {
-    // Only proceed if the button is not currently disabled
-    if (!nextBtn.disabled) {
-        if (currentIndex < flashcards.length - 1) {
-            currentIndex++;
-            renderCard(currentIndex);
-        }
-        disableButtonTemporarily(nextBtn); // Disable after click
-    }
-});
-            prevBtn.addEventListener("click", () => {
-    // Only proceed if the button is not currently disabled
-    if (!prevBtn.disabled) {
-        if (currentIndex > 0) {
-            currentIndex--;
-            renderCard(currentIndex);
-        }
-        disableButtonTemporarily(prevBtn); // Disable after click
-    }
-});
+            nextBtn.addEventListener('click', () => {
+                if (currentIndex < flashcardData.length - 1) {
+                    currentIndex++;
+                    renderCard(currentIndex);
+                }
+            });
+            prevBtn.addEventListener('click', () => {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    renderCard(currentIndex);
+                }
+            });
 
             modeFlashcardsBtn.addEventListener('click', () => switchView('flashcard'));
             modeQuizBtn.addEventListener('click', () => switchView('quiz'));
