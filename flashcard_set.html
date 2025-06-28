@@ -304,13 +304,12 @@
             // This event listener now *only* toggles the 'flipped' class for the animation.
             // It no longer affects content or card index, which prevents blank cards or skips.
             document.getElementById("flashcard").addEventListener("click", () => {
-                flashcard.classList.toggle('flipped');
-                // The 'showFront' state is now toggled, and renderCard is called to update content
-                // based on this new state, but only after the animation starts or completes.
-                // This will re-trigger the content update for the current card.
-                showFront = !showFront;
-                renderCard(currentIndex); // Pass the current index
-            });
+    if (flashcard.classList.contains('flipped')) {
+        flashcard.classList.remove('flipped');
+    } else {
+        flashcard.classList.add('flipped');
+    }
+});
             
             function shuffleArray(array) {
                 for (let i = array.length - 1; i > 0; i--) {
