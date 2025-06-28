@@ -1064,6 +1064,7 @@ body.confirm-email-page #about-section button:hover {
     height: 400px;
     position: relative;
     cursor: pointer;
+    transform-style: preserve-3d;
 }
 
 .flashcard-inner {
