@@ -484,18 +484,48 @@
             }
 
             flashcard.addEventListener('click', () => flashcard.classList.toggle('flipped'));
-            nextBtn.addEventListener('click', () => {
-                if (currentIndex < flashcardData.length - 1) {
+nextBtn.addEventListener("click", () => {
+    if (currentIndex < flashcards.length - 1) {
+        currentIndex++;
+        console.log("Next Card - Current Index:", currentIndex); // ADD THIS LINE
+        renderCard(currentIndex);
+    }
+});
+
+prevBtn.addEventListener("click", () => {
+    if (currentIndex > 0) {
+        currentIndex--;
+        console.log("Previous Card - Current Index:", currentIndex); // ADD THIS LINE
+        renderCard(currentIndex);
+    }
+});
+            function debounce(func, delay) {
+                let timeout;
+                return function(...args) {
+                    const context = this;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => func.apply(context, args), delay);
+                };
+            }
+
+            const debouncedNext = debounce(() => {
+                if (currentIndex < flashcards.length - 1) {
                     currentIndex++;
+                    console.log("Next Card - Current Index:", currentIndex);
                     renderCard(currentIndex);
                 }
-            });
-            prevBtn.addEventListener('click', () => {
+            }, 200);
+
+            const debouncedPrev = debounce(() => {
                 if (currentIndex > 0) {
                     currentIndex--;
+                    console.log("Previous Card - Current Index:", currentIndex);
                     renderCard(currentIndex);
                 }
-            });
+            }, 200);
+
+            nextBtn.addEventListener("click", debouncedNext);
+            prevBtn.addEventListener("click", debouncedPrev);
 
             modeFlashcardsBtn.addEventListener('click', () => switchView('flashcard'));
             modeQuizBtn.addEventListener('click', () => switchView('quiz'));
