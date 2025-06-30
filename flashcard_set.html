@@ -106,18 +106,7 @@
             const modePrintBtn = document.getElementById('mode-print');
             const printViewContainer = document.getElementById('print-view');
             const flashcard = document.getElementById('flashcard');
-            console.log("DOMContentLoaded event fired."); // ADD THIS
-    console.log("Flashcard element found:", flashcard); // ADD THIS
-
-    // ... (your existing code for fetching data, etc.) ...
-
-    // Locate this specific event listener:
-        document.getElementById("flashcard").addEventListener("click", () => {
-        console.log("Flashcard clicked! Attempting to toggle 'flipped' class."); // ADD THIS
-        flashcard.classList.toggle('flipped');
-        console.log("Current classes on flashcard after click:", flashcard.classList.value); // ADD THIS
-    });
-
+            
             const cardProgress = document.getElementById('card-progress');
 
             const modeFlashcardsBtn = document.getElementById('mode-flashcards');
@@ -275,7 +264,7 @@
 
             // Modified renderCard function to use adjustFontSize and reset flip state
             // It now takes 'index' as a parameter to ensure it always renders the correct card.
-            function renderCard(index) { // Changed renderCard() to renderCard(index)
+            function renderCard(index) {
                 const card = flashcards[index];
                 if (!card) {
                     flashcardFront.textContent = "";
@@ -283,7 +272,7 @@
                     return;
                 }
 
-                // Crucial: Ensure the card is showing the front when navigating to a new card
+                // *** CRITICAL CHANGE: Ensure the card is showing the front when navigating to a new card ***
                 // This resolves the "skips every even numbered card" and "goes completely blank" issues.
                 flashcard.classList.remove('flipped'); // Remove 'flipped' class to show front
 
@@ -298,7 +287,7 @@
                     `Card ${currentIndex + 1} of ${flashcards.length}`;
             }
 
-// Attach event listeners once
+            // Attach event listeners once
             nextBtn.addEventListener("click", () => {
                 if (currentIndex < flashcards.length - 1) {
                     currentIndex++;
@@ -483,11 +472,6 @@
                 window.print();
             }
 
-            // Initial Load
-    populateCategoryFilter();
-    // Initial render
-    renderCard(currentIndex);
-    
             modeFlashcardsBtn.addEventListener('click', () => switchView('flashcard'));
             modeQuizBtn.addEventListener('click', () => switchView('quiz'));
             modeListBtn.addEventListener('click', () => switchView('list'));
