@@ -123,6 +123,7 @@
             let flashcards = [];
             let flashcardData = [];
             let currentIndex = 0;
+            let isShowingFront = true; //
             let currentQuizIndex = 0; // Renamed from 'showFront' as it's not a boolean state here anymore.
 
             const urlParams = new URLSearchParams(window.location.search);
@@ -256,31 +257,41 @@
             }
 
             function renderCard(index) {
-                const card = flashcards[index];
-                if (!card) {
-                    flashcardFront.textContent = "";
-                    flashcardBack.textContent = "";
-                    return;
-                }
+    const card = flashcards[index];
+    if (!card) {
+        flashcardFront.textContent = "";
+        flashcardBack.textContent = "";
+        return;
+    }
 
-                // Ensure the card is showing the front when navigated
-                flashcard.classList.remove('flipped');
+    // Set content for both sides
+    flashcardFront.textContent = card.term;
+    flashcardBack.textContent = card.definition;
 
-                flashcardFront.textContent = card.term;
-                flashcardBack.textContent = card.definition;
+    // Always show the front (term) when navigating to a new card
+    flashcardFront.style.display = 'flex'; // Make front visible
+    flashcardBack.style.display = 'none';  // Make back hidden
+    isShowingFront = true; // Update our state variable to reflect this
 
-                // Adjust font size for both front and back
-                adjustFontSize(flashcardFront);
-                adjustFontSize(flashcardBack);
+    // Adjust font size for both front and back
+    adjustFontSize(flashcardFront);
+    adjustFontSize(flashcardBack);
 
-                document.getElementById("card-progress").textContent =
-                    `Card ${currentIndex + 1} of ${flashcards.length}`;
-            }
+    document.getElementById("card-progress").textContent =
+        `Card ${currentIndex + 1} of ${flashcards.length}`;
+}
 
              // ONLY TOGGLE THE 'FLIPPED' CLASS ON CARD CLICK
             document.getElementById("flashcard").addEventListener("click", () => {
-                flashcard.classList.toggle('flipped');
-            });
+    if (isShowingFront) {
+        flashcardFront.style.display = 'none'; // Hide the front
+        flashcardBack.style.display = 'flex';  // Show the back
+    } else {
+        flashcardFront.style.display = 'flex'; // Show the front
+        flashcardBack.style.display = 'none';  // Hide the back
+    }
+    isShowingFront = !isShowingFront; // Toggle the state variable
+});
 
             // --- DEBOUNCE UTILITY FUNCTION ---
             // This function ensures that `func` is only called once per `delay` milliseconds,
