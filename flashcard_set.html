@@ -9,7 +9,6 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="stylesheet.css" />
-
 </head>
 
 <body class="flashcard-set-page">
@@ -88,12 +87,10 @@
     <div id="print-view"></div>
 
     <script type="module">
-        import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
-        const supabase = createClient(supabaseUrl, supabaseKey, {
-
-        });
+        const supabase = createClient(supabaseUrl, supabaseKey, {});
 
         window.supabase = supabase; // Make supabase globally accessible
 
@@ -106,18 +103,6 @@
             const modePrintBtn = document.getElementById('mode-print');
             const printViewContainer = document.getElementById('print-view');
             const flashcard = document.getElementById('flashcard');
-            console.log("DOMContentLoaded event fired."); // ADD THIS
-    console.log("Flashcard element found:", flashcard); // ADD THIS
-
-    // ... (your existing code for fetching data, etc.) ...
-
-    // Locate this specific event listener:
-        document.getElementById("flashcard").addEventListener("click", () => {
-        console.log("Flashcard clicked! Attempting to toggle 'flipped' class."); // ADD THIS
-        flashcard.classList.toggle('flipped');
-        console.log("Current classes on flashcard after click:", flashcard.classList.value); // ADD THIS
-    });
-
             const cardProgress = document.getElementById('card-progress');
 
             const modeFlashcardsBtn = document.getElementById('mode-flashcards');
@@ -138,8 +123,7 @@
             let flashcards = [];
             let flashcardData = [];
             let currentIndex = 0;
-            let showFront = true;
-            let currentQuizIndex = 0;
+            let currentQuizIndex = 0; // Renamed from 'showFront' as it's not a boolean state here anymore.
 
             const urlParams = new URLSearchParams(window.location.search);
             const setId = urlParams.get('set_id');
@@ -152,17 +136,19 @@
             const setTitleElement = document.querySelector('.set-header h1');
 
             try {
-                const {data: setData, error: setError} = await supabase
+                const { data: setData, error: setError } = await supabase
                     .from('flashcard_sets')
                     .select('title')
                     .eq('id', setId)
                     .single();
 
-                if (setError) {
+                if (setError && setError.code !== 'PGRST116') { // PGRST116 means "No rows found"
                     console.error('Error fetching set title:', setError.message);
                     setTitleElement.textContent = 'Untitled Set';
-                } else {
+                } else if (setData) {
                     setTitleElement.textContent = setData.title || 'Untitled Set';
+                } else {
+                    setTitleElement.textContent = 'Untitled Set';
                 }
             } catch (error) {
                 console.error('Unexpected error fetching set title:', error);
@@ -173,7 +159,7 @@
             const user = sessionResult.data.session?.user;
 
             if (user) {
-                const {data: profile} = await supabase
+                const { data: profile } = await supabase
                     .from("profiles")
                     .select("username")
                     .eq("user_id", user.id)
@@ -192,17 +178,17 @@
             const creatorNameElement = document.getElementById("creator-name");
 
             try {
-                const {data: setMeta, error: setMetaError} = await supabase
+                const { data: setMeta, error: setMetaError } = await supabase
                     .from('flashcard_sets')
                     .select('user_id')
                     .eq('id', setId)
                     .single();
 
-                if (setMetaError || !setMeta?.user_id) {
+                if (setMetaError && setMetaError.code !== 'PGRST116' || !setMeta?.user_id) {
                     console.error("Error fetching set creator ID:", setMetaError?.message);
                     creatorNameElement.textContent = "Unknown";
-                } else {
-                    const {data: profileData, error: profileError} = await supabase
+                } else if (setMeta?.user_id) {
+                    const { data: profileData, error: profileError } = await supabase
                         .from("profiles")
                         .select("username")
                         .eq("user_id", setMeta.user_id)
@@ -214,15 +200,17 @@
                     } else {
                         creatorNameElement.textContent = profileData.username;
                     }
+                } else {
+                    creatorNameElement.textContent = "Unknown";
                 }
             } catch (e) {
                 console.error("Unexpected error getting creator name:", e);
                 creatorNameElement.textContent = "Unknown";
             }
 
-            const {data, error} = await supabase
+            const { data, error } = await supabase
                 .from("flashcards")
-                .select("term, definition")
+                .select("term, definition, category") // Make sure to select 'category' if it exists in your DB
                 .eq("set_id", setId);
 
             if (error) {
@@ -232,19 +220,13 @@
             }
 
             flashcards = (data || []).filter(card => card.term?.trim() && card.definition?.trim());
-            flashcardData = [...flashcards];
-
+            flashcardData = [...flashcards]; // Use this for Quiz/List views
 
             if (flashcardData.length === 0) {
                 document.querySelector('.main-container').innerHTML = '<p>No flashcards found for this set.</p>';
                 return;
             }
 
-            if (flashcards.length === 0) {
-                flashcardFront.textContent = "No flashcards found.";
-                flashcardBack.textContent = "";
-                return;
-            }
             // Function to dynamically adjust font size
             function adjustFontSize(element) {
                 const parent = element.parentElement; // flashcard-front or flashcard-back
@@ -265,17 +247,15 @@
                     element.style.fontSize = `${fontSize}px`;
                 }
 
-                // If text still overflows at min font size, hide overflow or allow scroll
+                // If text still overflows at min font size, hide overflow
                 if (fontSize <= 10 && (element.scrollHeight > parent.clientHeight || element.scrollWidth > parent.clientWidth)) {
-                    element.style.overflow = 'auto'; // Or 'hidden' if you prefer to cut it off
+                    element.style.overflow = 'auto'; // Or 'hidden' if you prefer
                 } else {
                     element.style.overflow = 'visible'; // Reset if it fits
                 }
             }
 
-            // Modified renderCard function to use adjustFontSize and reset flip state
-            // It now takes 'index' as a parameter to ensure it always renders the correct card.
-            function renderCard(index) { // Changed renderCard() to renderCard(index)
+            function renderCard(index) {
                 const card = flashcards[index];
                 if (!card) {
                     flashcardFront.textContent = "";
@@ -283,14 +263,13 @@
                     return;
                 }
 
-                // Crucial: Ensure the card is showing the front when navigating to a new card
-                // This resolves the "skips every even numbered card" and "goes completely blank" issues.
-                flashcard.classList.remove('flipped'); // Remove 'flipped' class to show front
+                // Ensure the card is showing the front when navigated
+                flashcard.classList.remove('flipped');
 
                 flashcardFront.textContent = card.term;
                 flashcardBack.textContent = card.definition;
 
-                // Apply font size adjustment to both sides
+                // Adjust font size for both front and back
                 adjustFontSize(flashcardFront);
                 adjustFontSize(flashcardBack);
 
@@ -298,7 +277,7 @@
                     `Card ${currentIndex + 1} of ${flashcards.length}`;
             }
 
- // ONLY TOGGLE THE 'FLIPPED' CLASS ON CARD CLICK
+             // ONLY TOGGLE THE 'FLIPPED' CLASS ON CARD CLICK
             document.getElementById("flashcard").addEventListener("click", () => {
                 flashcard.classList.toggle('flipped');
             });
