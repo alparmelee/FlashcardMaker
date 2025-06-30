@@ -483,20 +483,11 @@
                 window.print();
             }
 
-            flashcard.addEventListener('click', () => flashcard.classList.toggle('flipped'));
-            nextBtn.addEventListener('click', () => {
-                if (currentIndex < flashcardData.length - 1) {
-                    currentIndex++;
-                    renderCard(currentIndex);
-                }
-            });
-            prevBtn.addEventListener('click', () => {
-                if (currentIndex > 0) {
-                    currentIndex--;
-                    renderCard(currentIndex);
-                }
-            });
-
+            // Initial Load
+    populateCategoryFilter();
+    // Initial render
+    renderCard(currentIndex);
+    
             modeFlashcardsBtn.addEventListener('click', () => switchView('flashcard'));
             modeQuizBtn.addEventListener('click', () => switchView('quiz'));
             modeListBtn.addEventListener('click', () => switchView('list'));
