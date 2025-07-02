@@ -1770,7 +1770,7 @@ body.signup-page .message-box.error {
 }
 
 /* Print styles (from create.html and flashcard_set.html) */
-print-page-title {
+.print-page-title {
     display: none;
 }
 
@@ -1846,19 +1846,8 @@ print-page-title {
         background-color: #fff !important;
     }
 
-    @page {
-        size: letter;
-        margin: 0.3in;
-    }
-
-   @media print {
-            @page :first {
-                margin-top: -0.3in; /* Set top margin to zero for the first page */
-                margin-left: 0.3in;
-                margin-right: 0.3in;
-                margin-bottom: 0.3in;
-            }
-        }
+    /* All @page rules must be at the top level within @media print, and cannot have selectors like body.class */
+    /* They are now moved to inline <style> tags within create.html and flashcard_set.html */
     
     .print-page-title {
         display: block !important;
@@ -1881,8 +1870,8 @@ print-page-title {
         border: none;
     }
     .flashcard-grid:last-of-type {
-    page-break-after: auto;
-}
+        page-break-after: auto;
+    }
 
     .card-item {
         border: 0.8pt solid #333 !important;
