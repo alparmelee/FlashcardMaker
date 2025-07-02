@@ -9,7 +9,18 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="stylesheet.css" />
-
+    <style media="print">
+        @page {
+            size: letter;
+            margin: 0.3in; /* Default margin for all pages of flashcard_set.html */
+        }
+        @page :first {
+            margin-top: -0.3in; /* Specific margin for the first page of flashcard_set.html */
+            margin-left: 0.3in;
+            margin-right: 0.3in;
+            margin-bottom: 0.3in;
+        }
+    </style>
 </head>
 
 <body class="flashcard-set-page">
