@@ -1871,6 +1871,9 @@ body.signup-page .message-box.error {
         grid-auto-rows: 1fr;
         border: none;
     }
+    .flashcard-grid:last-of-type {
+    page-break-after: auto;
+}
 
     .card-item {
         border: 0.8pt solid #333 !important;
