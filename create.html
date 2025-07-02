@@ -9,6 +9,19 @@
         rel="stylesheet" />
     <link rel="stylesheet" href="stylesheet.css" />
 
+    <style media="print">
+        @page {
+            size: letter;
+            margin: 0.3in; /* Default margin for all pages of create.html */
+        }
+        @page :first {
+            margin-top: 0in; /* Specific margin for the first page of create.html */
+            margin-left: 0.3in;
+            margin-right: 0.3in;
+            margin-bottom: 0.3in;
+        }
+    </style>
+
     <script type="module">
         import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
