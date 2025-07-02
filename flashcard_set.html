@@ -103,10 +103,16 @@
             const prevBtn = document.getElementById("prev-card");
             const nextBtn = document.getElementById("next-card");
             const welcomeMsg = document.getElementById("welcome-msg");
-            const modePrintBtn = document.getElementById('mode-print');
-            const printViewContainer = document.getElementById('print-view');
+
+            // Updated print button references
+            const printFlashcardsBtn = document.getElementById('print-flashcards-btn');
+            const printListBtn = document.getElementById('print-list-btn');
+
+            const printAreaFlashcards = document.getElementById('print-area-flashcards');
+            const printAreaList = document.getElementById('print-area-list');
+
             const flashcard = document.getElementById('flashcard');
-            
+
             const cardProgress = document.getElementById('card-progress');
 
             const modeFlashcardsBtn = document.getElementById('mode-flashcards');
@@ -127,7 +133,6 @@
             let flashcards = [];
             let flashcardData = [];
             let currentIndex = 0;
-            let showFront = true;
             let currentQuizIndex = 0;
 
             const urlParams = new URLSearchParams(window.location.search);
@@ -141,7 +146,7 @@
             const setTitleElement = document.querySelector('.set-header h1');
 
             try {
-                const {data: setData, error: setError} = await supabase
+                const { data: setData, error: setError } = await supabase
                     .from('flashcard_sets')
                     .select('title')
                     .eq('id', setId)
@@ -162,7 +167,7 @@
             const user = sessionResult.data.session?.user;
 
             if (user) {
-                const {data: profile} = await supabase
+                const { data: profile } = await supabase
                     .from("profiles")
                     .select("username")
                     .eq("user_id", user.id)
@@ -181,7 +186,7 @@
             const creatorNameElement = document.getElementById("creator-name");
 
             try {
-                const {data: setMeta, error: setMetaError} = await supabase
+                const { data: setMeta, error: setMetaError } = await supabase
                     .from('flashcard_sets')
                     .select('user_id')
                     .eq('id', setId)
@@ -191,7 +196,7 @@
                     console.error("Error fetching set creator ID:", setMetaError?.message);
                     creatorNameElement.textContent = "Unknown";
                 } else {
-                    const {data: profileData, error: profileError} = await supabase
+                    const { data: profileData, error: profileError } = await supabase
                         .from("profiles")
                         .select("username")
                         .eq("user_id", setMeta.user_id)
@@ -209,9 +214,9 @@
                 creatorNameElement.textContent = "Unknown";
             }
 
-            const {data, error} = await supabase
+            const { data, error } = await supabase
                 .from("flashcards")
-                .select("term, definition")
+                .select("term, definition, category") // Include category
                 .eq("set_id", setId);
 
             if (error) {
@@ -306,7 +311,7 @@
             document.getElementById("flashcard").addEventListener("click", () => {
                 flashcard.classList.toggle('flipped');
             });
-            
+
             function shuffleArray(array) {
                 for (let i = array.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
@@ -316,8 +321,8 @@
             }
             // Fetch flashcard data with categories if available
             function switchView(activeView) {
-                const views = {flashcard: flashcardView, quiz: quizView, list: listView};
-                const buttons = {flashcard: modeFlashcardsBtn, quiz: modeQuizBtn, list: modeListBtn};
+                const views = { flashcard: flashcardView, quiz: quizView, list: listView };
+                const buttons = { flashcard: modeFlashcardsBtn, quiz: modeQuizBtn, list: modeListBtn };
                 for (const view in views) {
                     views[view].classList.add('hidden');
                     buttons[view].classList.remove('active');
@@ -393,7 +398,7 @@
                     selectedButton.classList.add('correct');
                 } else {
                     selectedButton.classList.add('incorrect');
-                    buttons.forEach(button => {if (button.textContent === correctAnswer) {button.classList.add('correct');} });
+                    buttons.forEach(button => { if (button.textContent === correctAnswer) { button.classList.add('correct'); } });
                 }
                 setTimeout(() => {
                     if (currentQuizIndex < flashcardData.length - 1) {
@@ -411,18 +416,18 @@
             // Initial render
             renderCard(currentIndex);
 
-            // --- UPDATED: Advanced Print Function ---
-            function prepareAndPrintAdvanced() {
+            // --- New: prepareAndPrintFlashcards function ---
+            function prepareAndPrintFlashcards() {
                 const CARDS_PER_PRINT_PAGE = 10;
                 const dataToPrint = [...flashcardData];
 
                 // Pad the data with empty slots
                 while (dataToPrint.length % CARDS_PER_PRINT_PAGE !== 0) {
-                    dataToPrint.push({term: `(Empty Slot)`, definition: `(Empty Slot)`});
+                    dataToPrint.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` });
                 }
 
                 const printTotalPages = (dataToPrint.length / CARDS_PER_PRINT_PAGE) * 2;
-                printViewContainer.innerHTML = '';
+                printAreaFlashcards.innerHTML = ''; // Clear previous content
 
                 for (let i = 0; i < printTotalPages; i++) {
                     const isTermPage = i % 2 === 0;
@@ -432,7 +437,7 @@
                     const printPageTitleElement = document.createElement('h3');
                     printPageTitleElement.className = 'print-page-title';
                     printPageTitleElement.textContent = `Page ${i + 1} / ${printTotalPages} - ${isTermPage ? 'Terms' : 'Definitions'} (Set ${setIndex + 1})`;
-                    printViewContainer.appendChild(printPageTitleElement);
+                    printAreaFlashcards.appendChild(printPageTitleElement);
 
                     const grid = document.createElement('div');
                     grid.className = 'flashcard-grid';
@@ -466,16 +471,52 @@
                         card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`;
                         grid.appendChild(card);
                     }
-                    printViewContainer.appendChild(grid);
+                    printAreaFlashcards.appendChild(grid);
                 }
 
+                // Hide other content and show only the flashcard print area
+                document.body.classList.add('printing-flashcards'); // Add a class to body for print styles
                 window.print();
+                document.body.classList.remove('printing-flashcards'); // Remove after print
+                printAreaFlashcards.innerHTML = ''; // Clear the print area after printing
             }
+
+            // --- New: prepareAndPrintList function ---
+            function prepareAndPrintList() {
+                printAreaList.innerHTML = ''; // Clear previous content
+
+                const printPageTitleElement = document.createElement('h3');
+                printPageTitleElement.className = 'print-page-title';
+                printPageTitleElement.textContent = `${setTitleElement.textContent} - List View`;
+                printAreaList.appendChild(printPageTitleElement);
+
+                const listContainer = document.createElement('div');
+                listContainer.className = 'term-list-container print'; // Add 'print' class for specific print styling
+
+                flashcardData.forEach(card => {
+                    const row = document.createElement('div');
+                    row.className = 'term-row';
+                    row.innerHTML = `<div class="term">${card.term}</div><div class="definition">${card.definition}</div>`;
+                    listContainer.appendChild(row);
+                });
+                printAreaList.appendChild(listContainer);
+
+                // Hide other content and show only the list print area
+                document.body.classList.add('printing-list'); // Add a class to body for print styles
+                window.print();
+                document.body.classList.remove('printing-list'); // Remove after print
+                printAreaList.innerHTML = ''; // Clear the print area after printing
+            }
+
 
             modeFlashcardsBtn.addEventListener('click', () => switchView('flashcard'));
             modeQuizBtn.addEventListener('click', () => switchView('quiz'));
             modeListBtn.addEventListener('click', () => switchView('list'));
-            modePrintBtn.addEventListener('click', prepareAndPrintAdvanced); // Changed to call advanced function
+
+            // Attach new event listeners for print buttons
+            printFlashcardsBtn.addEventListener('click', prepareAndPrintFlashcards);
+            printListBtn.addEventListener('click', prepareAndPrintList);
+
             categoryFilter.addEventListener('change', (e) => renderListView(e.target.value));
         });
     </script>
