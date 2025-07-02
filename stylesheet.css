@@ -1801,7 +1801,7 @@ body.signup-page .message-box.error {
         /* If the top space is still an issue, you might need to adjust margin-top here. */
         /* For example, if it's too much, try margin-top: 0.2in; or less than 0.3in. */
         /* Or, if the issue is *extra* space, try setting it to match the general @page margin: */
-        margin-top: 0.3in; /* This explicitly sets the first page's top margin to match others */
+        margin-top: 0.2in; /* This explicitly sets the first page's top margin to match others */
     }
 
 
