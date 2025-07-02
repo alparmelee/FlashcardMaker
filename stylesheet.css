@@ -1909,7 +1909,6 @@ body.signup-page .message-box.error {
     body.flashcard-set-page .card-navigation-wrapper,
     body.flashcard-set-page .quiz-mode-container,
     body.flashcard-set-page .list-view-controls,
-    body.flashcard-set-page #list-view, /* <-- Added to hide the entire list view */
     body.flashcard-set-page .creator-info,
     body.flashcard-set-page .hidden:not(#print-view) {
         /* Keep original hidden behavior, but allow #print-view */
@@ -1922,44 +1921,152 @@ body.signup-page .message-box.error {
         margin: 0;
         padding: 0;
     }
+}
 
-    /* Add or ensure you have these styles for your double-sided flashcards to print correctly */
-    .print-page-title {
-        text-align: center;
-        margin-bottom: 20px;
-        font-size: 1.2em;
-        page-break-after: always; /* Ensure each page title starts on a new page */
-    }
 
-    .flashcard-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr); /* Two columns for double-sided */
-        gap: 20px;
-        page-break-after: always; /* Ensures each grid (10 cards) starts on a new page */
-        padding: 20px;
-        box-sizing: border-box;
-    }
-
-    .card-item {
-        border: 1px solid #ccc;
-        padding: 15px;
-        display: flex;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .top-nav-inner {
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        height: 150px; /* Adjust as needed for card size */
-        overflow: hidden; /* Hide overflow if text is too long */
-        font-size: 1em;
-        position: relative;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
     }
 
-    .card-item .label {
-        position: absolute;
-        top: 5px;
-        left: 5px;
-        font-size: 0.7em;
-        color: #777;
+    .top-nav ul {
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 0.5rem;
+    }
+
+    .top-nav .auth-buttons,
+    .top-nav .user-status {
+        margin-top: 0.5rem;
+        justify-content: center;
+    }
+
+    .feature-grid {
+        grid-template-columns: 1fr;
+        /* Stack cards on smaller screens */
+    }
+
+    .feature-item .card-image-wrapper {
+        height: 200px;
+        /* Slightly larger image height for stacked cards */
+    }
+
+    /* About page responsive */
+    #about-section h1 {
+        font-size: 2rem;
+    }
+
+    #about-section .logo-center {
+        height: 200px;
+        width: 200px;
+    }
+
+    #about-section p.lead {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    #about-section section.features h2,
+    #about-section section.tutorial h2 {
+        font-size: 1.5rem;
+    }
+
+    /* Create page responsive */
+    .container-fc>h1 {
+        font-size: 1.8em;
+    }
+
+    .input-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .input-row input {
+        width: 100%;
+    }
+
+    /* Flashcard set page responsive */
+    .main-container {
+        padding: 0 0.5rem;
+        /* Reduce side padding on smaller screens */
+    }
+
+    .flashcard {
+        height: 300px;
+        /* Adjust height for smaller screens */
+        font-size: 2em;
+        /* Adjust font size for smaller screens */
+    }
+
+    .flashcard-viewer-container {
+        flex-direction: column;
+        /* Stack buttons and card vertically */
+        gap: 0.5rem;
+    }
+
+    .card-nav-button {
+        padding: 0.5rem 1rem;
+        font-size: 1.5em;
+    }
+
+    #quiz-choices-container {
+        grid-template-columns: 1fr;
+        /* Stack quiz choices vertically */
+    }
+
+    /* Dashboard page responsive */
+    .content-wrapper {
+        width: calc(100% - 20px);
+        /* Adjust padding for smaller screens */
+        margin: 15px auto;
+    }
+
+    .sets-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+    }
+
+    /* Login/Signup page responsive */
+    .form-container {
+        padding: 1.5rem;
+    }
+
+    /* Confirm email responsive */
+    body.confirm-email-page #about-section {
+        padding: 1.5rem;
+    }
+
+    body.confirm-email-page #about-section h1 {
+        font-size: 1.75rem;
+    }
+
+    body.confirm-email-page #about-section p.lead {
+        font-size: 1rem;
+    }
+
+    body.confirm-email-page #about-section .logo-center {
+        height: 80px;
+        width: 80px;
+    }
+
+    /* Search page responsive */
+    .search-bar-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .search-bar-container input[type="text"],
+    .search-bar-container button {
+        width: 100%;
+    }
+
+    .sets-grid {
+        grid-template-columns: 1fr;
+        /* Stack cards on smaller screens */
     }
 }
 
