@@ -1787,20 +1787,23 @@ body.signup-page .message-box.error {
         font-size: 10pt;
         color: #000 !important;
         padding: 0;
-        margin: 0;
+        margin: 0; /* ENSURE THIS IS 0 */
     }
 
-    /* NEW RULE: Set consistent margins for all pages */
+    /* Add this @page rule at the very beginning of your @media print block */
     @page {
         size: letter;
-        margin: 0.5in; /* Consistent margin for all pages */
+        margin: 0.3in; /* Start with a consistent margin for all pages */
     }
 
-    /* NEW RULE: Override specific margin for the first page if needed */
+    /* Add this to fine-tune the first page if needed */
     @page :first {
-        margin-top: 0.5in; /* Adjust if needed */
-        /* Adjust other margins if necessary */
+        /* If the top space is still an issue, you might need to adjust margin-top here. */
+        /* For example, if it's too much, try margin-top: 0.2in; or less than 0.3in. */
+        /* Or, if the issue is *extra* space, try setting it to match the general @page margin: */
+        margin-top: 0.3in; /* This explicitly sets the first page's top margin to match others */
     }
+
 
     .top-nav {
         display: none !important;
@@ -1858,25 +1861,23 @@ body.signup-page .message-box.error {
         background-color: #fff !important;
     }
 
-    /* Ensure the print-view itself has no extra padding or margin that would offset it */
-    body.flashcard-set-page #print-view {
-        display: block !important;
-        width: 100%;
-        margin: 0 !important;
-        padding: 0 !important;
-        box-sizing: border-box;
+    /* You had an @page rule here. It's better to put it at the top of the @media print block.
+       I've moved it up for better organization and clearer cascade.
+       Remove the duplicate one from here:
+    @page {
+        size: letter;
+        margin: 0.3in;
     }
+    */
 
-    /* Also, review the .print-page-title to ensure it's not adding extra space */
     .print-page-title {
         display: block !important;
         text-align: center;
-        margin-top: 0 !important;
-        margin-bottom: 20px;
-        font-size: 1.2em;
+        font-size: 9pt;
+        margin-top: 0; /* ADD THIS to ensure no extra space from the title itself */
+        margin-bottom: 2mm;
         font-weight: bold;
         color: #000;
-        page-break-after: always;
     }
 
     .flashcard-grid {
@@ -1945,7 +1946,6 @@ body.signup-page .message-box.error {
         padding: 0;
     }
 }
-
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
