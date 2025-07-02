@@ -1790,6 +1790,18 @@ body.signup-page .message-box.error {
         margin: 0;
     }
 
+    /* NEW RULE: Set consistent margins for all pages */
+    @page {
+        size: letter;
+        margin: 0.5in; /* Consistent margin for all pages */
+    }
+
+    /* NEW RULE: Override specific margin for the first page if needed */
+    @page :first {
+        margin-top: 0.5in; /* Adjust if needed */
+        /* Adjust other margins if necessary */
+    }
+
     .top-nav {
         display: none !important;
     }
@@ -1846,18 +1858,25 @@ body.signup-page .message-box.error {
         background-color: #fff !important;
     }
 
-    @page {
-        size: letter;
-        margin: 0.3in;
+    /* Ensure the print-view itself has no extra padding or margin that would offset it */
+    body.flashcard-set-page #print-view {
+        display: block !important;
+        width: 100%;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box;
     }
 
+    /* Also, review the .print-page-title to ensure it's not adding extra space */
     .print-page-title {
         display: block !important;
         text-align: center;
-        font-size: 9pt;
-        margin-bottom: 2mm;
+        margin-top: 0 !important;
+        margin-bottom: 20px;
+        font-size: 1.2em;
         font-weight: bold;
         color: #000;
+        page-break-after: always;
     }
 
     .flashcard-grid {
@@ -1872,8 +1891,8 @@ body.signup-page .message-box.error {
         border: none;
     }
     .flashcard-grid:last-of-type {
-    page-break-after: auto;
-}
+        page-break-after: auto;
+    }
 
     .card-item {
         border: 0.8pt solid #333 !important;
@@ -2073,4 +2092,3 @@ body.signup-page .message-box.error {
         /* Stack cards on smaller screens */
     }
 }
-
