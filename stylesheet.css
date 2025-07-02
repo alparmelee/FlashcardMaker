@@ -1848,15 +1848,15 @@ body.signup-page .message-box.error {
 
     @page {
         size: letter;
-        margin: 0.3in;
+        margin: 0.1in;
     }
     /* THIS IS THE KEY CHANGE: Remove white space at the top of the first page */
     @page :first {
         margin-top: 0; /* Set top margin to zero for the first page */
         /* You might still keep other margins (left, right, bottom) if you want them consistent */
-        margin-left: 0.3in;
-        margin-right: 0.3in;
-        margin-bottom: 0.3in;
+        margin-left: 0.1in;
+        margin-right: 0.1in;
+        margin-bottom: 0.1in;
     }
 
     .print-page-title {
