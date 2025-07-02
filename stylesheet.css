@@ -1770,7 +1770,7 @@ body.signup-page .message-box.error {
 }
 
 /* Print styles (from create.html and flashcard_set.html) */
-.print-page-title {
+print-page-title {
     display: none;
 }
 
@@ -1846,19 +1846,20 @@ body.signup-page .message-box.error {
         background-color: #fff !important;
     }
 
- @page {
+    @page {
         size: letter;
         margin: 0.3in;
     }
-    /* THIS IS THE KEY CHANGE: Remove white space at the top of the first page */
-    @page :first {
-        margin-top: -0.3in; /* Set top margin to zero for the first page */
-        /* You might still keep other margins (left, right, bottom) if you want them consistent */
-        margin-left: 0.3in;
-        margin-right: 0.3in;
-        margin-bottom: 0.3in;
-    }
 
+   @media print {
+            @page :first {
+                margin-top: -0.3in; /* Set top margin to zero for the first page */
+                margin-left: 0.3in;
+                margin-right: 0.3in;
+                margin-bottom: 0.3in;
+            }
+        }
+    
     .print-page-title {
         display: block !important;
         text-align: center;
