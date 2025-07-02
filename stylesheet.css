@@ -1909,6 +1909,7 @@ body.signup-page .message-box.error {
     body.flashcard-set-page .card-navigation-wrapper,
     body.flashcard-set-page .quiz-mode-container,
     body.flashcard-set-page .list-view-controls,
+    body.flashcard-set-page #list-view,
     body.flashcard-set-page .creator-info,
     body.flashcard-set-page .hidden:not(#print-view) {
         /* Keep original hidden behavior, but allow #print-view */
