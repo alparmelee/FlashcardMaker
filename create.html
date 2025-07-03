@@ -102,10 +102,11 @@
                     }
                 });
 
-                if (!setTitle || flashcards.length === 0) {
-                    alert('Please enter a title and at least one flashcard.');
-                    return;
+                if (!setId) {
+                    setTitle = prompt("Enter a name for your flashcard set:", setTitle);
+                    if (!setTitle) return;
                 }
+
 
                 const {data: set, error: setError} = await supabase
                     .from('flashcard_sets')
@@ -190,6 +191,7 @@
             let rowCount = 1;
             let flashcardData = [];
             let currentPage = 0;
+            let actualFlashcards = [];
             // Load the set for editing if setId is provided
             if (setId) {
                 loadSetForEditing(setId);
@@ -290,52 +292,42 @@
                         return;
                     }
 
-                    // Populate set title if needed
-                    if (set.title) {
-                        modalSetNameInput.value = set.title;
+                    // Save flashcards globally if needed
+                    actualFlashcards = cards;
+
+                    // Update the set title at the top if you have an element for it
+                    const titleDisplay = document.getElementById("set-title");
+                    if (titleDisplay && set.title) {
+                        titleDisplay.textContent = set.title;
                     }
 
-                    // Fill flashcardData array
-                    flashcardData = cards;
+                    // Clear the existing manual input area
+                    manualInputArea.innerHTML = '';
 
-                    modalSetNameInput.value = set.title;
-                    document.getElementById("page-info").textContent = `Editing Set: ${set.title}`;
-                    document.getElementById("page-info").classList.remove("hidden");
-
-                    termDefInputs.innerHTML = '';
-                    flashcardData.forEach((card, index) => {
+                    // Populate fields
+                    cards.forEach(card => {
                         const newRow = document.createElement('div');
                         newRow.className = 'input-row';
-                        newRow.innerHTML = `<input type="text" placeholder="Term ${index + 1}" class="term" value="${card.term}"> 
-                        <input type="text" placeholder="Definition ${index + 1}" class="definition" value="${card.definition}">
-                        <button type="button" class="delete-row-btn">Delete</button>`;
-                        termDefInputs.appendChild(newRow);
+                        newRow.innerHTML = `
+                <input type="text" placeholder="Term" class="term" value="${card.term}">
+                <input type="text" placeholder="Definition" class="definition" value="${card.definition}">
+                <button type="button" class="delete-row-btn">Delete</button>
+            `;
+                        manualInputArea.appendChild(newRow);
                     });
-                    rowCount = flashcardData.length;
 
-                    // Show manual input mode (editing)
+                    // Switch to manual input mode
                     manualInputArea.classList.remove('hidden');
                     bulkInputArea.classList.add('hidden');
                     displayArea.classList.add('hidden');
 
-
+                    console.log("Set loaded:", cards);
 
                 } catch (err) {
                     console.error("Error loading set for editing:", err);
                 }
-
-                const data = await response.json();
-
-                // Populate the manual input area with the loaded flashcard data
-                manualInputArea.innerHTML = '';
-                data.forEach(card => {
-                    const newRow = document.createElement('div');
-                    newRow.className = 'input-row';
-                    newRow.innerHTML = `<input type="text" placeholder="Term" class="term" value="${card.term}"><input type="text" placeholder="Definition" class="definition" value="${card.definition}"><button type="button" class="delete-row-btn">Delete</button>`;
-                    manualInputArea.appendChild(newRow);
-                });
-
             }
+
 
             function collectManualFlashcards() {
                 flashcardData = [];
