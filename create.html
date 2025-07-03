@@ -266,6 +266,76 @@
                 }
             });
 
+            // Function to load a set for editing
+            async function loadSetForEditing(setId) {
+                try {
+                    const {data: set, error: setError} = await supabase
+                        .from('flashcard_sets')
+                        .select('title')
+                        .eq('id', setId)
+                        .single();
+
+                    if (setError) {
+                        console.error("Error fetching set:", setError);
+                        return;
+                    }
+
+                    const {data: cards, error: cardError} = await supabase
+                        .from('flashcards')
+                        .select('term, definition')
+                        .eq('set_id', setId);
+
+                    if (cardError) {
+                        console.error("Error fetching flashcards:", cardError);
+                        return;
+                    }
+
+                    // Populate set title if needed
+                    if (set.title) {
+                        modalSetNameInput.value = set.title;
+                    }
+
+                    // Fill flashcardData array
+                    flashcardData = cards;
+
+                    modalSetNameInput.value = set.title;
+                    document.getElementById("page-info").textContent = `Editing Set: ${set.title}`;
+                    document.getElementById("page-info").classList.remove("hidden");
+
+                    termDefInputs.innerHTML = '';
+                    flashcardData.forEach((card, index) => {
+                        const newRow = document.createElement('div');
+                        newRow.className = 'input-row';
+                        newRow.innerHTML = `<input type="text" placeholder="Term ${index + 1}" class="term" value="${card.term}"> 
+                        <input type="text" placeholder="Definition ${index + 1}" class="definition" value="${card.definition}">
+                        <button type="button" class="delete-row-btn">Delete</button>`;
+                        termDefInputs.appendChild(newRow);
+                    });
+                    rowCount = flashcardData.length;
+
+                    // Show manual input mode (editing)
+                    manualInputArea.classList.remove('hidden');
+                    bulkInputArea.classList.add('hidden');
+                    displayArea.classList.add('hidden');
+
+
+
+                } catch (err) {
+                    console.error("Error loading set for editing:", err);
+                }
+
+                const data = await response.json();
+
+                // Populate the manual input area with the loaded flashcard data
+                manualInputArea.innerHTML = '';
+                data.forEach(card => {
+                    const newRow = document.createElement('div');
+                    newRow.className = 'input-row';
+                    newRow.innerHTML = `<input type="text" placeholder="Term" class="term" value="${card.term}"><input type="text" placeholder="Definition" class="definition" value="${card.definition}"><button type="button" class="delete-row-btn">Delete</button>`;
+                    manualInputArea.appendChild(newRow);
+                });
+
+            }
 
             function collectManualFlashcards() {
                 flashcardData = [];
@@ -507,6 +577,41 @@
                 const setName = modalSetNameInput.value.trim();
                 const category = ''; // No category input, so default to empty string
 
+                if (setId) {
+                    // Update existing set title
+                    await supabase
+                        .from('flashcard_sets')
+                        .update({title: setName, terms_count: actualFlashcards.length})
+                        .eq('id', setId);
+
+                    // Delete old cards
+                    await supabase
+                        .from('flashcards')
+                        .delete()
+                        .eq('set_id', setId);
+
+                    // Insert new/edited flashcards
+                    const updatedCards = actualFlashcards.map(card => ({
+                        set_id: setId,
+                        term: card.term,
+                        definition: card.definition
+                    }));
+
+                    const {error: cardsInsertError} = await supabase
+                        .from('flashcards')
+                        .insert(updatedCards);
+
+                    if (cardsInsertError) {
+                        showMessage(`Failed to update flashcards: ${cardsInsertError.message}`, 'error');
+                        return;
+                    }
+
+                    showMessage('Flashcard set updated!', 'success');
+                    setTimeout(() => window.location.href = 'user_dashboard.html', 2000);
+                    return;
+                }
+
+
                 if (!setName) {
                     modalErrorMessage.textContent = 'Set Title is required!';
                     modalErrorMessage.style.display = 'block';
@@ -584,51 +689,6 @@
                 modalErrorMessage.style.display = 'none'; // Clear any error message
                 showMessage('Save operation cancelled.', 'info');
             });
-
-            // Load flashcard set for editing
-            async function loadSetForEditing(setId) {
-                try {
-                    const {data: set, error: setError} = await supabase
-                        .from('flashcard_sets')
-                        .select('title')
-                        .eq('id', setId)
-                        .single();
-
-                    if (setError) {
-                        console.error("Error fetching set:", setError);
-                        return;
-                    }
-
-                    const {data: cards, error: cardError} = await supabase
-                        .from('flashcards')
-                        .select('term, definition')
-                        .eq('set_id', setId);
-
-                    if (cardError) {
-                        console.error("Error fetching flashcards:", cardError);
-                        return;
-                    }
-
-                    // Populate set title if needed
-                    if (set.title) {
-                        modalSetNameInput.value = set.title;
-                    }
-
-                    // Fill flashcardData array
-                    flashcardData = cards;
-
-                    // Show display
-                    manualInputArea.classList.add('hidden');
-                    bulkInputArea.classList.add('hidden');
-                    displayArea.classList.remove('hidden');
-
-                    // Update display
-                    currentPage = 0;
-                    updateDisplay();
-                } catch (err) {
-                    console.error("Error loading set for editing:", err);
-                }
-            }
         });
     </script>
 </head>
