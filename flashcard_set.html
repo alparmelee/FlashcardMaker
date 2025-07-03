@@ -12,10 +12,13 @@
     <style media="print">
         @page {
             size: letter;
-            margin: 0.3in; /* Default margin for all pages of flashcard_set.html */
+            margin: 0.3in;
+            /* Default margin for all pages of flashcard_set.html */
         }
+
         @page :first {
-            margin-top: -0.3in; /* Specific margin for the first page of flashcard_set.html */
+            margin-top: -0.3in;
+            /* Specific margin for the first page of flashcard_set.html */
             margin-left: 0.3in;
             margin-right: 0.3in;
             margin-bottom: 0.3in;
@@ -52,6 +55,7 @@
             <button class="mode-button" id="mode-quiz"><i class="fa-solid fa-pen-to-square"></i> Quiz</button>
             <button class="mode-button" id="mode-list"><i class="fa-solid fa-list-ul"></i> List</button>
             <button class="mode-button" id="mode-print"><i class="fa-solid fa-print"></i> Print</button>
+            <button class="mode-button" id="mode-edit"><i class="fa-solid fa-edit"></i> Edit</button>
         </div>
 
         <div id="flashcard-view">
@@ -117,30 +121,32 @@
             const modePrintBtn = document.getElementById('mode-print');
             const printViewContainer = document.getElementById('print-view');
             const flashcard = document.getElementById('flashcard');
-            
-            const cardProgress = document.getElementById('card-progress');
 
+            const cardProgress = document.getElementById('card-progress');
+            // Added elements for mode buttons and views
             const modeFlashcardsBtn = document.getElementById('mode-flashcards');
             const modeQuizBtn = document.getElementById('mode-quiz');
             const modeListBtn = document.getElementById('mode-list');
-
+            // Added elements for flashcard, quiz, and list views
             const flashcardView = document.getElementById('flashcard-view');
             const quizView = document.getElementById('quiz-view');
             const listView = document.getElementById('list-view');
-
+            // Added elements for quiz functionality
             const quizProgress = document.getElementById('quiz-progress');
             const quizQuestion = document.getElementById('quiz-question');
             const quizChoicesContainer = document.getElementById('quiz-choices-container');
-
+            // Added categoryFilter and termListContainer for list view functionality
             const categoryFilter = document.getElementById('category-filter');
             const termListContainer = document.getElementById('term-list-container');
-
+            // Added modeEditBtn for future edit functionality
+            const modeEditBtn = document.getElementById('mode-edit');
+            // Initialize variables for flashcards and quiz
             let flashcards = [];
             let flashcardData = [];
             let currentIndex = 0;
             let showFront = true;
             let currentQuizIndex = 0;
-
+            // Check if set_id is provided in the URL
             const urlParams = new URLSearchParams(window.location.search);
             const setId = urlParams.get('set_id');
             if (!setId) {
@@ -168,17 +174,17 @@
                 console.error('Unexpected error fetching set title:', error);
                 setTitleElement.textContent = 'Untitled Set';
             }
-
+            // Fetch user session and profile information
             const sessionResult = await supabase.auth.getSession();
             const user = sessionResult.data.session?.user;
-
+            // If user is not logged in, redirect to login page
             if (user) {
                 const {data: profile} = await supabase
                     .from("profiles")
                     .select("username")
                     .eq("user_id", user.id)
                     .single();
-
+                // Display welcome message with username or email
                 const username = profile?.username || user.email || "User";
                 welcomeMsg.textContent = `Welcome, ${username}!`;
                 document.querySelector(".user-status").style.display = "block";
@@ -188,16 +194,16 @@
                     window.location.href = 'login.html';
                 });
             }
-
+            // Fetch the creator's name based on the set_id
             const creatorNameElement = document.getElementById("creator-name");
-
+            // Fetch the creator's username from the profiles table
             try {
                 const {data: setMeta, error: setMetaError} = await supabase
                     .from('flashcard_sets')
                     .select('user_id')
                     .eq('id', setId)
                     .single();
-
+                // If there's an error or no user_id, set creator name to "Unknown"
                 if (setMetaError || !setMeta?.user_id) {
                     console.error("Error fetching set creator ID:", setMetaError?.message);
                     creatorNameElement.textContent = "Unknown";
@@ -219,18 +225,18 @@
                 console.error("Unexpected error getting creator name:", e);
                 creatorNameElement.textContent = "Unknown";
             }
-
+            // Fetch flashcards for the given set_id
             const {data, error} = await supabase
                 .from("flashcards")
                 .select("term, definition")
                 .eq("set_id", setId);
-
+            // If there's an error fetching flashcards, log it and display a message
             if (error) {
                 console.error("Error fetching flashcards:", error.message);
                 flashcardFront.textContent = "Failed to load flashcards.";
                 return;
             }
-
+            // If no flashcards are found, display a message
             flashcards = (data || []).filter(card => card.term?.trim() && card.definition?.trim());
             flashcardData = [...flashcards];
 
@@ -317,7 +323,7 @@
             document.getElementById("flashcard").addEventListener("click", () => {
                 flashcard.classList.toggle('flipped');
             });
-            
+
             function shuffleArray(array) {
                 for (let i = array.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
@@ -487,6 +493,11 @@
             modeQuizBtn.addEventListener('click', () => switchView('quiz'));
             modeListBtn.addEventListener('click', () => switchView('list'));
             modePrintBtn.addEventListener('click', prepareAndPrintAdvanced); // Changed to call advanced function
+            modeEditBtn.addEventListener('click', () => {
+                if (setId) {
+                    window.location.href = `create.html?set_id=${setId}`;
+                }
+            });
             categoryFilter.addEventListener('change', (e) => renderListView(e.target.value));
         });
     </script>
