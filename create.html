@@ -26,29 +26,37 @@
         window.supabase = supabase;
 
         async function updateAuthUI() {
-            // Fetch user session and profile information
-            const sessionResult = await supabase.auth.getSession();
-            const user = sessionResult.data.session?.user;
+            const {data: {session}} = await window.supabase.auth.getSession();
+            const authButtonsDiv = document.querySelector('.auth-buttons');
 
-            // If user is not logged in, redirect to login page
-            if (user) {
-                const {data: profile} = await supabase
-                    .from("profiles")
-                    .select("username")
-                    .eq("user_id", user.id)
+            if (session) {
+                const {data: profile, error: profileError} = await window.supabase
+                    .from('profiles')
+                    .select('username')
+                    .eq('user_id', session.user.id)
                     .single();
 
-                // Display welcome message with username or email
-                const username = profile?.username || user.email || "User";
-                welcomeMsg.textContent = `Welcome, ${username}!`;
-                document.querySelector(".user-status").style.display = "block";
+                const username = (profile && !profileError) ? profile.username : session.user.email;
+                authButtonsDiv.innerHTML = `
+                        <div class="user-status">
+                            <span>Welcome, ${username}!</span>
+                            <a href="#" id="logout-btn" class="logout-button btn">Logout</a>
+                        </div>`;
+
                 document.getElementById('logout-btn').addEventListener('click', async (e) => {
                     e.preventDefault();
-                    await supabase.auth.signOut();
+                    await window.supabase.auth.signOut();
                     window.location.href = 'login.html';
                 });
+
+            } else {
+                authButtonsDiv.innerHTML = `
+                        <a href="login.html" class="btn">Login</a>
+                        <a href="signup.html" class="btn">Signup</a>`;
             }
         }
+        
+        updateAuthUI();
     </script>
 </head>
 
