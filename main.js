@@ -3,7 +3,6 @@ import { saveFlashcardSet, loadSet } from './flashcardData.js';
 import { updateDisplay, setupPagination, resetPage } from './displayManager.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-  await updateAuthUI();
 
   const displayArea = document.getElementById('flashcard-display');
   const cardsContainer = document.getElementById('cards-container');
