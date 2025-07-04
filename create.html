@@ -1,133 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CramCraft - Create Flashcards</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="stylesheet.css" />
-  <style media="print">
-    @page {
-      size: letter;
-      margin: 0.3in;
-    }
-    @page :first {
-      margin: 0.3in;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CramCraft - Create Flashcards</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="stylesheet.css" />
+    <style media="print">
+        @page {
+            size: letter;
+            margin: 0.3in;
+        }
+
+        @page :first {
+            margin: 0.3in;
+        }
+    </style>
+    <script type="module">
+        import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
+        const supabase = createClient(supabaseUrl, supabaseKey);
+        window.supabase = supabase;
+    </script>
 </head>
 
 <body class="create-page">
-  <nav class="top-nav">
-    <div class="top-nav-inner">
-      <div class="nav-logo"><a href="index.html">CramCraft</a></div>
-      <ul>
-        <li><a href="index.html">Home</a></li>
-        <li><a href="create.html">Create</a></li>
-        <li><a href="user_dashboard.html">Dashboard</a></li>
-        <li><a href="search_page.html">Search</a></li>
-        <li><a href="about.html">About</a></li>
-      </ul>
-      <div class="auth-buttons">
-        <div class="user-status" style="display: none;"></div>
-        <a href="login.html" class="btn">Login</a>
-        <a href="signup.html" class="btn">Signup</a>
-      </div>
-    </div>
-  </nav>
-
-  <div class="main-content-wrapper">
-    <div id="flashcard-maker-section">
-      <div class="container-fc">
-        <img src="images/Cramcraft.png" alt="CramCraft Mini Logo" class="logo-center-small">
-
-        <!-- Manual Input Section -->
-        <div class="input-area" id="manual-input-area">
-          <h2>Enter Terms and Definitions Manually</h2>
-          <div id="term-def-inputs">
-            <div class="input-row">
-              <input type="text" placeholder="Term 1" class="term" />
-              <input type="text" placeholder="Definition 1" class="definition" />
-              <button type="button" class="delete-row-btn">Delete</button>
+    <nav class="top-nav">
+        <div class="top-nav-inner">
+            <div class="nav-logo"><a href="index.html">CramCraft</a></div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="create.html">Create</a></li>
+                <li><a href="user_dashboard.html">Dashboard</a></li>
+                <li><a href="search_page.html">Search</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <div class="user-status" style="display: none;"></div>
+                <a href="login.html" class="btn">Login</a>
+                <a href="signup.html" class="btn">Signup</a>
             </div>
-          </div>
-          <button id="add-row">Add Another Term/Definition</button>
-          <button id="start-flashcards">Generate Flashcards from Manual Input</button>
-          <button id="show-bulk-input">Switch to Bulk Input</button>
         </div>
+    </nav>
 
-        <!-- Bulk Input Section -->
-        <div class="input-area hidden" id="bulk-input-area">
-          <h2>Enter Bulk Flashcard Data</h2>
-          <div class="delimiter-group">
-            <p><strong>1. Separate Term and Definition with:</strong></p>
-            <div class="delimiter-options">
-              <label><input type="radio" name="termDefDelimiter" value="tab" checked> Tab</label>
-              <label><input type="radio" name="termDefDelimiter" value="comma"> Comma (,)</label>
-              <label><input type="radio" name="termDefDelimiter" value="tilde"> Tilde (~)</label>
-              <label>
-                <input type="radio" name="termDefDelimiter" value="customTermDef"> Custom:
-                <input type="text" id="custom-term-def-delimiter-input" maxlength="1" class="hidden" />
-              </label>
+    <div class="main-content-wrapper">
+        <div id="flashcard-maker-section">
+            <div class="container-fc">
+                <img src="images/Cramcraft.png" alt="CramCraft Mini Logo" class="logo-center-small">
+
+                <!-- Manual Input Section -->
+                <div class="input-area" id="manual-input-area">
+                    <h2>Enter Terms and Definitions Manually</h2>
+                    <div id="term-def-inputs">
+                        <div class="input-row">
+                            <input type="text" placeholder="Term 1" class="term" />
+                            <input type="text" placeholder="Definition 1" class="definition" />
+                            <button type="button" class="delete-row-btn">Delete</button>
+                        </div>
+                    </div>
+                    <button id="add-row">Add Another Term/Definition</button>
+                    <button id="start-flashcards">Generate Flashcards from Manual Input</button>
+                    <button id="show-bulk-input">Switch to Bulk Input</button>
+                </div>
+
+                <!-- Bulk Input Section -->
+                <div class="input-area hidden" id="bulk-input-area">
+                    <h2>Enter Bulk Flashcard Data</h2>
+                    <div class="delimiter-group">
+                        <p><strong>1. Separate Term and Definition with:</strong></p>
+                        <div class="delimiter-options">
+                            <label><input type="radio" name="termDefDelimiter" value="tab" checked> Tab</label>
+                            <label><input type="radio" name="termDefDelimiter" value="comma"> Comma (,)</label>
+                            <label><input type="radio" name="termDefDelimiter" value="tilde"> Tilde (~)</label>
+                            <label>
+                                <input type="radio" name="termDefDelimiter" value="customTermDef"> Custom:
+                                <input type="text" id="custom-term-def-delimiter-input" maxlength="1" class="hidden" />
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="delimiter-group">
+                        <p><strong>2. Separate Cards (Rows) with:</strong></p>
+                        <div class="delimiter-options">
+                            <label><input type="radio" name="cardDelimiter" value="newline" checked> New Line</label>
+                            <label><input type="radio" name="cardDelimiter" value="semicolon"> Semicolon (;)</label>
+                            <label>
+                                <input type="radio" name="cardDelimiter" value="customCard"> Custom:
+                                <input type="text" id="custom-card-delimiter-input" class="hidden"
+                                    placeholder="e.g. ---" />
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="input-instructions">
+                        <p><strong>Paste your flashcard data below using your chosen separators.</strong></p>
+                        <textarea id="bulk-data-input" rows="10"
+                            placeholder="Example (Tab between term/def, New Line between cards):&#10;Term1\tDefinition1&#10;Term2\tDefinition2..."></textarea>
+                    </div>
+
+                    <button id="parse-bulk-data">Parse Bulk Data & Generate Flashcards</button>
+                    <button id="show-manual-input">Switch to Manual Row Input</button>
+                </div>
+
+                <!-- Display Flashcards -->
+                <div class="display-area hidden" id="flashcard-display">
+                    <div id="page-info"></div>
+                    <div id="cards-container"></div>
+                    <div class="controls">
+                        <button id="prev-page">Previous Page</button>
+                        <button id="next-page">Next Page</button>
+                        <button id="print-cards">Print Flashcards</button>
+                        <button id="save-cards">Save to Database</button>
+                        <button id="back-to-input">Back to Input Methods</button>
+                    </div>
+                </div>
             </div>
-          </div>
+        </div>
+    </div>
 
-          <div class="delimiter-group">
-            <p><strong>2. Separate Cards (Rows) with:</strong></p>
-            <div class="delimiter-options">
-              <label><input type="radio" name="cardDelimiter" value="newline" checked> New Line</label>
-              <label><input type="radio" name="cardDelimiter" value="semicolon"> Semicolon (;)</label>
-              <label>
-                <input type="radio" name="cardDelimiter" value="customCard"> Custom:
-                <input type="text" id="custom-card-delimiter-input" class="hidden" placeholder="e.g. ---" />
-              </label>
+    <!-- Alerts & Modal -->
+    <div class="message-box" id="custom-alert"></div>
+    <div id="setTitleModal" class="modal">
+        <div class="modal-content">
+            <h3>Enter Set Title</h3>
+            <input type="text" id="modal-set-name-input" placeholder="Enter your flashcard set title" required />
+            <div class="modal-buttons">
+                <button class="save-btn-modal" id="modal-save-set">Save Set</button>
+                <button class="cancel-btn-modal" id="modal-cancel-save">Cancel</button>
             </div>
-          </div>
-
-          <div class="input-instructions">
-            <p><strong>Paste your flashcard data below using your chosen separators.</strong></p>
-            <textarea id="bulk-data-input" rows="10" placeholder="Example (Tab between term/def, New Line between cards):&#10;Term1\tDefinition1&#10;Term2\tDefinition2..."></textarea>
-          </div>
-
-          <button id="parse-bulk-data">Parse Bulk Data & Generate Flashcards</button>
-          <button id="show-manual-input">Switch to Manual Row Input</button>
+            <p id="modal-error-message" style="color: red; margin-top: 10px; display: none;"></p>
         </div>
-
-        <!-- Display Flashcards -->
-        <div class="display-area hidden" id="flashcard-display">
-          <div id="page-info"></div>
-          <div id="cards-container"></div>
-          <div class="controls">
-            <button id="prev-page">Previous Page</button>
-            <button id="next-page">Next Page</button>
-            <button id="print-cards">Print Flashcards</button>
-            <button id="save-cards">Save to Database</button>
-            <button id="back-to-input">Back to Input Methods</button>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <!-- Alerts & Modal -->
-  <div class="message-box" id="custom-alert"></div>
-  <div id="setTitleModal" class="modal">
-    <div class="modal-content">
-      <h3>Enter Set Title</h3>
-      <input type="text" id="modal-set-name-input" placeholder="Enter your flashcard set title" required />
-      <div class="modal-buttons">
-        <button class="save-btn-modal" id="modal-save-set">Save Set</button>
-        <button class="cancel-btn-modal" id="modal-cancel-save">Cancel</button>
-      </div>
-      <p id="modal-error-message" style="color: red; margin-top: 10px; display: none;"></p>
-    </div>
-  </div>
-
-  <!-- Modular JavaScript Files -->
-  <script type="module" src="supabaseClient.js"></script>
-  <script type="module" src="authUI.js"></script>
-  <script type="module" src="flashcardData.js"></script>
-  <script type="module" src="displayManager.js"></script>
-  <script type="module" src="main.js"></script>
+    <!-- Modular JavaScript Files -->
+    <script type="module" src="authUI.js"></script>
+    <script type="module" src="flashcardData.js"></script>
+    <script type="module" src="displayManager.js"></script>
+    <script type="module" src="main.js"></script>
 </body>
+
 </html>
