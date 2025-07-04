@@ -1,5 +1,4 @@
 // main.js
-import { updateAuthUI } from './authUI.js';
 import { saveFlashcardSet, loadSet } from './flashcardData.js';
 import { updateDisplay, setupPagination, resetPage } from './displayManager.js';
 

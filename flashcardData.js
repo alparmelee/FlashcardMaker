@@ -1,6 +1,4 @@
 // flashcardData.js
-import { supabase } from './supabaseClient.js';
-
 export async function saveFlashcardSet(setName, flashcards, existingSetId = null) {
   const { data: { user }, error: userError } = await supabase.auth.getUser();
   if (userError || !user) {
