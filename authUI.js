@@ -2,32 +2,26 @@
 import { supabase } from './supabaseClient.js';
 
 export async function updateAuthUI() {
-  const { data: { session } } = await supabase.auth.getSession();
-  const authButtonsDiv = document.querySelector('.auth-buttons');
+// Fetch user session and profile information
+    const sessionResult = await supabase.auth.getSession();
+    const user = sessionResult.data.session?.user;
 
-  if (session) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('username')
-      .eq('user_id', session.user.id)
-      .single();
+// If user is not logged in, redirect to login page
+    if (user) {
+        const {data: profile} = await supabase
+            .from("profiles")
+            .select("username")
+            .eq("user_id", user.id)
+            .single();
 
-    const username = profile?.username || session.user.email;
-    authButtonsDiv.innerHTML = `
-      <div class="user-status">
-        <span>Welcome, ${username}!</span>
-        <a href="#" id="logout-btn" class="logout-button btn">Logout</a>
-      </div>`;
-
-    document.getElementById('logout-btn').addEventListener('click', async e => {
-      e.preventDefault();
-      await supabase.auth.signOut();
-      window.location.href = 'login.html';
-    });
-
-  } else {
-    authButtonsDiv.innerHTML = `
-      <a href="login.html" class="btn">Login</a>
-      <a href="signup.html" class="btn">Signup</a>`;
-  }
+// Display welcome message with username or email
+        const username = profile?.username || user.email || "User";
+            welcomeMsg.textContent = `Welcome, ${username}!`;
+            document.querySelector(".user-status").style.display = "block";
+            document.getElementById('logout-btn').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await supabase.auth.signOut();
+            window.location.href = 'login.html';
+        });
+    }
 }
