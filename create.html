@@ -155,14 +155,14 @@
             const printBtn = document.getElementById('print-cards');
             const backBtn = document.getElementById('back-to-input');
             const saveBtn = document.getElementById('save-cards');
-            // NEW: Elements for manual and bulk input areas
+
             const manualInputArea = document.getElementById('manual-input-area');
             const bulkInputArea = document.getElementById('bulk-input-area');
             const showBulkInputBtn = document.getElementById('show-bulk-input');
             const showManualInputBtn = document.getElementById('show-manual-input');
             const bulkDataInput = document.getElementById('bulk-data-input');
             const parseBulkDataBtn = document.getElementById('parse-bulk-data');
-            // NEW: Custom term/definition and card delimiters
+
             const termDefDelimiterRadios = document.querySelectorAll('input[name="termDefDelimiter"]');
             const customTermDefDelimiterInput = document.getElementById('custom-term-def-delimiter-input');
             const cardDelimiterRadios = document.querySelectorAll('input[name="cardDelimiter"]');
@@ -173,7 +173,7 @@
             const setInput = document.getElementById('set-name-input'); // This will refer to the hidden input if not removed from HTML
             const categoryInput = document.getElementById('set-category-input'); // This will refer to the hidden input if not removed from HTML
 
-            // NEW: Custom alert box for messages
+
             const customAlertBox = document.getElementById('custom-alert');
             const controlsDiv = document.querySelector('#flashcard-maker-section .controls');
 
@@ -183,17 +183,11 @@
             const modalSaveSetBtn = document.getElementById('modal-save-set');
             const modalCancelSaveBtn = document.getElementById('modal-cancel-save');
             const modalErrorMessage = document.getElementById('modal-error-message');
-            // NEW: Get the set_id from URL parameters
-            const urlParams = new URLSearchParams(window.location.search);
-            const setId = urlParams.get('set_id');
+
 
             let rowCount = 1;
             let flashcardData = [];
             let currentPage = 0;
-            // Load the set for editing if setId is provided
-            if (setId) {
-                loadSetForEditing(setId);
-            }
             let totalPages = 0;
             const CARDS_PER_PAGE = 10;
 
@@ -209,7 +203,7 @@
                     customAlertBox.style.display = 'none';
                 }, 3000);
             }
-            // Function to check if a line is an option line (e.g., "A. Option 1")
+
             function isOptionLine(line) {return /^\s*[a-zA-Z]\.\s/.test(line.trim());}
 
             termDefDelimiterRadios.forEach(radio => {
@@ -584,52 +578,8 @@
                 modalErrorMessage.style.display = 'none'; // Clear any error message
                 showMessage('Save operation cancelled.', 'info');
             });
-
-            // Load flashcard set for editing
-            async function loadSetForEditing(setId) {
-                try {
-                    const {data: set, error: setError} = await supabase
-                        .from('flashcard_sets')
-                        .select('title')
-                        .eq('id', setId)
-                        .single();
-
-                    if (setError) {
-                        console.error("Error fetching set:", setError);
-                        return;
-                    }
-
-                    const {data: cards, error: cardError} = await supabase
-                        .from('flashcards')
-                        .select('term, definition')
-                        .eq('set_id', setId);
-
-                    if (cardError) {
-                        console.error("Error fetching flashcards:", cardError);
-                        return;
-                    }
-
-                    // Populate set title if needed
-                    if (set.title) {
-                        modalSetNameInput.value = set.title;
-                    }
-
-                    // Fill flashcardData array
-                    flashcardData = cards;
-
-                    // Show display
-                    manualInputArea.classList.add('hidden');
-                    bulkInputArea.classList.add('hidden');
-                    displayArea.classList.remove('hidden');
-
-                    // Update display
-                    currentPage = 0;
-                    updateDisplay();
-                } catch (err) {
-                    console.error("Error loading set for editing:", err);
-                }
-            }
         });
+
     </script>
 </head>
 
