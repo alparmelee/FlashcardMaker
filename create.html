@@ -81,6 +81,10 @@ window.supabase = supabase; // Make supabase globally accessible
             const saveBtn = document.getElementById('save-flashcards');
             if (!saveBtn) return;
 
+            // This part of the code block is for an older saving method,
+            // which is superseded by the modal logic further down.
+            // Keeping it commented out for now, but it's not currently active.
+            /*
             saveBtn.addEventListener('click', async () => {
                 const { data: { user }, error } = await supabase.auth.getUser();
                 if (!user) {
@@ -135,6 +139,7 @@ window.supabase = supabase; // Make supabase globally accessible
                 alert('Flashcard set saved!');
                 window.location.href = 'user_dashboard.html';
             });
+            */
         });
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -170,8 +175,8 @@ window.supabase = supabase; // Make supabase globally accessible
 
             // NEW: References for set name and category inputs (these are commented out in HTML as they are no longer visible inputs)
             // This is just to ensure the JS variables don't cause errors if not removed.
-            const setInput = document.getElementById('set-name-input'); // This will refer to the hidden input if not removed from HTML
-            const categoryInput = document.getElementById('set-category-input'); // This will refer to the hidden input if not removed from HTML
+            // const setInput = document.getElementById('set-name-input'); // This will refer to the hidden input if not removed from HTML
+            // const categoryInput = document.getElementById('set-category-input'); // This will refer to the hidden input if not removed from HTML
 
 
             const customAlertBox = document.getElementById('custom-alert');
@@ -347,31 +352,30 @@ window.supabase = supabase; // Make supabase globally accessible
                 return true;
             }
 
-            //Quiz Mode line added
+            // MODIFIED: Removed the redundant prompt for set name here.
+            // This function now only prepares the display. The actual set name and category
+            // input for database saving happens in the modal when 'Save to Database' is clicked.
             function proceedToFlashcardDisplay() {
-                if (flashcardData.length > 0) {
-                    // Removed the prompt for set name here, as it's now handled by the modal
-                    // The quiz mode saving to localStorage is also retained, but distinct from DB save
-                    const existing = JSON.parse(localStorage.getItem("flashcardGroups") || "{}");
-                    // Note: The prompt for setName below is for the quiz mode local storage.
-                    // The modal handles the name for database saving.
-                    const setNameForLocal = prompt("Enter a name for your flashcard set (for Quiz Mode local storage):");
-                    if (setNameForLocal) {
-                         existing[setNameForLocal] = flashcardData;
-                         localStorage.setItem("flashcardGroups", JSON.stringify(existing));
-                    }
-                    while (flashcardData.length % CARDS_PER_PAGE !== 0 && flashcardData.length < 500) {
-                        flashcardData.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` });
-                    }
-                } else { showMessage('No data to display.', 'error'); return; }
+                if (flashcardData.length === 0) { showMessage('No data to display.', 'error'); return; }
 
-                // MODIFIED: Removed validation for set name here. It will now only be validated on save.
-                manualInputArea.classList.add('hidden'); bulkInputArea.classList.add('hidden');
+                // The local storage saving for quiz mode is still here, but no longer prompts.
+                // It just saves with a generic name if you proceed without saving to DB.
+                // If you want to completely remove this local storage saving as well, let me know.
+                const existing = JSON.parse(localStorage.getItem("flashcardGroups") || "{}");
+                const defaultSetNameForLocal = "Generated Set " + new Date().toLocaleTimeString(); // Generic name
+                existing[defaultSetNameForLocal] = flashcardData;
+                localStorage.setItem("flashcardGroups", JSON.stringify(existing));
+
+                while (flashcardData.length % CARDS_PER_PAGE !== 0 && flashcardData.length < 500) {
+                    flashcardData.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` });
+                }
+
+                manualInputArea.classList.add('hidden');
+                bulkInputArea.classList.add('hidden');
                 displayArea.classList.remove('hidden');
                 currentPage = 0;
                 const actualCards = flashcardData.filter(c => c.term !== '(Empty Slot)').length;
-                totalPages = actualCards > 0 ? Math.ceil(actualCards / CARDS_PER_PAGE) * 2 : 0;
-                totalPages = (flashcardData.length / CARDS_PER_PAGE) * 2;
+                totalPages = (flashcardData.length / CARDS_PER_PAGE) * 2; // Calculate total pages for display (terms + defs)
 
                 updateDisplay();
                 if (actualCards > 0) showMessage(`Generated ${actualCards} flashcards!`, 'success');
