@@ -45,10 +45,6 @@
                     <label><input type="radio" name="category-filter" value="science"> Science</label>
                     <label><input type="radio" name="category-filter" value="history"> History</label>
                     <label><input type="radio" name="category-filter" value="technology"> Technology</label>
-                    <label>
-                        <input type="radio" name="category-filter" value="custom"> Other:
-                        <input type="text" id="custom-category-input" placeholder="Type category" class="hidden">
-                    </label>
                 </div>
             </div>
             </div>
@@ -117,7 +113,6 @@
         const resultsGrid = document.getElementById('search-results-grid');
         const resultsInfo = document.getElementById('results-count-info');
         const categoryRadioGroup = document.getElementById('category-radio-group');
-        const customCategoryInput = document.getElementById('custom-category-input');
 
 
         // Debounce search input to avoid too many requests
@@ -128,27 +123,9 @@
             }, 250);
         });
 
-        // Event listeners for category radio buttons
-        categoryRadioGroup.addEventListener('change', (event) => {
-            if (event.target.name === 'category-filter') {
-                const selectedValue = event.target.value;
-                if (selectedValue === 'custom') {
-                    customCategoryInput.classList.remove('hidden');
-                    customCategoryInput.focus();
-                } else {
-                    customCategoryInput.classList.add('hidden');
-                    customCategoryInput.value = ''; // Clear custom input when another radio is selected
-                }
-                performSearch(); // Perform search immediately on category change
-            }
-        });
-
-        // Event listener for custom category input (debounced)
-        customCategoryInput.addEventListener('input', () => {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-                performSearch();
-            }, 250);
+        // Event listener for category radio buttons
+        categoryRadioGroup.addEventListener('change', () => {
+            performSearch(); // Perform search immediately on category change
         });
 
 
@@ -160,14 +137,14 @@
                     title,
                     terms_count,
                     user_id,
-                    category, // This line IS in this code
+                    category,
                     profiles!flashcard_sets_user_id_fkey(username)
                 `)
                 .order('created_at', { ascending: false });
 
             if (error) {
                 console.error('Error fetching sets:', error);
-                resultsInfo.textContent = 'Failed to load flashcard sets. Please check console for details.'; // Added more descriptive message
+                resultsInfo.textContent = 'Failed to load flashcard sets. Please check console for details.';
                 return;
             }
 
@@ -178,22 +155,15 @@
 
         function performSearch() {
             const query = searchInput.value.trim().toLowerCase();
-            const selectedCategoryRadio = document.querySelector('input[name="category-filter"]:checked').value;
-            let filterCategory = '';
-
-            if (selectedCategoryRadio === 'custom') {
-                filterCategory = customCategoryInput.value.trim().toLowerCase();
-            } else if (selectedCategoryRadio !== 'all') {
-                filterCategory = selectedCategoryRadio.toLowerCase();
-            }
+            const selectedCategory = document.querySelector('input[name="category-filter"]:checked').value.toLowerCase();
 
             const filteredSets = allSets.filter(set => {
                 const matchesQuery = set.title.toLowerCase().includes(query) || (set.profiles?.username?.toLowerCase().includes(query));
                 const setCategory = set.category ? set.category.toLowerCase() : ''; // Get set category, handle null
 
                 let matchesCategory = true;
-                if (filterCategory) {
-                    matchesCategory = setCategory.includes(filterCategory); // Case-insensitive partial match
+                if (selectedCategory !== 'all') { // If a specific category is selected
+                    matchesCategory = setCategory.includes(selectedCategory); // Check if the set's category includes the selected category
                 }
 
                 return matchesQuery && matchesCategory;
@@ -223,10 +193,10 @@
 
                 card.innerHTML = `
                     <h3>${set.title}</h3>
-                    <p>${categoryDisplay}</p>
+                    <p>${categoryDisplay} Click to view flashcards in this set.</p>
                     <p class="set-meta">
                         ${set.terms_count || 0} Terms &nbsp;&bull;&nbsp; 
-                        By: <strong>${set.profiles?.username || 'Unknown'}</strong>
+                        By: <strong>${set.profiles?.username || 'Unknown User'}</strong>
                     </p>
                 `;
                 resultsGrid.appendChild(card);
