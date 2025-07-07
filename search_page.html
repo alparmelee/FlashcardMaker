@@ -167,7 +167,7 @@
 
             if (error) {
                 console.error('Error fetching sets:', error);
-                resultsInfo.textContent = 'Failed to load flashcard sets.';
+                resultsInfo.textContent = 'Failed to load flashcard sets. Please check console for details.'; // Added more descriptive message
                 return;
             }
 
@@ -225,7 +225,8 @@
                     <h3>${set.title}</h3>
                     <p>${categoryDisplay}</p>
                     <p class="set-meta">
-                        ${set.terms_count || 0} Terms &nbsp;&bull;&nbsp; By: <strong>${set.profiles?.username || 'Unknown'}</strong>
+                        ${set.terms_count || 0} Terms &nbsp;&bull;&nbsp; 
+                        By: <strong>${set.profiles?.username || 'Unknown'}</strong>
                     </p>
                 `;
                 resultsGrid.appendChild(card);
