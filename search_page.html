@@ -31,39 +31,29 @@
 
     <div class="content-wrapper">
         <h1>Search Flashcard Sets</h1>
-        <div class="search-controls-container">
-            <div class="search-bar-container">
-                <input type="text" placeholder="Search for sets by title..." id="search-input">
-                <button onclick="performSearch()">Search</button>
-            </div>
-
-            <div class="category-filter-container">
-                <p>Filter by Category:</p>
-                <div class="category-radio-group" id="category-radio-group">
-                    <label><input type="radio" name="category-filter" value="all" checked> All</label>
-                    <label><input type="radio" name="category-filter" value="math"> Math</label>
-                    <label><input type="radio" name="category-filter" value="science"> Science</label>
-                    <label><input type="radio" name="category-filter" value="history"> History</label>
-                    <label><input type="radio" name="category-filter" value="technology"> Technology</label>
-                    <label>
-                        <input type="radio" name="category-filter" value="custom"> Other:
-                        <input type="text" id="custom-category-input" placeholder="Type category" class="hidden">
-                    </label>
-                </div>
-            </div>
-            </div>
-
+        <div class="search-bar-container">
+            <input type="text" placeholder="Search for sets (e.g., 'Photosynthesis', 'Calculus 101')..."
+                id="search-input">
+            <button onclick="performSearch()">Search</button>
+        </div>
 
         <div class="search-results-info">
-            <p id="results-count-info">Showing all public flashcard sets.</p>
+            <p>Showing placeholder results. Try searching for "chemistry" or "history" (no actual search implemented).
+            </p>
         </div>
 
         <div class="sets-grid" id="search-results-grid">
+            <div class="set-card">
+                <h3><a href="flashcard_set.html"></a></h3>
+                <p>flashcard_sets</p>
+                <p class="set-meta">15 Terms &nbsp;&bull;&nbsp; By: <strong id="creator-name"></strong> <strong
+                        id="rating"></strong></p>
             </div>
+        </div>
     </div>
 
     <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
@@ -76,7 +66,7 @@
             }
         });
 
-        window.supabase = supabase; // Make supabase globally accessible
+window.supabase = supabase; // Make supabase globally accessible
 
         // Update Auth buttons in top nav based on session on page load
         async function updateAuthUI() {
@@ -239,3 +229,4 @@
 </body>
 
 </html>
+
