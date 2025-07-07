@@ -112,7 +112,9 @@
 
         window.supabase = supabase; // Make supabase globally accessible
 
-document.addEventListener('DOMContentLoaded', async () => {
+window.supabase = supabase; // Make supabase globally accessible
+
+        document.addEventListener('DOMContentLoaded', async () => {
             const flashcardFront = document.getElementById("flashcard-front");
             const flashcardBack = document.getElementById("flashcard-back");
             const prevBtn = document.getElementById("prev-card");
@@ -135,7 +137,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const quizProgress = document.getElementById('quiz-progress');
             const quizQuestion = document.getElementById('quiz-question');
             const quizChoicesContainer = document.getElementById('quiz-choices-container');
-            // Added categoryFilter and termListContainer for list view functionality
+            // Added termListContainer for list view functionality
             const termListContainer = document.getElementById('term-list-container');
             // Added modeEditBtn for future edit functionality
             const modeEditBtn = document.getElementById('mode-edit');
