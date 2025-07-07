@@ -31,29 +31,39 @@
 
     <div class="content-wrapper">
         <h1>Search Flashcard Sets</h1>
-        <div class="search-bar-container">
-            <input type="text" placeholder="Search for sets (e.g., 'Photosynthesis', 'Calculus 101')..."
-                id="search-input">
-            <button onclick="performSearch()">Search</button>
-        </div>
+        <div class="search-controls-container">
+            <div class="search-bar-container">
+                <input type="text" placeholder="Search for sets by title..." id="search-input">
+                <button onclick="performSearch()">Search</button>
+            </div>
+
+            <div class="category-filter-container">
+                <p>Filter by Category:</p>
+                <div class="category-radio-group" id="category-radio-group">
+                    <label><input type="radio" name="category-filter" value="all" checked> All</label>
+                    <label><input type="radio" name="category-filter" value="math"> Math</label>
+                    <label><input type="radio" name="category-filter" value="science"> Science</label>
+                    <label><input type="radio" name="category-filter" value="history"> History</label>
+                    <label><input type="radio" name="category-filter" value="technology"> Technology</label>
+                    <label>
+                        <input type="radio" name="category-filter" value="custom"> Other:
+                        <input type="text" id="custom-category-input" placeholder="Type category" class="hidden">
+                    </label>
+                </div>
+            </div>
+            </div>
+
 
         <div class="search-results-info">
-            <p>Showing placeholder results. Try searching for "chemistry" or "history" (no actual search implemented).
-            </p>
+            <p id="results-count-info">Showing all public flashcard sets.</p>
         </div>
 
         <div class="sets-grid" id="search-results-grid">
-            <div class="set-card">
-                <h3><a href="flashcard_set.html"></a></h3>
-                <p>flashcard_sets</p>
-                <p class="set-meta">15 Terms &nbsp;&bull;&nbsp; By: <strong id="creator-name"></strong> <strong
-                        id="rating"></strong></p>
             </div>
-        </div>
     </div>
 
     <script type="module">
-        import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
@@ -68,14 +78,13 @@
 
         window.supabase = supabase; // Make supabase globally accessible
 
-
         // Update Auth buttons in top nav based on session on page load
         async function updateAuthUI() {
-            const {data: {session}} = await window.supabase.auth.getSession();
+            const { data: { session } } = await window.supabase.auth.getSession();
             const authButtonsDiv = document.querySelector('.auth-buttons');
 
             if (session) {
-                const {data: profile, error: profileError} = await window.supabase
+                const { data: profile, error: profileError } = await window.supabase
                     .from('profiles')
                     .select('username')
                     .eq('user_id', session.user.id)
@@ -102,12 +111,40 @@
         }
         updateAuthUI();
 
-        loadAllPublicSets();
-
         let allSets = []; // store all sets globally
         let debounceTimer;
+        const searchInput = document.getElementById('search-input');
+        const resultsGrid = document.getElementById('search-results-grid');
+        const resultsInfo = document.getElementById('results-count-info');
+        const categoryRadioGroup = document.getElementById('category-radio-group');
+        const customCategoryInput = document.getElementById('custom-category-input');
+
+
         // Debounce search input to avoid too many requests
-        document.getElementById('search-input').addEventListener('input', () => {
+        searchInput.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                performSearch();
+            }, 250);
+        });
+
+        // Event listeners for category radio buttons
+        categoryRadioGroup.addEventListener('change', (event) => {
+            if (event.target.name === 'category-filter') {
+                const selectedValue = event.target.value;
+                if (selectedValue === 'custom') {
+                    customCategoryInput.classList.remove('hidden');
+                    customCategoryInput.focus();
+                } else {
+                    customCategoryInput.classList.add('hidden');
+                    customCategoryInput.value = ''; // Clear custom input when another radio is selected
+                }
+                performSearch(); // Perform search immediately on category change
+            }
+        });
+
+        // Event listener for custom category input (debounced)
+        customCategoryInput.addEventListener('input', () => {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
                 performSearch();
@@ -116,21 +153,17 @@
 
 
         async function loadAllPublicSets() {
-            const resultsGrid = document.getElementById('search-results-grid');
-            const resultsInfo = document.querySelector('.search-results-info p');
-
-            const {data: sets, error} = await supabase
+            const { data: sets, error } = await supabase
                 .from('flashcard_sets')
                 .select(`
                     id,
                     title,
                     terms_count,
                     user_id,
+                    category, // IMPORTANT: Fetch the category column
                     profiles!flashcard_sets_user_id_fkey(username)
-                    `)
-                .order('created_at', {ascending: false});
-
-            allSets = sets;
+                `)
+                .order('created_at', { ascending: false });
 
             if (error) {
                 console.error('Error fetching sets:', error);
@@ -138,64 +171,70 @@
                 return;
             }
 
-            resultsInfo.textContent = `Showing ${sets.length} flashcard sets:`;
-            resultsGrid.innerHTML = '';
-
-            sets.forEach(set => {
-                const card = document.createElement('div');
-                card.classList.add('set-card');
-                card.style.cursor = 'pointer';
-                card.onclick = () => {
-                    window.location.href = `flashcard_set.html?set_id=${set.id}`;
-                };
-
-                card.innerHTML = `
-                <h3>${set.title}</h3>
-                <p>Click to view flashcards in this set.</p>
-                <p class="set-meta">
-                 ${set.terms_count || 0} Terms &nbsp;&bull;&nbsp; By: ${set.profiles?.username || 'Unknown User'}</p>
-                `;
-
-                resultsGrid.appendChild(card);
-            });
+            allSets = sets; // Store all fetched sets
+            performSearch(); // Initial display of all sets (or filtered if query/category is pre-filled)
         }
 
+
         function performSearch() {
-            const query = document.getElementById('search-input').value.trim().toLowerCase();
-            const resultsGrid = document.getElementById('search-results-grid');
-            const resultsInfo = document.querySelector('.search-results-info p');
+            const query = searchInput.value.trim().toLowerCase();
+            const selectedCategoryRadio = document.querySelector('input[name="category-filter"]:checked').value;
+            let filterCategory = '';
 
-            const filtered = allSets.filter(set =>
-                set.title.toLowerCase().includes(query)
-            );
+            if (selectedCategoryRadio === 'custom') {
+                filterCategory = customCategoryInput.value.trim().toLowerCase();
+            } else if (selectedCategoryRadio !== 'all') {
+                filterCategory = selectedCategoryRadio.toLowerCase();
+            }
 
-            resultsInfo.textContent = `Showing ${filtered.length} sets for "${query}"`;
-            resultsGrid.innerHTML = '';
+            const filteredSets = allSets.filter(set => {
+                const matchesQuery = set.title.toLowerCase().includes(query) || (set.profiles?.username?.toLowerCase().includes(query)); // Search by title OR username
+                const setCategory = set.category ? set.category.toLowerCase() : ''; // Get set category, handle null
 
-            filtered.forEach(set => {
+                let matchesCategory = true;
+                if (filterCategory) {
+                    matchesCategory = setCategory.includes(filterCategory); // Case-insensitive partial match
+                }
+                
+                return matchesQuery && matchesCategory;
+            });
+
+            displaySets(filteredSets);
+        }
+
+        function displaySets(setsToDisplay) {
+            resultsGrid.innerHTML = ''; // Clear previous results
+            resultsInfo.textContent = `Showing ${setsToDisplay.length} sets.`;
+
+            if (setsToDisplay.length === 0) {
+                resultsInfo.textContent = `No sets found matching your criteria.`;
+                return;
+            }
+
+            setsToDisplay.forEach(set => {
                 const card = document.createElement('div');
                 card.classList.add('set-card');
                 card.style.cursor = 'pointer';
                 card.onclick = () => {
                     window.location.href = `flashcard_set.html?set_id=${set.id}`;
                 };
+
+                const categoryDisplay = set.category ? `<span class="category-tag">${set.category}</span>` : '';
 
                 card.innerHTML = `
                     <h3>${set.title}</h3>
-                    <p>Click to view flashcards in this set.</p>
-                    <p class="set-meta">${set.terms_count || 0} Terms &nbsp;&bull;&nbsp; By: ${set.profiles?.username || 'Unknown User'}</p>
-                    `;
-
+                    <p>${categoryDisplay} Click to view flashcards in this set.</p>
+                    <p class="set-meta">
+                        ${set.terms_count || 0} Terms &nbsp;&bull;&nbsp; By: ${set.profiles?.username || 'Unknown User'}
+                    </p>
+                `;
                 resultsGrid.appendChild(card);
             });
-
-            if (filtered.length === 0) {
-                resultsInfo.textContent = `No sets found for "${query}".`;
-            }
-
         }
-        document.getElementById('search-input').addEventListener('input', performSearch);
-        
+
+        // Initial load of sets when the page loads
+        document.addEventListener('DOMContentLoaded', loadAllPublicSets);
+
     </script>
 </body>
 
