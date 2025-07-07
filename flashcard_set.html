@@ -114,7 +114,7 @@
 
 window.supabase = supabase; // Make supabase globally accessible
 
-        document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', async () => {
             const flashcardFront = document.getElementById("flashcard-front");
             const flashcardBack = document.getElementById("flashcard-back");
             const prevBtn = document.getElementById("prev-card");
@@ -483,6 +483,7 @@ window.supabase = supabase; // Make supabase globally accessible
                     window.location.href = `create.html?set_id=${setId}`;
                 }
             });
+            // Removed the categoryFilter.addEventListener as the element no longer exists
         });
     </script>
 </body>
