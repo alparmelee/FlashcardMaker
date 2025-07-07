@@ -160,7 +160,7 @@
                     title,
                     terms_count,
                     user_id,
-                    category, // IMPORTANT: Fetch the category column
+                    category, // This line IS in this code
                     profiles!flashcard_sets_user_id_fkey(username)
                 `)
                 .order('created_at', { ascending: false });
