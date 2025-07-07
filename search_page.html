@@ -31,12 +31,12 @@
 
     <div class="content-wrapper">
         <h1>Search Flashcard Sets</h1>
+
         <div class="search-controls-container">
             <div class="search-bar-container">
                 <input type="text" placeholder="Search for sets by title..." id="search-input">
                 <button onclick="performSearch()">Search</button>
             </div>
-
             <div class="category-filter-container">
                 <p>Filter by Category:</p>
                 <div class="category-radio-group" id="category-radio-group">
@@ -53,17 +53,15 @@
             </div>
             </div>
 
-
         <div class="search-results-info">
             <p id="results-count-info">Showing all public flashcard sets.</p>
         </div>
-
         <div class="sets-grid" id="search-results-grid">
             </div>
     </div>
 
     <script type="module">
-        import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
@@ -77,6 +75,7 @@
         });
 
         window.supabase = supabase; // Make supabase globally accessible
+
 
         // Update Auth buttons in top nav based on session on page load
         async function updateAuthUI() {
@@ -113,6 +112,7 @@
 
         let allSets = []; // store all sets globally
         let debounceTimer;
+        // Get references to all necessary DOM elements
         const searchInput = document.getElementById('search-input');
         const resultsGrid = document.getElementById('search-results-grid');
         const resultsInfo = document.getElementById('results-count-info');
@@ -188,14 +188,14 @@
             }
 
             const filteredSets = allSets.filter(set => {
-                const matchesQuery = set.title.toLowerCase().includes(query) || (set.profiles?.username?.toLowerCase().includes(query)); // Search by title OR username
+                const matchesQuery = set.title.toLowerCase().includes(query) || (set.profiles?.username?.toLowerCase().includes(query));
                 const setCategory = set.category ? set.category.toLowerCase() : ''; // Get set category, handle null
 
                 let matchesCategory = true;
                 if (filterCategory) {
                     matchesCategory = setCategory.includes(filterCategory); // Case-insensitive partial match
                 }
-                
+
                 return matchesQuery && matchesCategory;
             });
 
@@ -223,9 +223,9 @@
 
                 card.innerHTML = `
                     <h3>${set.title}</h3>
-                    <p>${categoryDisplay} Click to view flashcards in this set.</p>
+                    <p>${categoryDisplay}</p>
                     <p class="set-meta">
-                        ${set.terms_count || 0} Terms &nbsp;&bull;&nbsp; By: ${set.profiles?.username || 'Unknown User'}
+                        ${set.terms_count || 0} Terms &nbsp;&bull;&nbsp; By: <strong>${set.profiles?.username || 'Unknown'}</strong>
                     </p>
                 `;
                 resultsGrid.appendChild(card);
@@ -234,7 +234,6 @@
 
         // Initial load of sets when the page loads
         document.addEventListener('DOMContentLoaded', loadAllPublicSets);
-
     </script>
 </body>
 
