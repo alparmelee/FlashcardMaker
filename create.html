@@ -41,7 +41,6 @@
 
 window.supabase = supabase; // Make supabase globally accessible
 
-
         // Update Auth buttons in top nav based on session on page load
         async function updateAuthUI() {
             const { data: { session } } = await window.supabase.auth.getSession();
@@ -76,73 +75,16 @@ window.supabase = supabase; // Make supabase globally accessible
 
         updateAuthUI();
 
-        document.addEventListener('DOMContentLoaded', () => {
-
-            const saveBtn = document.getElementById('save-flashcards');
-            if (!saveBtn) return;
-
-            // This part of the code block is for an older saving method,
-            // which is superseded by the modal logic further down.
-            // Keeping it commented out for now, but it's not currently active.
-            /*
-            saveBtn.addEventListener('click', async () => {
-                const { data: { user }, error } = await supabase.auth.getUser();
-                if (!user) {
-                    alert('You must be logged in to save flashcards. Redirecting...');
-                    return window.location.href = 'login.html';
-                }
-
-                const setTitle = document.getElementById('set-name').value.trim();
-                const rows = document.querySelectorAll('.flashcard-row');
-                const flashcards = [];
-
-                rows.forEach(row => {
-                    const term = row.querySelector('.term-input')?.value.trim();
-                    const definition = row.querySelector('.definition-input')?.value.trim();
-                    const category = row.querySelector('.category-input')?.value.trim() || null;
-
-                    if (term && definition) {
-                        flashcards.push({ term, definition, category });
-                    }
-                });
-
-                if (!setTitle || flashcards.length === 0) {
-                    alert('Please enter a title and at least one flashcard.');
-                    return;
-                }
-
-                const { data: set, error: setError } = await supabase
-                    .from('flashcard_sets')
-                    .insert([{ title: setTitle, user_id: user.id, terms_count: flashcards.length }])
-                    .select()
-                    .single();
-
-                if (setError) {
-                    console.error('Set creation error:', setError);
-                    return alert('Error creating flashcard set.');
-                }
-
-                const cardsToInsert = flashcards.map(card => ({
-                    ...card,
-                    set_id: set.id
-                }));
-
-                const { error: cardError } = await supabase
-                    .from('flashcards')
-                    .insert(cardsToInsert);
-
-                if (cardError) {
-                    console.error('Flashcard insert error:', cardError);
-                    return alert('Flashcards failed to save.');
-                }
-
-                alert('Flashcard set saved!');
-                window.location.href = 'user_dashboard.html';
-            });
-            */
-        });
-
         document.addEventListener('DOMContentLoaded', function () {
+            // Check URL for set_id
+            const urlParams = new URLSearchParams(window.location.search);
+            let currentSetId = urlParams.get('set_id');
+            let isEditMode = false;
+
+            if (currentSetId) {
+                isEditMode = true;
+            }
+
             // --- Page Swapping Logic (Simplified) ---
             const flashcardMakerSection = document.getElementById('flashcard-maker-section');
             flashcardMakerSection.classList.remove('hidden');
@@ -159,7 +101,7 @@ window.supabase = supabase; // Make supabase globally accessible
             const nextBtn = document.getElementById('next-page');
             const printBtn = document.getElementById('print-cards');
             const backBtn = document.getElementById('back-to-input');
-            const saveBtn = document.getElementById('save-cards');
+            const saveBtn = document.getElementById('save-cards'); // This is the button that opens the modal
 
             const manualInputArea = document.getElementById('manual-input-area');
             const bulkInputArea = document.getElementById('bulk-input-area');
@@ -173,19 +115,12 @@ window.supabase = supabase; // Make supabase globally accessible
             const cardDelimiterRadios = document.querySelectorAll('input[name="cardDelimiter"]');
             const customCardDelimiterInput = document.getElementById('custom-card-delimiter-input');
 
-            // NEW: References for set name and category inputs (these are commented out in HTML as they are no longer visible inputs)
-            // This is just to ensure the JS variables don't cause errors if not removed.
-            // const setInput = document.getElementById('set-name-input'); // This will refer to the hidden input if not removed from HTML
-            // const categoryInput = document.getElementById('set-category-input'); // This will refer to the hidden input if not removed from HTML
-
-
             const customAlertBox = document.getElementById('custom-alert');
             const controlsDiv = document.querySelector('#flashcard-maker-section .controls');
 
-            // NEW: Modal elements
+            // Modal elements
             const setTitleModal = document.getElementById('setTitleModal');
             const modalSetNameInput = document.getElementById('modal-set-name-input');
-            // ADDED: New input for category in the modal
             const modalCategoryInput = document.getElementById('modal-category-input');
             const modalSaveSetBtn = document.getElementById('modal-save-set');
             const modalCancelSaveBtn = document.getElementById('modal-cancel-save');
@@ -193,10 +128,15 @@ window.supabase = supabase; // Make supabase globally accessible
 
 
             let rowCount = 1;
-            let flashcardData = [];
+            let flashcardData = []; // This will hold the parsed or manually entered flashcards
             let currentPage = 0;
             let totalPages = 0;
             const CARDS_PER_PAGE = 10;
+
+            // Update save button text based on mode
+            if (isEditMode) {
+                saveBtn.textContent = 'Update Set in Database';
+            }
 
             function showMessage(message, type = 'warning') {
                 customAlertBox.textContent = message;
@@ -269,13 +209,13 @@ window.supabase = supabase; // Make supabase globally accessible
 
 
             function collectManualFlashcards() {
-                flashcardData = [];
+                flashcardData = []; // Clear previous data
                 const termInputs = manualInputArea.querySelectorAll('.term');
                 const defInputs = manualInputArea.querySelectorAll('.definition');
                 for (let i = 0; i < termInputs.length; i++) {
                     const term = termInputs[i].value.trim();
                     const definition = defInputs[i].value.trim();
-                    if (term || definition) {
+                    if (term || definition) { // Only add non-empty entries
                         flashcardData.push({
                             term: term || `(No Term Provided ${flashcardData.length + 1})`,
                             definition: definition || `(No Definition Provided ${flashcardData.length + 1})`
@@ -290,7 +230,7 @@ window.supabase = supabase; // Make supabase globally accessible
             }
 
             function parseBulkFlashcards() {
-                flashcardData = [];
+                flashcardData = []; // Clear previous data
                 const bulkText = bulkDataInput.value;
                 if (!bulkText.trim()) {
                     showMessage('Please enter some data in the bulk input field.', 'error'); return false;
@@ -352,20 +292,19 @@ window.supabase = supabase; // Make supabase globally accessible
                 return true;
             }
 
-            // MODIFIED: Removed the redundant prompt for set name here.
-            // This function now only prepares the display. The actual set name and category
-            // input for database saving happens in the modal when 'Save to Database' is clicked.
             function proceedToFlashcardDisplay() {
                 if (flashcardData.length === 0) { showMessage('No data to display.', 'error'); return; }
 
                 // The local storage saving for quiz mode is still here, but no longer prompts.
-                // It just saves with a generic name if you proceed without saving to DB.
-                // If you want to completely remove this local storage saving as well, let me know.
                 const existing = JSON.parse(localStorage.getItem("flashcardGroups") || "{}");
                 const defaultSetNameForLocal = "Generated Set " + new Date().toLocaleTimeString(); // Generic name
                 existing[defaultSetNameForLocal] = flashcardData;
                 localStorage.setItem("flashcardGroups", JSON.stringify(existing));
 
+                // Pad with empty slots for display purposes if not enough cards to fill a page
+                // Only if not in edit mode and generating fresh, or if needed for print preview consistency
+                // For direct DB save, we filter these out later.
+                const initialFlashcardDataLength = flashcardData.length;
                 while (flashcardData.length % CARDS_PER_PAGE !== 0 && flashcardData.length < 500) {
                     flashcardData.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` });
                 }
@@ -374,12 +313,11 @@ window.supabase = supabase; // Make supabase globally accessible
                 bulkInputArea.classList.add('hidden');
                 displayArea.classList.remove('hidden');
                 currentPage = 0;
-                const actualCards = flashcardData.filter(c => c.term !== '(Empty Slot)').length;
-                totalPages = (flashcardData.length / CARDS_PER_PAGE) * 2; // Calculate total pages for display (terms + defs)
+                const actualCardsCount = initialFlashcardDataLength; // Use initial length before padding
+                totalPages = (Math.ceil(actualCardsCount / CARDS_PER_PAGE)) * 2; // Calculate pages based on actual cards
 
                 updateDisplay();
-                if (actualCards > 0) showMessage(`Generated ${actualCards} flashcards!`, 'success');
-                else if (actualCards === 0 && flashcardData.every(c => c.term === `(Empty Slot)`)) showMessage('Generated empty slots.', 'warning');
+                if (actualCardsCount > 0) showMessage(`Generated ${actualCardsCount} flashcards!`, 'success');
                 else showMessage('No flashcards were generated.', 'error');
             }
 
@@ -388,11 +326,11 @@ window.supabase = supabase; // Make supabase globally accessible
 
             function updateDisplay() {
                 cardsContainer.innerHTML = '';
+                // Count actual cards, excluding (Empty Slot) placeholders
                 const actualCardCount = flashcardData.filter(c => c.term !== `(Empty Slot)`).length;
                 totalPages = flashcardData.length > 0 ? (Math.ceil(flashcardData.length / CARDS_PER_PAGE)) * 2 : 0;
 
-
-                if (totalPages === 0 || actualCardCount === 0 && flashcardData.every(c => c.term === `(Empty Slot)`)) {
+                if (totalPages === 0 || actualCardCount === 0) {
                     pageInfo.textContent = 'No flashcards to display.';
                     if (controlsDiv) controlsDiv.classList.add('hidden');
                     prevBtn.disabled = true; nextBtn.disabled = true; printBtn.disabled = true;
@@ -408,17 +346,25 @@ window.supabase = supabase; // Make supabase globally accessible
                 pageInfo.classList.remove('hidden');
                 const grid = document.createElement('div'); grid.className = 'flashcard-grid';
                 for (let i = 0; i < CARDS_PER_PAGE; i++) {
-                    const itemIndex = startIdx + i; if (itemIndex >= flashcardData.length) break;
+                    const itemIndex = startIdx + i;
+                    // Only display cards that are within the actual populated data length
+                    if (itemIndex >= flashcardData.length) break;
+
                     const card = document.createElement('div'); card.className = 'card-item';
                     const itemToDisplay = flashcardData[itemIndex];
+
+                    // Calculate display index based on actual, non-empty cards
                     let displayIndex = 0;
                     if (itemToDisplay.term !== '(Empty Slot)') {
                         let count = 0;
-                        for (let k = 0; k < flashcardData.length; k++) {
-                            if (flashcardData[k].term !== '(Empty Slot)') count++;
-                            if (k === itemIndex) { displayIndex = count; break; }
+                        for (let k = 0; k < itemIndex + 1; k++) { // Iterate up to current itemIndex
+                            if (flashcardData[k].term !== '(Empty Slot)') {
+                                count++;
+                            }
                         }
+                        displayIndex = count;
                     } else {
+                        // For empty slots, just use their padded index + 1
                         displayIndex = itemIndex + 1;
                     }
 
@@ -440,8 +386,10 @@ window.supabase = supabase; // Make supabase globally accessible
             printBtn.addEventListener('click', () => {
                 const actualCardsForPrint = flashcardData.filter(c => c.term !== '(Empty Slot)');
                 if (actualCardsForPrint.length === 0) { showMessage('No actual flashcards to print.', 'error'); return; }
-                const dataToPrint = [...actualCardsForPrint];
+
+                const dataToPrint = [...actualCardsForPrint]; // Work with actual cards only for print
                 while (dataToPrint.length % CARDS_PER_PAGE !== 0) { dataToPrint.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` }); }
+
                 const printTotalPages = (dataToPrint.length / CARDS_PER_PAGE) * 2;
                 const originalPageInfoClass = pageInfo.className;
                 const originalControlsClass = controlsDiv ? controlsDiv.className : '';
@@ -456,7 +404,9 @@ window.supabase = supabase; // Make supabase globally accessible
                     cardsContainer.appendChild(printPageTitleElement);
                     const grid = document.createElement('div'); grid.className = 'flashcard-grid';
                     for (let j = 0; j < CARDS_PER_PAGE; j++) {
-                        let indexToFetchDataFrom = startIdxForPrint + j; if (indexToFetchDataFrom >= dataToPrint.length) break;
+                        let indexToFetchDataFrom = startIdxForPrint + j;
+                        if (indexToFetchDataFrom >= dataToPrint.length) break;
+
                         if (!isTermPageForPrint) {
                             const numColumns = 2; const col = j % numColumns;
                             if (col === 0) { if (indexToFetchDataFrom + 1 < dataToPrint.length && (j + 1) < CARDS_PER_PAGE) indexToFetchDataFrom = startIdxForPrint + j + 1; }
@@ -464,16 +414,22 @@ window.supabase = supabase; // Make supabase globally accessible
                         }
                         const itemToDisplay = dataToPrint[indexToFetchDataFrom];
                         const card = document.createElement('div'); card.className = 'card-item';
+
+                        // For printing, we want the actual card number, not the padded slot number
                         let originalItemIndex = -1;
                         if (itemToDisplay.term !== '(Empty Slot)') {
-                            let count = 0;
+                            // Find the original index from the unpadded actualCardsForPrint
+                            let countActual = 0;
                             for (let k = 0; k < actualCardsForPrint.length; k++) {
-                                if (actualCardsForPrint[k].term === itemToDisplay.term && actualCardsForPrint[k].definition === itemToDisplay.definition) {
-                                    originalItemIndex = k + 1; break;
+                                if (actualCardsForPrint[k] === itemToDisplay) { // Reference equality is fine here as it's the same object
+                                    originalItemIndex = k + 1;
+                                    break;
                                 }
                             }
-                            if (originalItemIndex === -1) originalItemIndex = indexToFetchDataFrom + 1;
-                        } else { originalItemIndex = indexToFetchDataFrom + 1; }
+                        } else {
+                            originalItemIndex = indexToFetchDataFrom + 1; // For empty slots, just use their sequential index
+                        }
+
                         const labelText = isTermPageForPrint ? `TERM ${originalItemIndex}` : `DEFINITION ${originalItemIndex}`;
                         const contentText = isTermPageForPrint ? itemToDisplay.term : itemToDisplay.definition;
                         card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`;
@@ -493,24 +449,124 @@ window.supabase = supabase; // Make supabase globally accessible
                 if (controlsDiv) controlsDiv.classList.add('hidden');
             });
 
+            // Function to load set data for editing
+            async function loadSetForEditing(setId) {
+                try {
+                    // Fetch set details (title and category)
+                    const { data: set, error: setError } = await window.supabase
+                        .from('flashcard_sets')
+                        .select('title, category')
+                        .eq('id', setId)
+                        .single();
+
+                    if (setError) throw setError;
+
+                    // Pre-fill the modal's input fields
+                    modalSetNameInput.value = set.title || '';
+                    modalCategoryInput.value = set.category || '';
+
+                    // Fetch associated flashcards
+                    const { data: cards, error: cardsError } = await window.supabase
+                        .from('flashcards')
+                        .select('term, definition')
+                        .eq('set_id', setId)
+                        .order('created_at', { ascending: true }); // Keep order consistent
+
+                    if (cardsError) throw cardsError;
+
+                    // Clear existing manual input rows
+                    termDefInputs.innerHTML = '';
+                    rowCount = 0; // Reset rowCount as we're rebuilding
+
+                    // Populate with fetched cards
+                    if (cards.length > 0) {
+                        cards.forEach((card, index) => {
+                            rowCount++;
+                            const newRow = document.createElement('div');
+                            newRow.className = 'input-row';
+                            newRow.innerHTML = `
+                                <input type="text" placeholder="Term ${rowCount}" class="term" value="${card.term || ''}">
+                                <input type="text" placeholder="Definition ${rowCount}" class="definition" value="${card.definition || ''}">
+                                <button type="button" class="delete-row-btn">Delete</button>
+                            `;
+                            termDefInputs.appendChild(newRow);
+                        });
+                        flashcardData = cards.filter(card => card.term?.trim() && card.definition?.trim()); // Set global flashcardData
+                    } else {
+                        // If no cards exist for the set, add one empty row for input
+                        addRowBtn.click(); // Simulate adding a row
+                        flashcardData = []; // Ensure flashcardData is empty
+                    }
+
+                    // Automatically switch to manual input view for editing
+                    showManualInputBtn.click();
+
+                    showMessage('Flashcard set loaded for editing.', 'success');
+
+                } catch (error) {
+                    console.error('Error loading set for editing:', error.message);
+                    showMessage('Failed to load flashcard set for editing. Redirecting...', 'error');
+                    setTimeout(() => { window.location.href = 'user_dashboard.html'; }, 2000); // Redirect on failure
+                }
+            }
+
+            // Call loadSetForEditing if in edit mode when the page loads
+            if (isEditMode) {
+                loadSetForEditing(currentSetId);
+            }
+
             // MODIFIED: Save button now opens a modal for title input
             saveBtn.addEventListener('click', () => {
-                const actualCards = flashcardData.filter(card => card.term !== '(Empty Slot)');
-                if (actualCards.length === 0) {
+                // Ensure flashcardData is up-to-date with current inputs before modal
+                let tempFlashcardsForCheck = [];
+                if (!manualInputArea.classList.contains('hidden')) {
+                    const termInputs = manualInputArea.querySelectorAll('.term');
+                    const defInputs = manualInputArea.querySelectorAll('.definition');
+                    for (let i = 0; i < termInputs.length; i++) {
+                        const term = termInputs[i].value.trim();
+                        const definition = defInputs[i].value.trim();
+                        if (term || definition) {
+                            tempFlashcardsForCheck.push({ term: term, definition: definition });
+                        }
+                    }
+                } else if (!bulkInputArea.classList.contains('hidden')) {
+                    // Temporarily parse bulk data to check its content
+                    // This is a simplified approach, a more robust solution might involve
+                    // a dedicated pre-validation step for bulk input.
+                    try {
+                        const originalFlashcardData = [...flashcardData]; // Save state
+                        if (!parseBulkFlashcards()) { // parseBulkFlashcards updates global flashcardData
+                            showMessage('Cannot save: Bulk data is invalid or empty.', 'error');
+                            return; // Stop if bulk parsing fails
+                        }
+                        tempFlashcardsForCheck = flashcardData.filter(card => card.term !== '(Empty Slot)');
+                        flashcardData = originalFlashcardData; // Restore global flashcardData if not proceeding
+                    } catch (e) {
+                        showMessage('Error processing bulk data for save check: ' + e.message, 'error');
+                        return;
+                    }
+                }
+
+                if (tempFlashcardsForCheck.length === 0) {
                     showMessage('No flashcards to save! Please create some first.', 'error');
                     return;
                 }
-                modalSetNameInput.value = ''; // Clear previous input
-                modalCategoryInput.value = ''; // Clear previous category input
+
+                // If in edit mode, modal inputs are already pre-filled by loadSetForEditing
+                // Otherwise, clear for new set creation
+                if (!isEditMode) {
+                    modalSetNameInput.value = ''; // Clear previous input
+                    modalCategoryInput.value = ''; // Clear previous category input
+                }
                 modalErrorMessage.style.display = 'none'; // Hide previous errors
                 setTitleModal.style.display = 'flex'; // Show the modal
                 modalSetNameInput.focus(); // Focus on the input field in the modal
             });
 
-            // Event listener for "Save Set" button inside the modal
+            // Event listener for "Save Set" / "Update Set" button inside the modal
             modalSaveSetBtn.addEventListener('click', async () => {
                 const setName = modalSetNameInput.value.trim();
-                const category = modalCategoryInput.value.trim(); // Get the category value
+                const category = modalCategoryInput.value.trim();
 
                 if (!setName) {
                     modalErrorMessage.textContent = 'Set Title is required!';
@@ -520,71 +576,127 @@ window.supabase = supabase; // Make supabase globally accessible
                 }
 
                 setTitleModal.style.display = 'none'; // Hide the modal
-                showMessage('Saving your flashcards...', 'warning');
+                showMessage('Processing your flashcards...', 'warning');
                 saveBtn.disabled = true; // Disable main save button
 
                 try {
-                    const actualFlashcards = flashcardData.filter(card => card.term !== '(Empty Slot)');
-                    // 1. Get the current user
+                    // Re-collect flashcard data right before saving/updating
+                    // This ensures we get the latest data from the active input area
+                    let cardsToProcess = [];
+                    if (!manualInputArea.classList.contains('hidden')) {
+                        collectManualFlashcards(); // Updates global flashcardData
+                        cardsToProcess = flashcardData.filter(card => card.term?.trim() && card.definition?.trim());
+                    } else if (!bulkInputArea.classList.contains('hidden')) {
+                        parseBulkFlashcards(); // Updates global flashcardData
+                        cardsToProcess = flashcardData.filter(card => card.term?.trim() && card.definition?.trim());
+                    } else {
+                        // If somehow neither is visible, or data wasn't prepared, use what's in flashcardData
+                        cardsToProcess = flashcardData.filter(card => card.term?.trim() && card.definition?.trim());
+                    }
+
+                    if (cardsToProcess.length === 0) {
+                        throw new Error('No valid flashcards to save/update. Please enter some terms and definitions.');
+                    }
+
                     const { data: { user }, error: userError } = await window.supabase.auth.getUser();
 
                     if (userError || !user) {
-                        showMessage('You must be logged in to save flashcards. Redirecting to login...', 'error');
+                        showMessage('You must be logged in to save/update flashcards. Redirecting to login...', 'error');
                         setTimeout(() => { window.location.href = 'login.html'; }, 2000);
                         return;
                     }
 
-                    // 2. Insert the flashcard set information
-                    const { data: newSet, error: setInsertError } = await window.supabase
-                        .from('flashcard_sets')
-                        .insert([
-                            {
-                                user_id: user.id,
-                                title: setName,
-                                category: category || null, // Include category, use null if empty
-                                terms_count: actualFlashcards.length
-                            }
-                        ])
-                        .select()
-                        .single();
+                    if (isEditMode && currentSetId) {
+                        // --- UPDATE EXISTING SET LOGIC ---
 
-                    if (setInsertError) {
-                        throw new Error(`Failed to save set: ${setInsertError.message}`);
+                        // 1. Delete all existing flashcards for this set
+                        const { error: deleteCardsError } = await window.supabase
+                            .from('flashcards')
+                            .delete()
+                            .eq('set_id', currentSetId);
+
+                        if (deleteCardsError) {
+                            console.error('Failed to delete old cards for update:', deleteCardsError.message);
+                            // Decide if you want to abort or proceed. For now, we'll throw to alert.
+                            throw new Error(`Failed to clear old flashcards. Update aborted: ${deleteCardsError.message}`);
+                        }
+
+                        // 2. Update the flashcard set details (title, category, terms_count)
+                        const { data: updatedSet, error: updateSetError } = await window.supabase
+                            .from('flashcard_sets')
+                            .update({ title: setName, category: category || null, terms_count: cardsToProcess.length })
+                            .eq('id', currentSetId)
+                            .select() // Select the updated row to confirm
+                            .single();
+
+                        if (updateSetError) {
+                            throw new Error(`Failed to update set details: ${updateSetError.message}`);
+                        }
+
+                        // 3. Insert the new/modified flashcards back into the database
+                        const cardsToInsert = cardsToProcess.map(card => ({
+                            set_id: currentSetId, // Link to the existing set
+                            term: card.term,
+                            definition: card.definition,
+                        }));
+
+                        const { error: insertCardsError } = await window.supabase
+                            .from('flashcards')
+                            .insert(cardsToInsert);
+
+                        if (insertCardsError) {
+                            throw new Error(`Failed to insert updated cards: ${insertCardsError.message}`);
+                        }
+
+                        showMessage('Flashcard set updated successfully! Redirecting to your dashboard.', 'success');
+
+                    } else {
+                        // --- INSERT NEW SET LOGIC ---
+                        const { data: newSet, error: setInsertError } = await window.supabase
+                            .from('flashcard_sets')
+                            .insert([
+                                {
+                                    user_id: user.id,
+                                    title: setName,
+                                    category: category || null,
+                                    terms_count: cardsToProcess.length
+                                }
+                            ])
+                            .select()
+                            .single();
+
+                        if (setInsertError) {
+                            throw new Error(`Failed to save new set: ${setInsertError.message}`);
+                        }
+
+                        const newSetId = newSet.id; // Get the ID of the newly created set
+
+                        const cardsToInsert = cardsToProcess.map(card => ({
+                            set_id: newSetId,
+                            term: card.term,
+                            definition: card.definition,
+                        }));
+
+                        const { error: cardsInsertError } = await window.supabase
+                            .from('flashcards')
+                            .insert(cardsToInsert);
+
+                        if (cardsInsertError) {
+                            throw new Error(`Failed to save individual cards for new set: ${cardsInsertError.message}`);
+                        }
+
+                        showMessage('Flashcard set saved successfully! You\'ll be redirected to your dashboard.', 'success');
                     }
 
-                    const setId = newSet.id;
-
-                    // 3. Prepare flashcards for batch insert
-                    const cardsToInsert = actualFlashcards.map(card => ({
-                        set_id: setId,
-                        term: card.term,
-                        definition: card.definition,
-                        // If you also added a 'category' column to the 'flashcards' table for individual cards,
-                        // you'd add it here. For now, we'll assume it's for the set only as per your request
-                        // and the previous image showed adding a category to flashcard_sets.
-                        // If you intend to add individual card categories, you'd need to modify
-                        // collectManualFlashcards() and parseBulkFlashcards() to capture it per card.
-                        // Example if you capture individual card categories:
-                        // category: card.category || null
-                    }));
-
-                    // 4. Insert the individual flashcards
-                    const { error: cardsInsertError } = await window.supabase
-                        .from('flashcards')
-                        .insert(cardsToInsert);
-
-                    if (cardsInsertError) {
-                        throw new Error(`Failed to save individual cards: ${cardsInsertError.message}`);
-                    }
-
-                    showMessage('Flashcard set saved successfully! You\'ll be redirected to your dashboard.', 'success');
                     setTimeout(() => {
                         window.location.href = 'user_dashboard.html';
                     }, 2000);
 
                 } catch (error) {
-                    console.error('Save error:', error.message);
-                    showMessage(`Failed to save flashcards: ${error.message}`, 'error');
+                    console.error('Save/Update error:', error.message);
+                    modalErrorMessage.textContent = `Error: ${error.message}`;
+                    modalErrorMessage.style.display = 'block';
+                    showMessage(`Failed to save/update flashcards: ${error.message}`, 'error');
                 } finally {
                     saveBtn.disabled = false;
                 }
@@ -597,7 +709,6 @@ window.supabase = supabase; // Make supabase globally accessible
                 showMessage('Save operation cancelled.', 'info');
             });
         });
-
     </script>
 </head>
 
