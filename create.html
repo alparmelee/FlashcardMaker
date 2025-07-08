@@ -563,7 +563,7 @@ window.supabase = supabase; // Make supabase globally accessible
                 modalSetNameInput.focus(); // Focus on the input field in the modal
             });
 
-            // Event listener for "Save Set" / "Update Set" button inside the modal
+ // Event listener for "Save Set" / "Update Set" button inside the modal
             modalSaveSetBtn.addEventListener('click', async () => {
                 const setName = modalSetNameInput.value.trim();
                 const category = modalCategoryInput.value.trim();
@@ -580,23 +580,33 @@ window.supabase = supabase; // Make supabase globally accessible
                 saveBtn.disabled = true; // Disable main save button
 
                 try {
-                    // Re-collect flashcard data right before saving/updating
-                    // This ensures we get the latest data from the active input area
-                    let cardsToProcess = [];
+                    // --- REVISED DATA COLLECTION LOGIC ---
+                    // This section ensures 'flashcardData' is refreshed from the current inputs
+                    // before saving/updating, regardless of whether 'Generate' was clicked.
                     if (!manualInputArea.classList.contains('hidden')) {
-                        collectManualFlashcards(); // Updates global flashcardData
-                        cardsToProcess = flashcardData.filter(card => card.term?.trim() && card.definition?.trim());
+                        collectManualFlashcards(); // Call the function to populate flashcardData from current manual inputs
                     } else if (!bulkInputArea.classList.contains('hidden')) {
-                        parseBulkFlashcards(); // Updates global flashcardData
-                        cardsToProcess = flashcardData.filter(card => card.term?.trim() && card.definition?.trim());
+                        parseBulkFlashcards(); // Call the function to populate flashcardData from current bulk input
                     } else {
-                        // If somehow neither is visible, or data wasn't prepared, use what's in flashcardData
-                        cardsToProcess = flashcardData.filter(card => card.term?.trim() && card.definition?.trim());
+                        // Fallback: If somehow no input area is visible (unlikely),
+                        // use the existing flashcardData. This case might imply an error.
+                        // For safety, you might add a more specific error or default to empty.
+                        // For now, it will simply proceed with whatever flashcardData has.
+                        console.warn('Neither manual nor bulk input area is visible. Using existing flashcardData.');
                     }
 
+                    // Now, filter out any empty placeholder cards from the collected data.
+                    // This creates the final array of cards to send to the database.
+                    const cardsToProcess = flashcardData.filter(card =>
+                        (card.term && card.term.trim() !== '' && card.term.trim() !== '(Empty Slot)') ||
+                        (card.definition && card.definition.trim() !== '' && card.definition.trim() !== '(Empty Slot)')
+                    );
+
                     if (cardsToProcess.length === 0) {
-                        throw new Error('No valid flashcards to save/update. Please enter some terms and definitions.');
+                        throw new Error('No valid flashcards found. Please enter at least one term or definition.');
                     }
+                    // --- END REVISED DATA COLLECTION LOGIC ---
+
 
                     const { data: { user }, error: userError } = await window.supabase.auth.getUser();
 
@@ -607,7 +617,8 @@ window.supabase = supabase; // Make supabase globally accessible
                     }
 
                     if (isEditMode && currentSetId) {
-                        // --- UPDATE EXISTING SET LOGIC ---
+                        // ... (rest of your UPDATE EXISTING SET LOGIC - this part is correct) ...
+                        // The 'cardsToProcess' variable will now contain the correct data.
 
                         // 1. Delete all existing flashcards for this set
                         const { error: deleteCardsError } = await window.supabase
@@ -617,7 +628,6 @@ window.supabase = supabase; // Make supabase globally accessible
 
                         if (deleteCardsError) {
                             console.error('Failed to delete old cards for update:', deleteCardsError.message);
-                            // Decide if you want to abort or proceed. For now, we'll throw to alert.
                             throw new Error(`Failed to clear old flashcards. Update aborted: ${deleteCardsError.message}`);
                         }
 
@@ -651,7 +661,9 @@ window.supabase = supabase; // Make supabase globally accessible
                         showMessage('Flashcard set updated successfully! Redirecting to your dashboard.', 'success');
 
                     } else {
-                        // --- INSERT NEW SET LOGIC ---
+                        // ... (rest of your INSERT NEW SET LOGIC - this part is correct) ...
+                        // The 'cardsToProcess' variable will now contain the correct data.
+
                         const { data: newSet, error: setInsertError } = await window.supabase
                             .from('flashcard_sets')
                             .insert([
@@ -701,7 +713,6 @@ window.supabase = supabase; // Make supabase globally accessible
                     saveBtn.disabled = false;
                 }
             });
-
             // Event listener for "Cancel" button inside the modal
             modalCancelSaveBtn.addEventListener('click', () => {
                 setTitleModal.style.display = 'none'; // Hide the modal
