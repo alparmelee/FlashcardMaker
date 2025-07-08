@@ -217,6 +217,7 @@
                             <h3>${set.title}</h3>
                             <p>${set.terms_count} terms</p>
                             <div class="set-actions">
+                                <button class="edit-set-btn" data-set-id="${set.id}">Edit</button>
                                 <button class="delete-set-btn" data-set-id="${set.id}">Delete</button>
                             </div>
                         `;
@@ -225,6 +226,12 @@
                             // Prevent navigation if delete button is clicked
                             if (e.target.classList.contains('delete-set-btn')) return;
                             window.location.href = `flashcard_set.html?set_id=${set.id}`;
+                        });
+                        // Add event listener for the edit button
+                        card.querySelector('.edit-set-btn').addEventListener('click', (e) => {
+                            e.stopPropagation(); // Prevent the parent card's click listener from firing
+                            const setId = e.target.getAttribute('data-set-id');
+                            window.location.href = `create.html?set_id=${setId}`;
                         });
                         grid.appendChild(card);
                     });
