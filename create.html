@@ -26,7 +26,7 @@
     </style>
 
     <script type="module">
-        import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
@@ -39,7 +39,7 @@
             }
         });
 
-window.supabase = supabase; // Make supabase globally accessible
+        window.supabase = supabase; // Make supabase globally accessible
 
         // Update Auth buttons in top nav based on session on page load
         async function updateAuthUI() {
@@ -380,6 +380,7 @@ window.supabase = supabase; // Make supabase globally accessible
                 saveBtn.disabled = actualCardCount === 0;
             }
 
+
             nextBtn.addEventListener('click', () => { if (currentPage < totalPages - 1) { currentPage++; updateDisplay(); } });
             prevBtn.addEventListener('click', () => { if (currentPage > 0) { currentPage--; updateDisplay(); } });
 
@@ -550,6 +551,120 @@ window.supabase = supabase; // Make supabase globally accessible
                 setTitleModal.style.display = 'flex'; // Show the modal
                 modalSetNameInput.focus(); // Focus on the input field in the modal
             });
+
+            // MODAL EVENT LISTENERS AND SAVE/UPDATE LOGIC
+
+            // Function to save or update the flashcard set in Supabase
+            async function saveOrUpdateFlashcardSet() {
+                modalErrorMessage.style.display = 'none'; // Hide any previous error messages
+
+                const setTitle = modalSetNameInput.value.trim();
+                const setCategory = modalCategoryInput.value.trim();
+
+                if (!setTitle) {
+                    modalErrorMessage.textContent = 'Set Title is required!';
+                    modalErrorMessage.style.display = 'block';
+                    return;
+                }
+
+                const actualCardsToSave = flashcardData.filter(card =>
+                    (card.term && card.term.trim() !== '' && card.term.trim() !== '(Empty Slot)') ||
+                    (card.definition && card.definition.trim() !== '' && card.definition.trim() !== '(Empty Slot)')
+                );
+
+                if (actualCardsToSave.length === 0) {
+                    modalErrorMessage.textContent = 'No valid flashcards to save. Please create at least one.';
+                    modalErrorMessage.style.display = 'block';
+                    return;
+                }
+
+                // Get current user session
+                const { data: { session }, error: sessionError } = await window.supabase.auth.getSession();
+                if (sessionError || !session) {
+                    modalErrorMessage.textContent = 'You must be logged in to save sets.';
+                    modalErrorMessage.style.display = 'block';
+                    showMessage('Please log in to save your flashcard set.', 'error');
+                    return;
+                }
+                const userId = session.user.id;
+
+                try {
+                    let setIdToUse = currentSetId; // Use existing ID if in edit mode
+
+                    if (isEditMode) {
+                        // Update existing set
+                        const { error: updateSetError } = await window.supabase
+                            .from('flashcard_sets')
+                            .update({ title: setTitle, category: setCategory, updated_at: new Date().toISOString() })
+                            .eq('id', setIdToUse);
+
+                        if (updateSetError) throw updateSetError;
+
+                        // Delete existing flashcards for this set before inserting new ones
+                        const { error: deleteCardsError } = await window.supabase
+                            .from('flashcards')
+                            .delete()
+                            .eq('set_id', setIdToUse);
+
+                        if (deleteCardsError) throw deleteCardsError;
+
+                        showMessage('Flashcard set updated successfully!', 'success');
+
+                    } else {
+                        // Create a new set
+                        const { data: newSetData, error: newSetError } = await window.supabase
+                            .from('flashcard_sets')
+                            .insert({ user_id: userId, title: setTitle, category: setCategory })
+                            .select() // Select the inserted data to get the new ID
+                            .single();
+
+                        if (newSetError) throw newSetError;
+                        setIdToUse = newSetData.id; // Get the ID of the newly created set
+
+                        showMessage('Flashcard set saved successfully!', 'success');
+                    }
+
+                    // Prepare flashcards for insertion
+                    const flashcardsToInsert = actualCardsToSave.map(card => ({
+                        set_id: setIdToUse,
+                        term: card.term,
+                        definition: card.definition,
+                        user_id: userId // Associate flashcards with the user as well
+                    }));
+
+                    // Insert or re-insert flashcards
+                    const { error: insertCardsError } = await window.supabase
+                        .from('flashcards')
+                        .insert(flashcardsToInsert);
+
+                    if (insertCardsError) throw insertCardsError;
+
+
+                    // Close the modal and optionally redirect or update UI
+                    setTitleModal.style.display = 'none';
+                    // After successful save/update, you might want to redirect to the dashboard
+                    // or just update the UI to show the new/updated set.
+                    // For now, let's redirect to the user dashboard.
+                    window.location.href = 'user_dashboard.html';
+
+                } catch (error) {
+                    console.error('Error saving/updating set:', error.message);
+                    modalErrorMessage.textContent = `Error: ${error.message}. Please try again.`;
+                    modalErrorMessage.style.display = 'block';
+                    showMessage('Failed to save flashcard set.', 'error');
+                }
+            }
+
+            // Event Listener for "Save Set" button in the modal
+            modalSaveSetBtn.addEventListener('click', saveOrUpdateFlashcardSet);
+
+            // Event Listener for "Cancel" button in the modal
+            modalCancelSaveBtn.addEventListener('click', () => {
+                setTitleModal.style.display = 'none'; // Hide the modal
+                modalErrorMessage.style.display = 'none'; // Hide any errors
+            });
+
+
         });
     </script>
 </head>
