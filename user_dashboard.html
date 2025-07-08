@@ -201,7 +201,12 @@
 
                 const { data: sets, error: setsError } = await supabase
                     .from('flashcard_sets')
-                    .select('id, title, terms_count')
+                    .select(`
+                        id,
+                        title,
+                        category,
+                        flashcards(count) // <-- This is the key change!
+                    `)
                     .eq('user_id', user.id)
                     .order('created_at', { ascending: false });
 
@@ -211,16 +216,16 @@
                     const grid = document.querySelector('.sets-grid');
                     grid.innerHTML = '';
                     sets.forEach(set => {
+                        const termCount = set.flashcards[0] ? set.flashcards[0].count : 0;
                         const card = document.createElement('div');
                         card.className = 'set-card';
                         card.innerHTML = `
-                            <h3>${set.title}</h3>
-                            <p>${set.terms_count} terms</p>
-                            <div class="set-actions">
-                                <button class="edit-set-btn" data-set-id="${set.id}">Edit</button>
-                                <button class="delete-set-btn" data-set-id="${set.id}">Delete</button>
-                            </div>
-                        `;
+    <h3>${set.title}</h3>
+    <p>${set.category ? set.category : 'No Category'}</p> <p>${termCount} terms</p> <div class="set-actions">
+        <button class="edit-set-btn" data-set-id="${set.id}">Edit</button>
+        <button class="delete-set-btn" data-set-id="${set.id}">Delete</button>
+    </div>
+`;
                         // Event listener for the whole card to navigate to flashcard_set.html
                         card.addEventListener('click', (e) => {
                             // Prevent navigation if delete button is clicked
