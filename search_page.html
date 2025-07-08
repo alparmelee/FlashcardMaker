@@ -1,25 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search Flashcard Sets - CramCraft</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="stylesheet.css" />
-    <style>
-        /* Add some basic styling for the new line if needed, for example: */
-        .set-view-prompt {
-            font-size: 0.85em;
-            color: #666;
-            margin-top: 5px; /* Adds space above it */
-            margin-bottom: 5px; /* Adds space below it */
-        }
-        /* Adjust other elements margin/padding as needed for new line */
-        .set-card p {
-            margin-bottom: 0; /* Adjust default paragraph margins if needed */
-        }
-    </style>
+    <title>Search Flashcards - CramCraft</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 </head>
+
 <body class="search-page">
     <nav class="top-nav">
         <div class="top-nav-inner">
@@ -33,32 +23,37 @@
             </ul>
             <div class="auth-buttons">
                 <div class="user-status" style="display: none;"></div>
-                <a href="login.html" class="btn">Login</a>
-                <a href="signup.html" class="btn">Signup</a>
+                <a href="login.html" class="btn signup">Login</a>
+                <a href="signup.html" class="btn signup">Signup</a>
             </div>
         </div>
     </nav>
 
-    <div class="main-content-wrapper search-content">
+    <div class="content-wrapper">
         <h1>Search Flashcard Sets</h1>
 
-        <div class="search-controls">
-            <input type="text" id="search-input" placeholder="Search for sets by title..." />
-            <button id="search-button">Search</button>
+        <div class="search-controls-container">
+            <div class="search-bar-container">
+                <input type="text" placeholder="Search for sets by title..." id="search-input">
+                <button onclick="performSearch()">Search</button>
+            </div>
+            <div class="category-filter-container">
+                <p>Filter by Category:</p>
+                <div class="category-radio-group" id="category-radio-group">
+                    <label><input type="radio" name="category-filter" value="all" checked> All</label>
+                    <label><input type="radio" name="category-filter" value="math"> Math</label>
+                    <label><input type="radio" name="category-filter" value="science"> Science</label>
+                    <label><input type="radio" name="category-filter" value="history"> History</label>
+                    <label><input type="radio" name="category-filter" value="technology"> Technology</label>
+                </div>
+            </div>
         </div>
 
-        <div class="filter-controls">
-            Filter by Category:
-            <label><input type="radio" name="category-filter" value="All" checked> All</label>
-            <label><input type="radio" name="category-filter" value="Math"> Math</label>
-            <label><input type="radio" name="category-filter" value="Science"> Science</label>
-            <label><input type="radio" name="category-filter" value="History"> History</label>
-            <label><input type="radio" name="category-filter" value="Technology"> Technology</label>
-            </div>
-
-        <p id="set-count-info">Showing X sets.</p>
+        <div class="search-results-info">
+            <p id="results-count-info">Showing all public flashcard sets.</p>
+        </div>
         <div class="sets-grid" id="search-results-grid">
-            </div>
+        </div>
     </div>
 
     <script type="module">
@@ -75,125 +70,140 @@
             }
         });
 
-        // Function to update auth UI (similar to your dashboard/create pages)
+        window.supabase = supabase; // Make supabase globally accessible
+
+
+        // Update Auth buttons in top nav based on session on page load
         async function updateAuthUI() {
-            const { data: { session } } = await supabase.auth.getSession();
+            const { data: { session } } = await window.supabase.auth.getSession();
             const authButtonsDiv = document.querySelector('.auth-buttons');
+
             if (session) {
-                const { data: profile, error: profileError } = await supabase
+                const { data: profile, error: profileError } = await window.supabase
                     .from('profiles')
                     .select('username')
                     .eq('user_id', session.user.id)
                     .single();
+
                 const username = (profile && !profileError) ? profile.username : session.user.email;
                 authButtonsDiv.innerHTML = `
-                    <div class="user-status">
-                        <span>Welcome, ${username}!</span>
-                        <a href="#" id="logout-btn" class="logout-button btn">Logout</a>
-                    </div>`;
+                        <div class="user-status">
+                            <span>Welcome, ${username}!</span>
+                            <a href="#" id="logout-btn" class="logout-button btn">Logout</a>
+                        </div>`;
+
                 document.getElementById('logout-btn').addEventListener('click', async (e) => {
                     e.preventDefault();
-                    await supabase.auth.signOut();
+                    await window.supabase.auth.signOut();
                     window.location.href = 'login.html';
                 });
+
             } else {
                 authButtonsDiv.innerHTML = `
-                    <a href="login.html" class="btn">Login</a>
-                    <a href="signup.html" class="btn">Signup</a>`;
+                        <a href="login.html" class="btn">Login</a>
+                        <a href="signup.html" class="btn">Signup</a>`;
             }
         }
+        updateAuthUI();
 
-        // Function to perform the search and load sets
-        async function loadFlashcardSets(searchTerm = '', categoryFilter = 'All') {
-            const searchResultsGrid = document.getElementById('search-results-grid');
-            const setCountInfo = document.getElementById('set-count-info');
-            searchResultsGrid.innerHTML = '<p>Loading sets...</p>'; // Show loading message
+        let allSets = []; // store all sets globally
+        let debounceTimer;
+        // Get references to all necessary DOM elements
+        const searchInput = document.getElementById('search-input');
+        const resultsGrid = document.getElementById('search-results-grid');
+        const resultsInfo = document.getElementById('results-count-info');
+        const categoryRadioGroup = document.getElementById('category-radio-group');
 
-            let query = supabase
+
+        // Debounce search input to avoid too many requests
+        searchInput.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                performSearch();
+            }, 250);
+        });
+
+        // Event listener for category radio buttons
+        categoryRadioGroup.addEventListener('change', () => {
+            performSearch(); // Perform search immediately on category change
+        });
+
+
+        async function loadAllPublicSets() {
+            const { data: sets, error } = await supabase
                 .from('flashcard_sets')
                 .select(`
                     id,
                     title,
-                    category,
                     user_id,
-                    profiles(username),     
-                    flashcards(count)       
-                `);
-
-            if (searchTerm) {
-                query = query.ilike('title', `%${searchTerm}%`); // Case-insensitive search by title
-            }
-
-            if (categoryFilter !== 'All') {
-                query = query.eq('category', categoryFilter);
-            }
-
-            query = query.order('created_at', { ascending: false }); // Order by creation date
-
-            const { data: sets, error } = await query;
+                    category,
+                    profiles!flashcard_sets_user_id_fkey(username),
+                    flashcards(count)  `)
+                .order('created_at', { ascending: false });
 
             if (error) {
-                console.error('Error fetching flashcard sets:', error.message);
-                searchResultsGrid.innerHTML = '<p>Error loading sets. Please try again.</p>';
-                setCountInfo.textContent = 'Error loading sets.';
+                console.error('Error fetching sets:', error);
+                resultsInfo.textContent = 'Failed to load flashcard sets. Please check console for details.';
                 return;
             }
 
-            searchResultsGrid.innerHTML = ''; // Clear loading message
+            allSets = sets; // Store all fetched sets
+            performSearch(); // Initial display of all sets (or filtered if query/category is pre-filled)
+        }
 
-            if (sets.length === 0) {
-                searchResultsGrid.innerHTML = '<p>No sets found matching your criteria.</p>';
-                setCountInfo.textContent = 'Showing 0 sets.';
+
+        function performSearch() {
+            const query = searchInput.value.trim().toLowerCase();
+            const selectedCategory = document.querySelector('input[name="category-filter"]:checked').value.toLowerCase();
+
+            const filteredSets = allSets.filter(set => {
+                const matchesQuery = set.title.toLowerCase().includes(query) || (set.profiles?.username?.toLowerCase().includes(query));
+                const setCategory = set.category ? set.category.toLowerCase() : ''; // Get set category, handle null
+
+                let matchesCategory = true;
+                if (selectedCategory !== 'all') { // If a specific category is selected
+                    matchesCategory = setCategory.includes(selectedCategory); // Check if the set's category includes the selected category
+                }
+
+                return matchesQuery && matchesCategory;
+            });
+
+            displaySets(filteredSets);
+        }
+
+        function displaySets(setsToDisplay) {
+            resultsGrid.innerHTML = ''; // Clear previous results
+            resultsInfo.textContent = `Showing ${setsToDisplay.length} sets.`;
+
+            if (setsToDisplay.length === 0) {
+                resultsInfo.textContent = `No sets found matching your criteria.`;
                 return;
             }
 
-            setCountInfo.textContent = `Showing ${sets.length} sets.`;
-
-            sets.forEach(set => {
-                const termCount = set.flashcards[0] ? set.flashcards[0].count : 0;
-                const creatorUsername = set.profiles ? set.profiles.username : 'Unknown';
-
-                const setCard = document.createElement('div');
-                setCard.className = 'set-card';
-                setCard.innerHTML = `
-                    <h3 class="set-title">${set.title}</h3>
-                    <p class="set-category">${set.category || 'No Category'}</p>
-                    <p class="set-view-prompt">Click to view flashcards in this set.</p>
-                    <p class="set-terms">${termCount} Terms • By: ${creatorUsername}</p>
-                    <div class="set-actions">
-                        <button class="view-button" data-set-id="${set.id}">View</button>
-                    </div>
-                `;
-
-                // Add event listener to the View button
-                setCard.querySelector('.view-button').addEventListener('click', () => {
+            setsToDisplay.forEach(set => {
+                const card = document.createElement('div');
+                card.classList.add('set-card');
+                card.style.cursor = 'pointer';
+                card.onclick = () => {
                     window.location.href = `flashcard_set.html?set_id=${set.id}`;
-                });
-                
-                searchResultsGrid.appendChild(setCard);
+                };
+
+                const categoryDisplay = set.category ? `${set.category}` : ''; // Removed category-tag span
+                const termCount = set.flashcards[0] ? set.flashcards[0].count : 0; // GET TERM COUNT
+
+                card.innerHTML = `
+                    <h3>${set.title}</h3>
+                    <p>${categoryDisplay}</p> <p>Click to view flashcards in this set.</p> <p class="set-meta">
+                        ${termCount} Terms &nbsp;&bull;&nbsp; By: <strong>${set.profiles?.username || 'Unknown User'}</strong>
+                    </p>
+                `;
+                resultsGrid.appendChild(card);
             });
         }
 
-        // Event Listeners
-        document.addEventListener('DOMContentLoaded', () => {
-            updateAuthUI(); // Update login/signup status
-            loadFlashcardSets(); // Load all sets initially
-
-            document.getElementById('search-button').addEventListener('click', () => {
-                const searchTerm = document.getElementById('search-input').value;
-                const categoryFilter = document.querySelector('input[name="category-filter"]:checked').value;
-                loadFlashcardSets(searchTerm, categoryFilter);
-            });
-
-            document.querySelectorAll('input[name="category-filter"]').forEach(radio => {
-                radio.addEventListener('change', () => {
-                    const searchTerm = document.getElementById('search-input').value;
-                    const categoryFilter = document.querySelector('input[name="category-filter"]:checked').value;
-                    loadFlashcardSets(searchTerm, categoryFilter);
-                });
-            });
-        });
-
+        // Initial load of sets when the page loads
+        document.addEventListener('DOMContentLoaded', loadAllPublicSets);
     </script>
 </body>
+
 </html>
