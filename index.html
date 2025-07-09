@@ -8,6 +8,125 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
     <link rel="stylesheet" href="stylesheet.css" />
+    <style>
+        /* Adjust space below "Why Choose CramCraft?" section */
+        .features {
+            padding-bottom: 10px; /* Reduced from 15px to 10px */
+            margin-bottom: 0;
+        }
+
+        .feature-grid {
+            /* Keep existing styles */
+            margin-bottom: 0;
+        }
+
+        /* Adjust padding for the "Featured Sets" section itself */
+        .featured-sets {
+            background-color: #f9f9f9;
+            padding: 15px 0; /* Reduced vertical padding from 20px to 15px */
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .featured-sets h2 {
+            font-size: 2.5em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .featured-sets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .featured-set-item {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .featured-set-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .featured-set-item .card-link {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .featured-set-item .card-image-wrapper {
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .featured-set-item .card-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .featured-set-item .card-title-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
+            color: white;
+            padding: 15px 10px 10px;
+            text-align: left;
+        }
+
+        .featured-set-item .card-title-overlay h3 {
+            margin: 0;
+            font-size: 1.5em;
+        }
+
+        .featured-set-item .card-content {
+            padding: 20px;
+            text-align: left;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .featured-set-item .card-content p {
+            font-size: 0.95em;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .featured-set-item .btn {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+            align-self: flex-start;
+        }
+
+        .featured-set-item .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 
 <body class="index-page">
@@ -88,6 +207,53 @@
             </div>
         </section>
 
+        <section class="featured-sets">
+            <h2>Featured Sets</h2>
+            <div class="featured-sets-grid">
+                <div class="featured-set-item">
+                    <a href="tech.html" class="card-link">
+                        <div class="card-image-wrapper">
+                            <img src="images/tech.jpg" alt="Technology Flashcards">
+                            <div class="card-title-overlay">
+                                <h3>Technology</h3>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <p>Explore comprehensive sets on IT Fundamentals, Networking, and Operating Systems.</p>
+                            <span class="btn">View Technology Sets</span>
+                        </div>
+                    </a>
+                </div>
+                <div class="featured-set-item">
+                    <a href="history.html" class="card-link">
+                        <div class="card-image-wrapper">
+                            <img src="images/ushistory.jpg" alt="History Flashcards">
+                            <div class="card-title-overlay">
+                                <h3>History</h3>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <p>Dive into U.S. History, Economics, and Government with dedicated flashcards.</p>
+                            <span class="btn">View History Sets</span>
+                        </div>
+                    </a>
+                </div>
+                <div class="featured-set-item">
+                    <a href="science.html" class="card-link">
+                        <div class="card-image-wrapper">
+                            <img src="images/science.jpg" alt="Science Flashcards">
+                            <div class="card-title-overlay">
+                                <h3>Science</h3>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <p>Master Biology concepts from foundational principles to cellular functions.</p>
+                            <span class="btn">View Science Sets</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
         <section class="about-preview">
             <h2>About CramCraft</h2>
             <p>CramCraft is designed to help students and professionals alike to study smarter, not harder. Learn more
@@ -121,7 +287,7 @@
 
         // Update Auth buttons in top nav based on session on page load
         async function updateAuthUI() {
-            const {data: {session}} = await window.supabase.auth.getSession();
+            const {data: {session} = {}} = await window.supabase.auth.getSession();
             const authButtonsDiv = document.querySelector('.auth-buttons');
 
             if (session) {
@@ -146,8 +312,8 @@
 
             } else {
                 authButtonsDiv.innerHTML = `
-                        <a href="login.html" class="btn">Login</a>
-                        <a href="signup.html" class="btn">Signup</a>`;
+                            <a href="login.html" class="btn">Login</a>
+                            <a href="signup.html" class="btn">Signup</a>`;
             }
         }
 
