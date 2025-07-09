@@ -233,7 +233,8 @@
 
             // Apply category filter if not 'all'
             if (selectedCategory !== 'all') {
-                baseQuery = baseQuery.eq('category', selectedCategory);
+                // Changed to ilike for case-insensitive category matching
+                baseQuery = baseQuery.ilike('category', selectedCategory);
             }
 
             // --- STEP 1: Get the total count of filtered sets (without fetching the data yet) ---
