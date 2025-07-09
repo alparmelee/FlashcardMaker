@@ -120,7 +120,7 @@
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImexpiI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
         const supabase = createClient(supabaseUrl, supabaseKey, {
             auth: {
                 storage: localStorage,
@@ -222,6 +222,8 @@
 
             resultsGrid.innerHTML = '<p>Loading sets...</p>'; // Show loading message
             resultsInfo.textContent = 'Searching...';
+            console.log(`Performing search: Query="${query}", Category="${selectedCategory}", CurrentPage=${currentPage}`);
+
 
             // Start with a base query for flashcard_sets
             let baseQuery = supabase
@@ -234,7 +236,7 @@
 
             // Apply category filter if not 'all'
             if (selectedCategory !== 'all') {
-                baseQuery = baseQuery.ilike('category', selectedCategory); // Keep ilike for case-insensitivity
+                baseQuery = baseQuery.ilike('category', selectedCategory);
             }
 
             // --- STEP 1: Get the total count of filtered sets (without fetching the data yet) ---
@@ -244,23 +246,28 @@
                 console.error('Error fetching total sets count:', countError);
                 resultsInfo.textContent = 'Failed to load sets count.';
                 resultsGrid.innerHTML = '<p>Error loading sets.</p>';
+                // Ensure pagination is hidden on error
+                paginationControlsDiv.style.display = 'none';
                 return;
             }
 
             totalFilteredSetsCount = totalCountResult;
             totalPages = Math.ceil(totalFilteredSetsCount / ITEMS_PER_PAGE);
 
+            console.log(`Total filtered sets count: ${totalFilteredSetsCount}, Total pages: ${totalPages}`);
+
             // Ensure currentPage doesn't exceed new totalPages (e.g., if filter drastically reduces count)
-            if (currentPage >= totalPages && totalPages > 0) {
+            // Or if no results, ensure currentPage is 0 to avoid negative indexing
+            if (totalPages === 0) {
+                currentPage = 0;
+            } else if (currentPage >= totalPages) {
                 currentPage = totalPages - 1;
-            } else if (totalPages === 0) {
-                currentPage = 0; // Reset if no pages
             }
 
 
             // --- STEP 2: Fetch the paginated data with flashcards(count) for display ---
-            // Only apply range if 'All' category is selected AND no search term is active
-            const applyPagination = selectedCategory === 'all' && query === ''; // Pagination only for "All" and no search term
+            // Pagination only for "All" category AND when no search term is active
+            const applyPagination = selectedCategory === 'all' && query === '';
 
             let finalQuery = baseQuery.select(`
                 id,
@@ -276,7 +283,11 @@
                 const from = currentPage * ITEMS_PER_PAGE;
                 const to = from + ITEMS_PER_PAGE - 1;
                 finalQuery = finalQuery.range(from, to);
+                console.log(`Applying pagination: from=${from}, to=${to}`);
+            } else {
+                console.log('Pagination is NOT applied (filtered category or search query active).');
             }
+
 
             const { data: sets, error: dataError } = await finalQuery; // Use finalQuery
 
@@ -284,39 +295,34 @@
                 console.error('Error fetching sets data:', dataError);
                 resultsInfo.textContent = 'Failed to load flashcard sets. Please check console for details.';
                 resultsGrid.innerHTML = '<p>Error loading sets.</p>';
+                // Ensure pagination is hidden on error
+                paginationControlsDiv.style.display = 'none';
                 return;
             }
 
-            displaySets(sets);
-            updatePaginationControls(applyPagination); // Pass applyPagination flag
+            console.log('Fetched sets data:', sets);
+
+            displaySets(sets, applyPagination); // Pass applyPagination flag to displaySets
+            // updatePaginationControls(applyPagination); // Removed: Called within displaySets now for better flow
         }
 
-        function displaySets(setsToDisplay) {
+        function displaySets(setsToDisplay, showPaginationControls) { // Added showPaginationControls parameter
             resultsGrid.innerHTML = ''; // Clear previous results
             // Adjust results info text based on whether pagination is active or not
             const query = searchInput.value.trim().toLowerCase();
             const selectedCategory = document.querySelector('input[name="category-filter"]:checked').value.toLowerCase();
-            const paginationActive = selectedCategory === 'all' && query === '';
 
-            if (setsToDisplay.length === 0 && totalFilteredSetsCount === 0) {
-                resultsInfo.textContent = `No sets found matching your criteria.`;
-                paginationControlsDiv.style.display = 'none'; // Hide pagination if no sets
-                return;
-            } else if (setsToDisplay.length === 0) {
-                // This case happens if you filter to a page that has no data,
-                // but there are sets on other pages.
-                resultsInfo.textContent = `No sets found on this page matching your criteria.`;
-                paginationControlsDiv.style.display = 'none'; // Hide pagination if no sets on current page
-                return;
-            }
-
-            if (paginationActive) {
+            // Set result info text
+            if (setsToDisplay.length === 0) {
+                 resultsInfo.textContent = `No sets found matching your criteria.`;
+            } else if (showPaginationControls) { // If pagination is active
                 resultsInfo.textContent = `Showing ${setsToDisplay.length} of ${totalFilteredSetsCount} sets. (Page ${currentPage + 1} of ${totalPages})`;
-            } else {
+            } else { // If filters/search are active (pagination not shown)
                  resultsInfo.textContent = `Showing ${setsToDisplay.length} sets.`;
             }
 
 
+            // Render sets
             setsToDisplay.forEach(set => {
                 const card = document.createElement('div');
                 card.classList.add('set-card');
@@ -338,6 +344,9 @@
                 `;
                 resultsGrid.appendChild(card);
             });
+
+            // Call updatePaginationControls here, explicitly based on the flag
+            updatePaginationControls(showPaginationControls); // Pass the flag directly
         }
 
         // NEW: Function to update pagination buttons and page numbers
@@ -349,6 +358,7 @@
 
                 pageNumbersSpan.innerHTML = ''; // Clear previous page numbers
 
+                // Display page numbers
                 for (let i = 0; i < totalPages; i++) {
                     const pageSpan = document.createElement('span');
                     pageSpan.classList.add('page-number-link');
