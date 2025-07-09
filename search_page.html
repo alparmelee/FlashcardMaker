@@ -135,10 +135,10 @@
 
         // Update Auth buttons in top nav based on session on page load
         async function updateAuthUI() {
-            const { data: { session } } = await window.supabase.auth.getSession();
+            const { data: { session } = {} } = await window.supabase.auth.getSession(); // Destructure with default empty object
             const authButtonsDiv = document.querySelector('.auth-buttons');
 
-            if (session) {
+            if (session && session.user) { // Check for session and user existence
                 const { data: profile, error: profileError } = await window.supabase
                     .from('profiles')
                     .select('username')
@@ -160,8 +160,8 @@
 
             } else {
                 authButtonsDiv.innerHTML = `
-                        <a href="login.html" class="btn">Login</a>
-                        <a href="signup.html" class="btn">Signup</a>`;
+                        <a href="login.html" class="btn signup">Login</a>
+                        <a href="signup.html" class="btn signup">Signup</a>`;
             }
         }
         updateAuthUI();
