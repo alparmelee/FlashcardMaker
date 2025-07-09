@@ -167,7 +167,7 @@
         updateAuthUI();
 
         // --- PAGINATION STATE VARIABLES ---
-        const ITEMS_PER_PAGE = 9; // Number of flashcard sets to show per page
+        const ITEMS_PER_PAGE = 18; // Changed to 18 sets per page
         let currentPage = 0; // Current page index (0-based)
         let totalFilteredSetsCount = 0; // Total count of sets after search/filter, before pagination
         let totalPages = 0; // Total number of pages
@@ -182,6 +182,7 @@
         const prevPageBtn = document.getElementById('prev-page-btn'); // NEW
         const nextPageBtn = document.getElementById('next-page-btn'); // NEW
         const pageNumbersSpan = document.getElementById('page-numbers'); // NEW
+        const paginationControlsDiv = document.getElementById('pagination-controls'); // Get the pagination container
 
 
         // Debounce search input to avoid too many requests
@@ -233,8 +234,7 @@
 
             // Apply category filter if not 'all'
             if (selectedCategory !== 'all') {
-                // Changed to ilike for case-insensitive category matching
-                baseQuery = baseQuery.ilike('category', selectedCategory);
+                baseQuery = baseQuery.ilike('category', selectedCategory); // Keep ilike for case-insensitivity
             }
 
             // --- STEP 1: Get the total count of filtered sets (without fetching the data yet) ---
@@ -259,20 +259,26 @@
 
 
             // --- STEP 2: Fetch the paginated data with flashcards(count) for display ---
-            const from = currentPage * ITEMS_PER_PAGE;
-            const to = from + ITEMS_PER_PAGE - 1;
+            // Only apply range if 'All' category is selected AND no search term is active
+            const applyPagination = selectedCategory === 'all' && query === ''; // Pagination only for "All" and no search term
 
-            const { data: sets, error: dataError } = await baseQuery
-                .select(`
-                    id,
-                    title,
-                    user_id,
-                    category,
-                    profiles!flashcard_sets_user_id_fkey(username),
-                    flashcards(count)
-                `)
-                .order('created_at', { ascending: false })
-                .range(from, to); // Apply pagination range
+            let finalQuery = baseQuery.select(`
+                id,
+                title,
+                user_id,
+                category,
+                profiles!flashcard_sets_user_id_fkey(username),
+                flashcards(count)
+            `)
+            .order('created_at', { ascending: false });
+
+            if (applyPagination) {
+                const from = currentPage * ITEMS_PER_PAGE;
+                const to = from + ITEMS_PER_PAGE - 1;
+                finalQuery = finalQuery.range(from, to);
+            }
+
+            const { data: sets, error: dataError } = await finalQuery; // Use finalQuery
 
             if (dataError) {
                 console.error('Error fetching sets data:', dataError);
@@ -282,22 +288,34 @@
             }
 
             displaySets(sets);
-            updatePaginationControls(); // Update button states
+            updatePaginationControls(applyPagination); // Pass applyPagination flag
         }
 
         function displaySets(setsToDisplay) {
             resultsGrid.innerHTML = ''; // Clear previous results
-            resultsInfo.textContent = `Showing ${setsToDisplay.length} of ${totalFilteredSetsCount} sets. (Page ${currentPage + 1} of ${totalPages})`;
+            // Adjust results info text based on whether pagination is active or not
+            const query = searchInput.value.trim().toLowerCase();
+            const selectedCategory = document.querySelector('input[name="category-filter"]:checked').value.toLowerCase();
+            const paginationActive = selectedCategory === 'all' && query === '';
 
             if (setsToDisplay.length === 0 && totalFilteredSetsCount === 0) {
                 resultsInfo.textContent = `No sets found matching your criteria.`;
+                paginationControlsDiv.style.display = 'none'; // Hide pagination if no sets
                 return;
             } else if (setsToDisplay.length === 0) {
                 // This case happens if you filter to a page that has no data,
                 // but there are sets on other pages.
                 resultsInfo.textContent = `No sets found on this page matching your criteria.`;
+                paginationControlsDiv.style.display = 'none'; // Hide pagination if no sets on current page
                 return;
             }
+
+            if (paginationActive) {
+                resultsInfo.textContent = `Showing ${setsToDisplay.length} of ${totalFilteredSetsCount} sets. (Page ${currentPage + 1} of ${totalPages})`;
+            } else {
+                 resultsInfo.textContent = `Showing ${setsToDisplay.length} sets.`;
+            }
+
 
             setsToDisplay.forEach(set => {
                 const card = document.createElement('div');
@@ -323,15 +341,14 @@
         }
 
         // NEW: Function to update pagination buttons and page numbers
-        function updatePaginationControls() {
-            prevPageBtn.disabled = currentPage === 0;
-            nextPageBtn.disabled = currentPage >= totalPages - 1 || totalPages === 0; // Disable next if on last page or no pages
+        function updatePaginationControls(showControls) {
+            if (showControls && totalPages > 1) { // Only show controls if enabled and more than 1 page
+                paginationControlsDiv.style.display = 'flex'; // Show the pagination container
+                prevPageBtn.disabled = currentPage === 0;
+                nextPageBtn.disabled = currentPage >= totalPages - 1;
 
-            pageNumbersSpan.innerHTML = ''; // Clear previous page numbers
+                pageNumbersSpan.innerHTML = ''; // Clear previous page numbers
 
-            // Display page numbers
-            if (totalPages > 0) {
-                // Add "Previous" button functionality if needed (already handled by prevPageBtn)
                 for (let i = 0; i < totalPages; i++) {
                     const pageSpan = document.createElement('span');
                     pageSpan.classList.add('page-number-link');
@@ -347,9 +364,8 @@
                     });
                     pageNumbersSpan.appendChild(pageSpan);
                 }
-                // Add "Next" button functionality if needed (already handled by nextPageBtn)
             } else {
-                 pageNumbersSpan.textContent = 'No Pages';
+                paginationControlsDiv.style.display = 'none'; // Hide the pagination container
             }
         }
 
