@@ -8,6 +8,43 @@
     <title>Search Flashcards - CramCraft</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+    <style>
+        /* Add some basic pagination styling to your stylesheet.css or here */
+        .pagination-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .pagination-controls button {
+            padding: 8px 15px;
+            border: 1px solid #007bff;
+            border-radius: 5px;
+            background-color: #f0f8ff;
+            color: #007bff;
+            cursor: pointer;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .pagination-controls button:hover:not(:disabled) {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .pagination-controls button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #e9ecef;
+            color: #6c757d;
+        }
+
+        .pagination-controls .page-number {
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
 </head>
 
 <body class="search-page">
@@ -53,6 +90,11 @@
             <p id="results-count-info">Showing all public flashcard sets.</p>
         </div>
         <div class="sets-grid" id="search-results-grid">
+        </div>
+        <div class="pagination-controls" id="pagination-controls">
+            <button id="prev-page-btn" disabled>Previous</button>
+            <span id="page-numbers"></span>
+            <button id="next-page-btn" disabled>Next</button>
         </div>
     </div>
 
@@ -106,31 +148,62 @@
         }
         updateAuthUI();
 
-        let allSets = []; // store all sets globally
-        let debounceTimer;
+        // --- PAGINATION STATE VARIABLES ---
+        const ITEMS_PER_PAGE = 9; // Number of flashcard sets to show per page
+        let currentPage = 0; // Current page index (0-based)
+        let totalFilteredSetsCount = 0; // Total count of sets after search/filter, before pagination
+        let totalPages = 0; // Total number of pages
+
         // Get references to all necessary DOM elements
         const searchInput = document.getElementById('search-input');
         const resultsGrid = document.getElementById('search-results-grid');
         const resultsInfo = document.getElementById('results-count-info');
         const categoryRadioGroup = document.getElementById('category-radio-group');
 
+        const prevPageBtn = document.getElementById('prev-page-btn'); // NEW
+        const nextPageBtn = document.getElementById('next-page-btn'); // NEW
+        const pageNumbersSpan = document.getElementById('page-numbers'); // NEW
+
 
         // Debounce search input to avoid too many requests
         searchInput.addEventListener('input', () => {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
+                currentPage = 0; // Reset to first page on new search
                 performSearch();
             }, 250);
         });
 
         // Event listener for category radio buttons
         categoryRadioGroup.addEventListener('change', () => {
+            currentPage = 0; // Reset to first page on new filter
             performSearch(); // Perform search immediately on category change
         });
 
+        // NEW: Pagination button listeners
+        prevPageBtn.addEventListener('click', () => {
+            if (currentPage > 0) {
+                currentPage--;
+                performSearch();
+            }
+        });
 
-        async function loadAllPublicSets() {
-            const { data: sets, error } = await supabase
+        nextPageBtn.addEventListener('click', () => {
+            if (currentPage < totalPages - 1) {
+                currentPage++;
+                performSearch();
+            }
+        });
+
+
+        async function performSearch() {
+            const query = searchInput.value.trim().toLowerCase();
+            const selectedCategory = document.querySelector('input[name="category-filter"]:checked').value.toLowerCase();
+
+            resultsGrid.innerHTML = '<p>Loading sets...</p>'; // Show loading message
+            resultsInfo.textContent = 'Searching...';
+
+            let supabaseQuery = supabase
                 .from('flashcard_sets')
                 .select(`
                     id,
@@ -138,45 +211,60 @@
                     user_id,
                     category,
                     profiles!flashcard_sets_user_id_fkey(username),
-                    flashcards(count)  `)
-                .order('created_at', { ascending: false });
+                    flashcards(count)
+                `, { count: 'exact' }); // IMPORTANT: Request exact count for pagination
 
-            if (error) {
-                console.error('Error fetching sets:', error);
-                resultsInfo.textContent = 'Failed to load flashcard sets. Please check console for details.';
+            if (query) {
+                supabaseQuery = supabaseQuery.ilike('title', `%${query}%`);
+            }
+
+            if (selectedCategory !== 'all') {
+                supabaseQuery = supabaseQuery.eq('category', selectedCategory);
+            }
+
+            // --- FETCH TOTAL COUNT FIRST ---
+            const { count, error: countError } = await supabaseQuery;
+
+            if (countError) {
+                console.error('Error fetching total sets count:', countError);
+                resultsInfo.textContent = 'Failed to load sets count.';
+                resultsGrid.innerHTML = '<p>Error loading sets.</p>';
                 return;
             }
 
-            allSets = sets; // Store all fetched sets
-            performSearch(); // Initial display of all sets (or filtered if query/category is pre-filled)
-        }
+            totalFilteredSetsCount = count;
+            totalPages = Math.ceil(totalFilteredSetsCount / ITEMS_PER_PAGE);
 
+            // --- THEN FETCH PAGINATED DATA ---
+            const from = currentPage * ITEMS_PER_PAGE;
+            const to = from + ITEMS_PER_PAGE - 1;
 
-        function performSearch() {
-            const query = searchInput.value.trim().toLowerCase();
-            const selectedCategory = document.querySelector('input[name="category-filter"]:checked').value.toLowerCase();
+            const { data: sets, error: dataError } = await supabaseQuery
+                .order('created_at', { ascending: false })
+                .range(from, to); // Apply pagination range
 
-            const filteredSets = allSets.filter(set => {
-                const matchesQuery = set.title.toLowerCase().includes(query) || (set.profiles?.username?.toLowerCase().includes(query));
-                const setCategory = set.category ? set.category.toLowerCase() : ''; // Get set category, handle null
+            if (dataError) {
+                console.error('Error fetching sets:', dataError);
+                resultsInfo.textContent = 'Failed to load flashcard sets. Please check console for details.';
+                resultsGrid.innerHTML = '<p>Error loading sets.</p>';
+                return;
+            }
 
-                let matchesCategory = true;
-                if (selectedCategory !== 'all') { // If a specific category is selected
-                    matchesCategory = setCategory.includes(selectedCategory); // Check if the set's category includes the selected category
-                }
-
-                return matchesQuery && matchesCategory;
-            });
-
-            displaySets(filteredSets);
+            displaySets(sets);
+            updatePaginationControls(); // NEW: Update button states
         }
 
         function displaySets(setsToDisplay) {
             resultsGrid.innerHTML = ''; // Clear previous results
-            resultsInfo.textContent = `Showing ${setsToDisplay.length} sets.`;
+            resultsInfo.textContent = `Showing ${setsToDisplay.length} of ${totalFilteredSetsCount} sets. (Page ${currentPage + 1} of ${totalPages})`;
 
-            if (setsToDisplay.length === 0) {
+            if (setsToDisplay.length === 0 && totalFilteredSetsCount === 0) {
                 resultsInfo.textContent = `No sets found matching your criteria.`;
+                return;
+            } else if (setsToDisplay.length === 0) {
+                // This case happens if you filter to a page that has no data,
+                // but there are sets on other pages.
+                resultsInfo.textContent = `No sets found on this page matching your criteria.`;
                 return;
             }
 
@@ -188,21 +276,52 @@
                     window.location.href = `flashcard_set.html?set_id=${set.id}`;
                 };
 
-                const categoryDisplay = set.category ? `${set.category}` : ''; // Removed category-tag span
-                const termCount = set.flashcards[0] ? set.flashcards[0].count : 0; // GET TERM COUNT
+                const categoryDisplay = set.category ? `${set.category}` : '';
+                const termCount = set.flashcards[0] ? set.flashcards[0].count : 0;
 
                 card.innerHTML = `
                     <h3>${set.title}</h3>
-                    <p>${categoryDisplay}</p> <p>Click to view flashcards in this set.</p> <p class="set-meta">
-                        ${termCount} Terms &nbsp;&bull;&nbsp; By: <strong>${set.profiles?.username || 'Unknown User'}</strong>
+                    <p>${categoryDisplay}</p>
+                    <p>Click to view flashcards in this set.</p> <p class="set-meta">
+                        ${termCount} Terms &nbsp;&bull;&nbsp;
+                        By: <strong>${set.profiles?.username || 'Unknown User'}</strong>
                     </p>
                 `;
                 resultsGrid.appendChild(card);
             });
         }
 
+        // NEW: Function to update pagination buttons and page numbers
+        function updatePaginationControls() {
+            prevPageBtn.disabled = currentPage === 0;
+            nextPageBtn.disabled = currentPage >= totalPages - 1 || totalPages === 0; // Disable next if on last page or no pages
+
+            pageNumbersSpan.innerHTML = ''; // Clear previous page numbers
+
+            // Display page numbers
+            if (totalPages > 0) {
+                for (let i = 0; i < totalPages; i++) {
+                    const pageSpan = document.createElement('span');
+                    pageSpan.classList.add('page-number-link');
+                    if (i === currentPage) {
+                        pageSpan.classList.add('active'); // Add an 'active' class for styling current page
+                        pageSpan.textContent = `[${i + 1}]`; // Highlight current page
+                    } else {
+                        pageSpan.textContent = `${i + 1}`;
+                    }
+                    pageSpan.addEventListener('click', () => {
+                        currentPage = i;
+                        performSearch();
+                    });
+                    pageNumbersSpan.appendChild(pageSpan);
+                }
+            } else {
+                 pageNumbersSpan.textContent = 'No Pages';
+            }
+        }
+
         // Initial load of sets when the page loads
-        document.addEventListener('DOMContentLoaded', loadAllPublicSets);
+        document.addEventListener('DOMContentLoaded', performSearch); // Call performSearch directly now
     </script>
 </body>
 
