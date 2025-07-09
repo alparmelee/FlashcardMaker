@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="stylesheet.css" />
+    <title>History Flashcards - CramCraft</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Specific styles for history_directory.html */
+        body.history-backdrop {
+            background-image: url('images/ushistory.jpg');
+            /* Assuming ushistory.jpg is in an 'images' folder */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #333;
+        }
+
+        .content-wrapper.history-directory-content {
+            background-color: rgba(255, 255, 255, 0.9);
+            /* Slightly transparent white background for readability */
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            max-width: 1000px;
+            margin: 30px auto;
+        }
+
+        .history-category-section {
+            margin-bottom: 40px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+
+        .history-category-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .history-category-section h2 {
+            font-size: 2em;
+            color: #8B4513;
+            /* A historical/earthy brown color */
+            margin-bottom: 20px;
+            border-bottom: 2px solid #A0522D;
+            /* A darker brown for the border */
+            padding-bottom: 10px;
+        }
+
+        .history-sets-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        /* The link itself becomes the card */
+        .history-set-card {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-decoration: none;
+            /* Remove underline */
+            color: inherit;
+            /* Inherit text color */
+        }
+
+        .history-set-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .history-set-card h3 {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .history-set-card p {
+            font-size: 1em;
+            color: #666;
+            margin-bottom: 0;
+        }
+
+        /* Ensure all links inside history-set-card do not have underlines */
+        .history-set-card a {
+            text-decoration: none !important;
+            color: inherit !important;
+        }
+
+        /* Global link style override (make sure this is specific enough or in your main stylesheet.css) */
+        a,
+        a:visited,
+        a:active {
+            text-decoration: none !important;
+            color: inherit;
+        }
+    </style>
+</head>
+
+<body class="history-backdrop">
+    <nav class="top-nav">
+        <div class="top-nav-inner">
+            <div class="nav-logo"><a href="index.html">CramCraft</a></div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="create.html">Create</a></li>
+                <li><a href="user_dashboard.html">Dashboard</a></li>
+                <li><a href="search_page.html">Search</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+            <div class="auth-buttons"></div>
+        </div>
+    </nav>
+
+    <div class="content-wrapper history-directory-content">
+        <h1>History Flashcard Directory</h1>
+        <p>Explore flashcard sets categorized under History.</p>
+
+        <div class="history-category-section">
+            <h2>US History</h2>
+            <div class="history-sets-grid">
+                <a href="https://alparmelee.github.io/FlashcardMaker/flashcard_set.html?set_id=07d8e4c6-649a-476a-86bf-3a640094bded"
+                    class="history-set-card">
+                    <h3>US History: Chapter 1 (1492-1775)</h3>
+                    <p>Colonial America and foundation.</p>
+                </a>
+                <a href="https://alparmelee.github.io/FlashcardMaker/flashcard_set.html?set_id=10ea66de-55ae-4eb8-a723-552368f86bba"
+                    class="history-set-card">
+                    <h3>US History: Chapter 2 (1776-1800)</h3>
+                    <p>Revolutionary War and early republic.</p>
+                </a>
+                <a href="https://alparmelee.github.io/FlashcardMaker/flashcard_set.html?set_id=1f04d310-74c4-4882-9d66-f7f5b9fe0770"
+                    class="history-set-card">
+                    <h3>US History: Chapter 3 (1800-1860)</h3>
+                    <p>Early 19th century and westward expansion.</p>
+                </a>
+                <a href="https://alparmelee.github.io/FlashcardMaker/flashcard_set.html?set_id=4bdd8bf7-f354-49db-af4f-0176ea2c5cb3"
+                    class="history-set-card">
+                    <h3>US History: Chapter 4 (1860-1865)</h3>
+                    <p>The Civil War and its aftermath.</p>
+                </a>
+                <a href="https://alparmelee.github.io/FlashcardMaker/flashcard_set.html?set_id=bb0896b2-4a0d-4767-b05a-72d732e2ee3d"
+                    class="history-set-card">
+                    <h3>US History: Chapter 5 (1865-1900)</h3>
+                    <p>Reconstruction and industrialization.</p>
+                </a>
+                <a href="https://alparmelee.github.io/FlashcardMaker/flashcard_set.html?set_id=017f2171-41c6-43ab-a742-723721def5fb"
+                    class="history-set-card">
+                    <h3>US History: Chapter 6 (1900-1919)</h3>
+                    <p>Progressive Era and World War I.</p>
+                </a>
+                <a href="https://alparmelee.github.io/FlashcardMaker/flashcard_set.html?set_id=22f159dd-4966-4eb3-96d5-83a16308b04c"
+                    class="history-set-card">
+                    <h3>US History: Chapter 7 (1920-1945)</h3>
+                    <p>The Roaring Twenties, Great Depression, and WWII.</p>
+                </a>
+                <a href="https://alparmelee.github.io/FlashcardMaker/flashcard_set.html?set_id=5354cd37-9d26-4a50-b57c-15015f35b9f3"
+                    class="history-set-card">
+                    <h3>US History: Chapter 8 (1945-1991)</h3>
+                    <p>Post-WWII America and Cold War era.</p>
+                </a>
+                <a href="https://alparmelee.github.io/FlashcardMaker/flashcard_set.html?set_id=7cd16a01-adb4-4689-8e88-437fd5a0a3b1"
+                    class="history-set-card">
+                    <h3>US History: Chapter 9 (1991-2008)</h3>
+                    <p>Recent US history and global changes.</p>
+                </a>
+                <a href="https://alparmelee.github.io/FlashcardMaker/flashcard_set.html?set_id=2566803f-8102-4875-9a09-ae559fa55545"
+                    class="history-set-card">
+                    <h3>US History: Chapter 10 (2008-Today)</h3>
+                    <p>Contemporary US history.</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="history-category-section">
+            <h2>Economics</h2>
+            <div class="history-sets-grid">
+            <a href="https://alparmelee.github.io/FlashcardMaker/flashcard_set.html?set_id=8c24f93b-bb65-4c1e-b67f-cd6e5ecfe704"
+                class="history-set-card">
+                <h3>Economics: Chapter 1</h3>
+                <p>Macroeconomic policies.</p>
+            </a>
+            <a href="https://alparmelee.github.io/FlashcardMaker/flashcard_set.html?set_id=8b1fea39-3614-4fdc-aea0-95ce2643cc5d"
+                class="history-set-card">
+                <h3>Economics: Chapter 2</h3>
+                <p>Aggregate demand and supply.</p>
+            </a>
+            <a href="https://alparmelee.github.io/FlashcardMaker/flashcard_set.html?set_id=3204664d-4188-4608-b30f-3e222f567012"
+                class="history-set-card">
+                <h3>Economics: Chapter 3</h3>
+                <p>Market equilibrium and efficiency.</p>
+            </a>
+            <a href="https://alparmelee.github.io/FlashcardMaker/flashcard_set.html?set_id=8ed77afa-0669-4acb-9971-5ac93659ffeb"
+                class="history-set-card">
+                <h3>Economics: Chapter 4</h3>
+                <p>Supply, demand, and elasticity.</p>
+            </a>
+            <a href="https://alparmelee.github.io/FlashcardMaker/flashcard_set.html?set_id=9dcbad8a-cd34-47d5-9e01-d5a0d5ebd5e0"
+                class="history-set-card">
+                <h3>Economics: Chapter 5</h3>
+                <p>Introduction to economic principles.</p>
+            </a>
+            </div>
+        </div>
+
+        <div class="history-category-section">
+            <h2>Government & Civics</h2>
+            <div class="history-sets-grid">
+                <a href="https://alparmelee.github.io/FlashcardMaker/flashcard_set.html?set_id=be7ffb28-7ffc-4286-b401-a31a8646beda"
+                    class="history-set-card">
+                    <h3>Government</h3>
+                    <p>Foundations of American government.</p>
+                </a>
+                <a href="https://alparmelee.github.io/FlashcardMaker/flashcard_set.html?set_id=e6b1254c-95be-4431-8234-c9d09babb26b"
+                    class="history-set-card">
+                    <h3>Presidents</h3>
+                    <p>Key facts about U.S. Presidents.</p>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
+        const supabase = createClient(supabaseUrl, supabaseKey, {
+            auth: {
+                storage: localStorage,
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: false
+            }
+        });
+
+        // Function to update Auth buttons in top nav based on session
+        async function updateAuthUI() {
+            const { data: { session } = {} } = await supabase.auth.getSession();
+            const authButtonsDiv = document.querySelector('.auth-buttons');
+
+            if (session && session.user) {
+                const { data: profile, error: profileError } = await supabase
+                    .from('profiles')
+                    .select('username')
+                    .eq('user_id', session.user.id)
+                    .single();
+
+                const username = (profile && !profileError) ? profile.username : session.user.email;
+                authButtonsDiv.innerHTML = `
+                    <div class="user-status">
+                        <span>Welcome, ${username}!</span>
+                        <a href="#" id="logout-btn" class="logout-button btn">Logout</a>
+                    </div>`;
+
+                document.getElementById('logout-btn').addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await supabase.auth.signOut();
+                    window.location.href = 'login.html';
+                });
+            } else {
+                authButtonsDiv.innerHTML = `
+                    <a href="login.html" class="btn signup">Login</a>
+                    <a href="signup.html" class="btn signup">Signup</a>`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', updateAuthUI);
+    </script>
+</body>
+
+</html>

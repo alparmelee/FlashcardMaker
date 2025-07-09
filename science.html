@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="stylesheet.css" />
+    <title>Science Flashcards - CramCraft</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Specific styles for science_directory.html */
+        body.science-backdrop {
+            background-image: url('images/science.jpg'); /* Assuming science.jpg is in an 'images' folder */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #333;
+        }
+
+        .content-wrapper.science-directory-content {
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white background for readability */
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            max-width: 1000px;
+            margin: 30px auto;
+        }
+
+        .science-category-section {
+            margin-bottom: 40px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+
+        .science-category-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .science-category-section h2 {
+            font-size: 2em;
+            color: #008000; /* A green color for Science */
+            margin-bottom: 20px;
+            border-bottom: 2px solid #32CD32; /* A lighter green for the border */
+            padding-bottom: 10px;
+        }
+
+        .science-sets-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        /* The link itself becomes the card */
+        .science-set-card {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-decoration: none; /* Remove underline */
+            color: inherit; /* Inherit text color */
+        }
+
+        .science-set-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .science-set-card h3 {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .science-set-card p {
+            font-size: 1em;
+            color: #666;
+            margin-bottom: 0;
+        }
+
+        /* Ensure all links inside science-set-card do not have underlines */
+        .science-set-card a {
+            text-decoration: none !important;
+            color: inherit !important;
+        }
+
+        /* Global link style override (make sure this is specific enough or in your main stylesheet.css) */
+        a, a:visited, a:active {
+            text-decoration: none !important;
+            color: inherit;
+        }
+    </style>
+</head>
+
+<body class="science-backdrop">
+    <nav class="top-nav">
+        <div class="top-nav-inner">
+            <div class="nav-logo"><a href="index.html">CramCraft</a></div>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="create.html">Create</a></li>
+                <li><a href="user_dashboard.html">Dashboard</a></li>
+                <li><a href="search_page.html">Search</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+            <div class="auth-buttons"></div>
+        </div>
+    </nav>
+
+    <div class="content-wrapper science-directory-content">
+        <h1>Science Flashcard Directory</h1>
+        <p>Explore flashcard sets categorized under Science.</p>
+
+        <div class="science-category-section">
+            <h2>Biology</h2>
+            <div class="science-sets-grid">
+                <a href="https://alparmelee.github.io/FlashcardMaker/flashcard_set.html?set_id=7491131f-80d9-4282-bfc9-1c070705826c"
+                    class="science-set-card">
+                    <h3>Biology Chapter 1: Biological Concepts</h3>
+                    <p>Introduction to the fundamental concepts of biology.</p>
+                </a>
+                <a href="https://alparmelee.github.io/FlashcardMaker/flashcard_set.html?set_id=45f389e7-d786-43d1-99a8-fc7881e048ca"
+                    class="science-set-card">
+                    <h3>Biology Chapter 2: Scientific Method</h3>
+                    <p>Understanding the process of scientific inquiry.</p>
+                </a>
+                <a href="https://alparmelee.github.io/FlashcardMaker/flashcard_set.html?set_id=15578544-e4eb-4454-911e-a40f186ef637"
+                    class="science-set-card">
+                    <h3>Biology Chapter 3: Atomic, Chemical, and Molecular Foundations</h3>
+                    <p>Basic chemistry and molecular structures in biology.</p>
+                </a>
+                <a href="https://alparmelee.github.io/FlashcardMaker/flashcard_set.html?set_id=6ac504f9-8693-4957-bc00-19df3fe8fdaf"
+                    class="science-set-card">
+                    <h3>Biology Chapter 4: Cellular Functions and Energy</h3>
+                    <p>Cellular processes, metabolism, and energy transfer.</p>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
+        const supabase = createClient(supabaseUrl, supabaseKey, {
+            auth: {
+                storage: localStorage,
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: false
+            }
+        });
+
+        // Function to update Auth buttons in top nav based on session
+        async function updateAuthUI() {
+            const { data: { session } = {} } = await supabase.auth.getSession();
+            const authButtonsDiv = document.querySelector('.auth-buttons');
+
+            if (session && session.user) {
+                const { data: profile, error: profileError } = await supabase
+                    .from('profiles')
+                    .select('username')
+                    .eq('user_id', session.user.id)
+                    .single();
+
+                const username = (profile && !profileError) ? profile.username : session.user.email;
+                authButtonsDiv.innerHTML = `
+                    <div class="user-status">
+                        <span>Welcome, ${username}!</span>
+                        <a href="#" id="logout-btn" class="logout-button btn">Logout</a>
+                    </div>`;
+
+                document.getElementById('logout-btn').addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await supabase.auth.signOut();
+                    window.location.href = 'login.html';
+                });
+            } else {
+                authButtonsDiv.innerHTML = `
+                    <a href="login.html" class="btn signup">Login</a>
+                    <a href="signup.html" class="btn signup">Signup</a>`;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', updateAuthUI);
+    </script>
+</body>
+
+</html>
