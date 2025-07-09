@@ -8,61 +8,6 @@
     <title>Search Flashcards - CramCraft</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    <style>
-        /* Add some basic pagination styling to your stylesheet.css or here */
-        .pagination-controls {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 20px;
-            gap: 10px;
-        }
-
-        .pagination-controls button {
-            padding: 8px 15px;
-            border: 1px solid #007bff;
-            border-radius: 5px;
-            background-color: #f0f8ff;
-            color: #007bff;
-            cursor: pointer;
-            transition: background-color 0.2s ease, color 0.2s ease;
-        }
-
-        .pagination-controls button:hover:not(:disabled) {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .pagination-controls button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            background-color: #e9ecef;
-            color: #6c757d;
-        }
-
-        .pagination-controls .page-number {
-            font-weight: bold;
-            color: #333;
-        }
-
-        .pagination-controls .page-number-link {
-            padding: 5px 10px;
-            border: 1px solid transparent;
-            border-radius: 3px;
-            cursor: pointer;
-            transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-        }
-
-        .pagination-controls .page-number-link:hover {
-            background-color: #e6e6e6;
-        }
-
-        .pagination-controls .page-number-link.active {
-            background-color: #007bff;
-            color: white;
-            border-color: #007bff;
-        }
-    </style>
 </head>
 
 <body class="search-page">
@@ -109,18 +54,13 @@
         </div>
         <div class="sets-grid" id="search-results-grid">
         </div>
-        <div class="pagination-controls" id="pagination-controls">
-            <button id="prev-page-btn" disabled>Previous</button>
-            <span id="page-numbers"></span>
-            <button id="next-page-btn" disabled>Next</button>
-        </div>
     </div>
 
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImexpiI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
         const supabase = createClient(supabaseUrl, supabaseKey, {
             auth: {
                 storage: localStorage,
@@ -135,10 +75,10 @@
 
         // Update Auth buttons in top nav based on session on page load
         async function updateAuthUI() {
-            const { data: { session } = {} } = await window.supabase.auth.getSession(); // Destructure with default empty object
+            const { data: { session } } = await window.supabase.auth.getSession();
             const authButtonsDiv = document.querySelector('.auth-buttons');
 
-            if (session && session.user) { // Check for session and user existence
+            if (session) {
                 const { data: profile, error: profileError } = await window.supabase
                     .from('profiles')
                     .select('username')
@@ -160,169 +100,86 @@
 
             } else {
                 authButtonsDiv.innerHTML = `
-                        <a href="login.html" class="btn signup">Login</a>
-                        <a href="signup.html" class="btn signup">Signup</a>`;
+                        <a href="login.html" class="btn">Login</a>
+                        <a href="signup.html" class="btn">Signup</a>`;
             }
         }
         updateAuthUI();
 
-        // --- PAGINATION STATE VARIABLES ---
-        const ITEMS_PER_PAGE = 18; // Changed to 18 sets per page
-        let currentPage = 0; // Current page index (0-based)
-        let totalFilteredSetsCount = 0; // Total count of sets after search/filter, before pagination
-        let totalPages = 0; // Total number of pages
-        let debounceTimer; // Debounce timer for search input
-
+        let allSets = []; // store all sets globally
+        let debounceTimer;
         // Get references to all necessary DOM elements
         const searchInput = document.getElementById('search-input');
         const resultsGrid = document.getElementById('search-results-grid');
         const resultsInfo = document.getElementById('results-count-info');
         const categoryRadioGroup = document.getElementById('category-radio-group');
 
-        const prevPageBtn = document.getElementById('prev-page-btn'); // NEW
-        const nextPageBtn = document.getElementById('next-page-btn'); // NEW
-        const pageNumbersSpan = document.getElementById('page-numbers'); // NEW
-        const paginationControlsDiv = document.getElementById('pagination-controls'); // Get the pagination container
-
 
         // Debounce search input to avoid too many requests
         searchInput.addEventListener('input', () => {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
-                currentPage = 0; // Reset to first page on new search
                 performSearch();
             }, 250);
         });
 
         // Event listener for category radio buttons
         categoryRadioGroup.addEventListener('change', () => {
-            currentPage = 0; // Reset to first page on new filter
             performSearch(); // Perform search immediately on category change
         });
 
-        // NEW: Pagination button listeners
-        prevPageBtn.addEventListener('click', () => {
-            if (currentPage > 0) {
-                currentPage--;
-                performSearch();
-            }
-        });
 
-        nextPageBtn.addEventListener('click', () => {
-            if (currentPage < totalPages - 1) {
-                currentPage++;
-                performSearch();
-            }
-        });
+        async function loadAllPublicSets() {
+            const { data: sets, error } = await supabase
+                .from('flashcard_sets')
+                .select(`
+                    id,
+                    title,
+                    user_id,
+                    category,
+                    profiles!flashcard_sets_user_id_fkey(username),
+                    flashcards(count)  `)
+                .order('created_at', { ascending: false });
 
-
-        async function performSearch() {
-            const query = searchInput.value.trim().toLowerCase();
-            const selectedCategory = document.querySelector('input[name="category-filter"]:checked').value.toLowerCase();
-
-            resultsGrid.innerHTML = '<p>Loading sets...</p>'; // Show loading message
-            resultsInfo.textContent = 'Searching...';
-            console.log(`Performing search: Query="${query}", Category="${selectedCategory}", CurrentPage=${currentPage}`);
-
-
-            // Start with a base query for flashcard_sets
-            let baseQuery = supabase
-                .from('flashcard_sets');
-
-            // Apply search filter if query exists
-            if (query) {
-                baseQuery = baseQuery.ilike('title', `%${query}%`);
-            }
-
-            // Apply category filter if not 'all'
-            if (selectedCategory !== 'all') {
-                baseQuery = baseQuery.ilike('category', selectedCategory);
-            }
-
-            // --- STEP 1: Get the total count of filtered sets (without fetching the data yet) ---
-            const { count: totalCountResult, error: countError } = await baseQuery.select('id', { count: 'exact' });
-
-            if (countError) {
-                console.error('Error fetching total sets count:', countError);
-                resultsInfo.textContent = 'Failed to load sets count.';
-                resultsGrid.innerHTML = '<p>Error loading sets.</p>';
-                // Ensure pagination is hidden on error
-                paginationControlsDiv.style.display = 'none';
-                return;
-            }
-
-            totalFilteredSetsCount = totalCountResult;
-            totalPages = Math.ceil(totalFilteredSetsCount / ITEMS_PER_PAGE);
-
-            console.log(`Total filtered sets count: ${totalFilteredSetsCount}, Total pages: ${totalPages}`);
-
-            // Ensure currentPage doesn't exceed new totalPages (e.g., if filter drastically reduces count)
-            // Or if no results, ensure currentPage is 0 to avoid negative indexing
-            if (totalPages === 0) {
-                currentPage = 0;
-            } else if (currentPage >= totalPages) {
-                currentPage = totalPages - 1;
-            }
-
-
-            // --- STEP 2: Fetch the paginated data with flashcards(count) for display ---
-            // Pagination only for "All" category AND when no search term is active
-            const applyPagination = selectedCategory === 'all' && query === '';
-
-            let finalQuery = baseQuery.select(`
-                id,
-                title,
-                user_id,
-                category,
-                profiles!flashcard_sets_user_id_fkey(username),
-                flashcards(count)
-            `)
-            .order('created_at', { ascending: false });
-
-            if (applyPagination) {
-                const from = currentPage * ITEMS_PER_PAGE;
-                const to = from + ITEMS_PER_PAGE - 1;
-                finalQuery = finalQuery.range(from, to);
-                console.log(`Applying pagination: from=${from}, to=${to}`);
-            } else {
-                console.log('Pagination is NOT applied (filtered category or search query active).');
-            }
-
-
-            const { data: sets, error: dataError } = await finalQuery; // Use finalQuery
-
-            if (dataError) {
-                console.error('Error fetching sets data:', dataError);
+            if (error) {
+                console.error('Error fetching sets:', error);
                 resultsInfo.textContent = 'Failed to load flashcard sets. Please check console for details.';
-                resultsGrid.innerHTML = '<p>Error loading sets.</p>';
-                // Ensure pagination is hidden on error
-                paginationControlsDiv.style.display = 'none';
                 return;
             }
 
-            console.log('Fetched sets data:', sets);
-
-            displaySets(sets, applyPagination); // Pass applyPagination flag to displaySets
-            // updatePaginationControls(applyPagination); // Removed: Called within displaySets now for better flow
+            allSets = sets; // Store all fetched sets
+            performSearch(); // Initial display of all sets (or filtered if query/category is pre-filled)
         }
 
-        function displaySets(setsToDisplay, showPaginationControls) { // Added showPaginationControls parameter
-            resultsGrid.innerHTML = ''; // Clear previous results
-            // Adjust results info text based on whether pagination is active or not
+
+        function performSearch() {
             const query = searchInput.value.trim().toLowerCase();
             const selectedCategory = document.querySelector('input[name="category-filter"]:checked').value.toLowerCase();
 
-            // Set result info text
+            const filteredSets = allSets.filter(set => {
+                const matchesQuery = set.title.toLowerCase().includes(query) || (set.profiles?.username?.toLowerCase().includes(query));
+                const setCategory = set.category ? set.category.toLowerCase() : ''; // Get set category, handle null
+
+                let matchesCategory = true;
+                if (selectedCategory !== 'all') { // If a specific category is selected
+                    matchesCategory = setCategory.includes(selectedCategory); // Check if the set's category includes the selected category
+                }
+
+                return matchesQuery && matchesCategory;
+            });
+
+            displaySets(filteredSets);
+        }
+
+        function displaySets(setsToDisplay) {
+            resultsGrid.innerHTML = ''; // Clear previous results
+            resultsInfo.textContent = `Showing ${setsToDisplay.length} sets.`;
+
             if (setsToDisplay.length === 0) {
-                 resultsInfo.textContent = `No sets found matching your criteria.`;
-            } else if (showPaginationControls) { // If pagination is active
-                resultsInfo.textContent = `Showing ${setsToDisplay.length} of ${totalFilteredSetsCount} sets. (Page ${currentPage + 1} of ${totalPages})`;
-            } else { // If filters/search are active (pagination not shown)
-                 resultsInfo.textContent = `Showing ${setsToDisplay.length} sets.`;
+                resultsInfo.textContent = `No sets found matching your criteria.`;
+                return;
             }
 
-
-            // Render sets
             setsToDisplay.forEach(set => {
                 const card = document.createElement('div');
                 card.classList.add('set-card');
@@ -331,56 +188,21 @@
                     window.location.href = `flashcard_set.html?set_id=${set.id}`;
                 };
 
-                const categoryDisplay = set.category ? `${set.category}` : '';
-                const termCount = set.flashcards[0] ? set.flashcards[0].count : 0;
+                const categoryDisplay = set.category ? `${set.category}` : ''; // Removed category-tag span
+                const termCount = set.flashcards[0] ? set.flashcards[0].count : 0; // GET TERM COUNT
 
                 card.innerHTML = `
                     <h3>${set.title}</h3>
-                    <p>${categoryDisplay}</p>
-                    <p>Click to view flashcards in this set.</p> <p class="set-meta">
-                        ${termCount} Terms &nbsp;&bull;&nbsp;
-                        By: <strong>${set.profiles?.username || 'Unknown User'}</strong>
+                    <p>${categoryDisplay}</p> <p>Click to view flashcards in this set.</p> <p class="set-meta">
+                        ${termCount} Terms &nbsp;&bull;&nbsp; By: <strong>${set.profiles?.username || 'Unknown User'}</strong>
                     </p>
                 `;
                 resultsGrid.appendChild(card);
             });
-
-            // Call updatePaginationControls here, explicitly based on the flag
-            updatePaginationControls(showPaginationControls); // Pass the flag directly
-        }
-
-        // NEW: Function to update pagination buttons and page numbers
-        function updatePaginationControls(showControls) {
-            if (showControls && totalPages > 1) { // Only show controls if enabled and more than 1 page
-                paginationControlsDiv.style.display = 'flex'; // Show the pagination container
-                prevPageBtn.disabled = currentPage === 0;
-                nextPageBtn.disabled = currentPage >= totalPages - 1;
-
-                pageNumbersSpan.innerHTML = ''; // Clear previous page numbers
-
-                // Display page numbers
-                for (let i = 0; i < totalPages; i++) {
-                    const pageSpan = document.createElement('span');
-                    pageSpan.classList.add('page-number-link');
-                    if (i === currentPage) {
-                        pageSpan.classList.add('active'); // Add an 'active' class for styling current page
-                        pageSpan.textContent = `[${i + 1}]`; // Highlight current page
-                    } else {
-                        pageSpan.textContent = `${i + 1}`;
-                    }
-                    pageSpan.addEventListener('click', () => {
-                        currentPage = i;
-                        performSearch();
-                    });
-                    pageNumbersSpan.appendChild(pageSpan);
-                }
-            } else {
-                paginationControlsDiv.style.display = 'none'; // Hide the pagination container
-            }
         }
 
         // Initial load of sets when the page loads
-        document.addEventListener('DOMContentLoaded', performSearch);
+        document.addEventListener('DOMContentLoaded', loadAllPublicSets);
     </script>
 </body>
 
