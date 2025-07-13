@@ -87,11 +87,9 @@
                 <div id="quiz-choices-container"></div>
 
                 <p id="timer">30s</p>
-                <button id="quiz-next" class="btn" style="display:none;">Next</button>
                 <div id="quiz-result" style="display:none;"></div>
                 <div id="review-section"></div>
 
-                <button class="btn" id="quiz-start-btn">Start Quiz</button>
             </div>
         </div>
 
@@ -505,29 +503,42 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
 
-            function handleChoiceClick(event) { // Handle choice button clicks
-                const selectedButton = event.target;
-                const chosenAnswer = selectedButton.textContent;
-                const correctAnswer = flashcardData[currentQuizIndex].definition;
-                const buttons = quizChoicesContainer.querySelectorAll('.choice-button');
-                buttons.forEach(button => button.disabled = true);
-                if (chosenAnswer === correctAnswer) {
-                    selectedButton.classList.add('correct');
-                } else {
-                    selectedButton.classList.add('incorrect');
-                    buttons.forEach(button => { if (button.textContent === correctAnswer) { button.classList.add('correct'); } });
-                }
-                setTimeout(() => {
-                    if (currentQuizIndex < flashcardData.length - 1) {
-                        currentQuizIndex++; showQuizQuestion(currentQuizIndex);
+            function handleChoiceClick(event) {
+              clearInterval(timerInterval);
+              disableChoices();
 
-                    } else {
-                        quizQuestion.textContent = "Quiz Complete!";
-                        quizProgress.textContent = "";
-                        quizChoicesContainer.innerHTML = '';
-                    }
-                }, 2500);
-            }
+              const selectedButton = event.target;
+              const chosenAnswer = selectedButton.textContent;
+              const correctAnswer = flashcardData[currentQuizIndex].definition;
+
+              const buttons = quizChoicesContainer.querySelectorAll('.choice-button');
+              buttons.forEach(button => {
+                if (button.textContent === correctAnswer) {
+                  button.classList.add('correct');
+                } else if (button === selectedButton && chosenAnswer !== correctAnswer) {
+                  button.classList.add('incorrect');
+                }
+              });
+
+              if (chosenAnswer === correctAnswer) {
+                // Correct answer, increment score
+                quizScore++;
+              } else if (retryEnabled) {
+                // If retry enabled, add to missed questions
+                missedQuestions.push(quizQuestions[currentQuizIndex]);
+              }
+
+              // Automatically move to next question after 2 seconds
+              setTimeout(() => {
+              if (currentQuizIndex < flashcardData.length - 1) {
+                  currentQuizIndex++;
+                  showQuizQuestion(currentQuizIndex);
+              } else {
+                  showQuizResults();
+               }
+              }, 2000);
+          }
+
             // Initial render
             renderCard(currentIndex);
 
