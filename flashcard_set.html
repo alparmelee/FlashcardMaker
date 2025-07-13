@@ -84,14 +84,14 @@
                 </div>
 
                 <p class="quiz-question" id="quiz-question"></p>
-                <div id="quiz-choices"></div>
+                <div id="quiz-choices-container"></div>
 
                 <p id="timer">30s</p>
                 <button id="quiz-next" class="btn" style="display:none;">Next</button>
                 <div id="quiz-result" style="display:none;"></div>
                 <div id="review-section"></div>
 
-                <button onclick="startQuiz()" class="btn">Start Quiz</button>
+                <button class="btn" id="quiz-start-btn">Start Quiz</button>
             </div>
         </div>
 
@@ -365,36 +365,145 @@ document.addEventListener('DOMContentLoaded', async () => {
                     termListContainer.appendChild(row);
                 });
             }
-            // Quiz functionality
-            function startQuiz() {
-                currentQuizIndex = 0;
-                showQuizQuestion(currentQuizIndex);
+            let quizQuestions = [];
+            let quizIndex = 0;
+            let quizScore = 0;
+            let missedQuestions = [];
+            let retryEnabled = true;
+            let quizTimer;
+            let timeLeft = 30;
+
+            function shuffle(array) {
+                return array.sort(() => Math.random() - 0.5);
             }
-            // Show a quiz question based on the current index
-            function showQuizQuestion(index) {
-                const currentCard = flashcardData[index];
-                quizQuestion.textContent = `What is the definition of "${currentCard.term}"?`;
-                quizProgress.textContent = `Question ${index + 1} of ${flashcardData.length}`;
-                const correctAnswer = currentCard.definition;
-                const incorrectAnswers = [];
-                while (incorrectAnswers.length < 3 && flashcardData.length > 3) {
-                    const randomIndex = Math.floor(Math.random() * flashcardData.length);
-                    const randomDefinition = flashcardData[randomIndex].definition;
-                    if (randomDefinition !== correctAnswer && !incorrectAnswers.includes(randomDefinition)) {
-                        incorrectAnswers.push(randomDefinition);
-                    }
+
+            function startQuiz() {
+                quizQuestions = flashcardData.map(card => {
+                    const incorrect = flashcardData
+                        .filter(c => c.definition !== card.definition)
+                        .sort(() => Math.random() - 0.5)
+                        .slice(0, 3)
+                        .map(c => c.definition);
+
+                    return {
+                        term: card.term,
+                        answer: card.definition,
+                        choices: shuffle([card.definition, ...incorrect])
+                    };
+                });
+
+                if (document.getElementById("shuffle-toggle").checked) {
+                    shuffle(quizQuestions);
                 }
-                // If not enough unique incorrect answers, fill with placeholders
-                const choices = shuffleArray([correctAnswer, ...incorrectAnswers]);
+
+                quizIndex = 0;
+                quizScore = 0;
+                missedQuestions = [];
+
+                document.getElementById('quiz-result').style.display = 'none';
+                document.getElementById('review-section').style.display = 'none';
+                document.getElementById('timer').style.display = 'block';
+
+                showQuizQuestion();
+            }
+
+            function showQuizQuestion() {
+                if (quizIndex >= quizQuestions.length) {
+                    if (retryEnabled && missedQuestions.length > 0) {
+                        quizQuestions = [...missedQuestions];
+                        missedQuestions = [];
+                        quizIndex = 0;
+                        showQuizQuestion();
+                        return;
+                    }
+                    return showQuizResults();
+                }
+
+                const q = quizQuestions[quizIndex];
+                quizQuestion.textContent = `What is the definition of "${q.term}"?`;
                 quizChoicesContainer.innerHTML = '';
-                choices.forEach(choice => {
-                    const button = document.createElement('button');
-                    button.className = 'choice-button';
-                    button.textContent = choice;
-                    button.addEventListener('click', handleChoiceClick);
-                    quizChoicesContainer.appendChild(button);
+
+                q.choices.forEach(choice => {
+                    const btn = document.createElement('button');
+                    btn.textContent = choice;
+                    btn.className = 'choice-button';
+                    btn.onclick = () => handleQuizChoice(choice, q.answer, btn);
+                    quizChoicesContainer.appendChild(btn);
+                });
+
+                document.getElementById("quiz-status").textContent = `Question ${quizIndex + 1} of ${quizQuestions.length}`;
+                document.getElementById("quiz-next").style.display = "none";
+
+                startTimer();
+            }
+
+            function startTimer() {
+                clearInterval(quizTimer);
+                timeLeft = 30;
+                document.getElementById('timer').textContent = `${timeLeft}s`;
+
+                quizTimer = setInterval(() => {
+                    timeLeft--;
+                    document.getElementById('timer').textContent = `${timeLeft}s`;
+                    if (timeLeft <= 0) {
+                        clearInterval(quizTimer);
+                        handleQuizChoice(null, quizQuestions[quizIndex].answer);
+                    }
+                }, 1000);
+            }
+
+            function handleQuizChoice(selected, correct, btn = null) {
+                clearInterval(quizTimer);
+
+                const buttons = quizChoicesContainer.querySelectorAll('.choice-button');
+                buttons.forEach(b => b.disabled = true);
+
+                if (selected === correct) {
+                    quizScore++;
+                    if (btn) btn.classList.add('correct');
+                } else {
+                    if (btn) btn.classList.add('incorrect');
+                        buttons.forEach(b => {
+                        if (b.textContent === correct) {
+                            b.classList.add('correct');
+                        }
+                    });
+
+                    missedQuestions.push(quizQuestions[quizIndex]);
+                }
+
+                document.getElementById("quiz-next").style.display = "inline-block";
+            }
+
+            document.getElementById("quiz-next").addEventListener("click", () => {
+                quizIndex++;
+                showQuizQuestion();
+            });
+
+            function showQuizResults() {
+                document.getElementById('quiz-question').textContent = "Quiz Complete!";
+                document.getElementById('quiz-status').textContent = "";
+                quizChoicesContainer.innerHTML = '';
+                document.getElementById('timer').style.display = 'none';
+                document.getElementById("quiz-next").style.display = "none";
+
+                const resultDiv = document.getElementById("quiz-result");
+                resultDiv.style.display = "block";
+                const percent = Math.round((quizScore / quizQuestions.length) * 100);
+
+                resultDiv.innerHTML = `
+                    <p>Score: ${quizScore} / ${quizQuestions.length} (${percent}%)</p>
+                    <button onclick="startQuiz()" class="btn">Retry Quiz</button>
+                `;
+
+                const review = document.getElementById("review-section");
+                review.style.display = 'block';
+                review.innerHTML = '<h3>Review</h3>';
+                quizQuestions.forEach(q => {
+                    review.innerHTML += `<p><strong>${q.term}:</strong> ${q.answer}</p>`;
                 });
             }
+
 
             function handleChoiceClick(event) { // Handle choice button clicks
                 const selectedButton = event.target;
