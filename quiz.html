@@ -4,9 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Quiz Mode</title>
-      <link rel="icon" type="image/png" href="images/icon.png">
+  <link rel="icon" type="image/png" href="images/icon.png">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-      <link rel="icon" type="image/png" href="images/icon.png">
   <style>
     body {
       font-family: 'Poppins', sans-serif;
@@ -52,9 +51,6 @@
   <div class="quiz-container" id="quiz-container">
     <h1>Quiz Mode</h1>
 
-    <label for="topic-select">Choose a flashcard set:</label>
-    <select id="topic-select" class="btn"></select>
-
     <div class="option-group">
       <label><input type="checkbox" id="shuffle-toggle" checked> Shuffle Questions</label>
       <label><input type="checkbox" id="retry-toggle"> Retry Missed Questions at End</label>
@@ -70,7 +66,7 @@
       <div id="review-section"></div>
     </div>
 
-    <button onclick="startQuiz()" class="btn">Start Quiz</button>
+    <button id="start-btn" class="btn">Start Quiz</button>
   </div>
 
   <script src="quiz.js"></script>
