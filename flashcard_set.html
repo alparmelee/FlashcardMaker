@@ -84,12 +84,14 @@
                 </div>
 
                 <p class="quiz-question" id="quiz-question"></p>
-                <div id="quiz-choices-container"></div>
+                <div id="quiz-choices"></div>
 
                 <p id="timer">30s</p>
+                <button id="quiz-next" class="btn" style="display:none;">Next</button>
                 <div id="quiz-result" style="display:none;"></div>
                 <div id="review-section"></div>
 
+                <button onclick="startQuiz()" class="btn">Start Quiz</button>
             </div>
         </div>
 
@@ -194,7 +196,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     .single();
                 // Display welcome message with username or email
                 const username = profile?.username || user.email || "User";
-                welcomeMsg.textContent = `Welcome, ${username}!`;
+                welcomeMsg.textContent = Welcome, ${username}!;
                 document.querySelector(".user-status").style.display = "block";
                 document.getElementById('logout-btn').addEventListener('click', async (e) => {
                     e.preventDefault();
@@ -263,7 +265,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             function adjustFontSize(element) {
                 const parent = element.parentElement; // flashcard-front or flashcard-back
                 let fontSize = 48; // Start with a large font size
-                element.style.fontSize = `${fontSize}px`; // Apply initial font size
+                element.style.fontSize = ${fontSize}px; // Apply initial font size
                 element.style.whiteSpace = 'normal'; // Allow text to wrap initially
 
                 // Reset overflow for accurate measurement
@@ -276,7 +278,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     fontSize > 10
                 ) {
                     fontSize -= 1; // Decrement by 1 for finer control
-                    element.style.fontSize = `${fontSize}px`;
+                    element.style.fontSize = ${fontSize}px;
                 }
 
                 // If text still overflows at min font size, hide overflow or allow scroll
@@ -309,7 +311,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 adjustFontSize(flashcardBack);
 
                 document.getElementById("card-progress").textContent =
-                    `Card ${currentIndex + 1} of ${flashcards.length}`;
+                    Card ${currentIndex + 1} of ${flashcards.length};
             }
 
             // Attach event listeners once
@@ -359,186 +361,64 @@ document.addEventListener('DOMContentLoaded', async () => {
                 flashcardData.forEach(card => {
                     const row = document.createElement('div');
                     row.className = 'term-row';
-                    row.innerHTML = `<div class="term">${card.term}</div><div class="definition">${card.definition}</div>`;
+                    row.innerHTML = <div class="term">${card.term}</div><div class="definition">${card.definition}</div>;
                     termListContainer.appendChild(row);
                 });
             }
-            let quizQuestions = [];
-            let quizIndex = 0;
-            let quizScore = 0;
-            let missedQuestions = [];
-            let retryEnabled = true;
-            let quizTimer;
-            let timeLeft = 30;
-
-            function shuffle(array) {
-                return array.sort(() => Math.random() - 0.5);
-            }
-
+            // Quiz functionality
             function startQuiz() {
-                quizQuestions = flashcardData.map(card => {
-                    const incorrect = flashcardData
-                        .filter(c => c.definition !== card.definition)
-                        .sort(() => Math.random() - 0.5)
-                        .slice(0, 3)
-                        .map(c => c.definition);
-
-                    return {
-                        term: card.term,
-                        answer: card.definition,
-                        choices: shuffle([card.definition, ...incorrect])
-                    };
-                });
-
-                if (document.getElementById("shuffle-toggle").checked) {
-                    shuffle(quizQuestions);
-                }
-
-                quizIndex = 0;
-                quizScore = 0;
-                missedQuestions = [];
-
-                document.getElementById('quiz-result').style.display = 'none';
-                document.getElementById('review-section').style.display = 'none';
-                document.getElementById('timer').style.display = 'block';
-
-                showQuizQuestion();
+                currentQuizIndex = 0;
+                showQuizQuestion(currentQuizIndex);
             }
-
-            function showQuizQuestion() {
-                if (quizIndex >= quizQuestions.length) {
-                    if (retryEnabled && missedQuestions.length > 0) {
-                        quizQuestions = [...missedQuestions];
-                        missedQuestions = [];
-                        quizIndex = 0;
-                        showQuizQuestion();
-                        return;
+            // Show a quiz question based on the current index
+            function showQuizQuestion(index) {
+                const currentCard = flashcardData[index];
+                quizQuestion.textContent = What is the definition of "${currentCard.term}"?;
+                quizProgress.textContent = Question ${index + 1} of ${flashcardData.length};
+                const correctAnswer = currentCard.definition;
+                const incorrectAnswers = [];
+                while (incorrectAnswers.length < 3 && flashcardData.length > 3) {
+                    const randomIndex = Math.floor(Math.random() * flashcardData.length);
+                    const randomDefinition = flashcardData[randomIndex].definition;
+                    if (randomDefinition !== correctAnswer && !incorrectAnswers.includes(randomDefinition)) {
+                        incorrectAnswers.push(randomDefinition);
                     }
-                    return showQuizResults();
                 }
-
-                const q = quizQuestions[quizIndex];
-                quizQuestion.textContent = `What is the definition of "${q.term}"?`;
+                // If not enough unique incorrect answers, fill with placeholders
+                const choices = shuffleArray([correctAnswer, ...incorrectAnswers]);
                 quizChoicesContainer.innerHTML = '';
-
-                q.choices.forEach(choice => {
-                    const btn = document.createElement('button');
-                    btn.textContent = choice;
-                    btn.className = 'choice-button';
-                    btn.onclick = () => handleQuizChoice(choice, q.answer, btn);
-                    quizChoicesContainer.appendChild(btn);
+                choices.forEach(choice => {
+                    const button = document.createElement('button');
+                    button.className = 'choice-button';
+                    button.textContent = choice;
+                    button.addEventListener('click', handleChoiceClick);
+                    quizChoicesContainer.appendChild(button);
                 });
-
-                document.getElementById("quiz-status").textContent = `Question ${quizIndex + 1} of ${quizQuestions.length}`;
-                document.getElementById("quiz-next").style.display = "none";
-
-                startTimer();
             }
 
-            function startTimer() {
-                clearInterval(quizTimer);
-                timeLeft = 30;
-                document.getElementById('timer').textContent = `${timeLeft}s`;
-
-                quizTimer = setInterval(() => {
-                    timeLeft--;
-                    document.getElementById('timer').textContent = `${timeLeft}s`;
-                    if (timeLeft <= 0) {
-                        clearInterval(quizTimer);
-                        handleQuizChoice(null, quizQuestions[quizIndex].answer);
-                    }
-                }, 1000);
-            }
-
-            function handleQuizChoice(selected, correct, btn = null) {
-                clearInterval(quizTimer);
-
+            function handleChoiceClick(event) { // Handle choice button clicks
+                const selectedButton = event.target;
+                const chosenAnswer = selectedButton.textContent;
+                const correctAnswer = flashcardData[currentQuizIndex].definition;
                 const buttons = quizChoicesContainer.querySelectorAll('.choice-button');
-                buttons.forEach(b => b.disabled = true);
-
-                if (selected === correct) {
-                    quizScore++;
-                    if (btn) btn.classList.add('correct');
+                buttons.forEach(button => button.disabled = true);
+                if (chosenAnswer === correctAnswer) {
+                    selectedButton.classList.add('correct');
                 } else {
-                    if (btn) btn.classList.add('incorrect');
-                        buttons.forEach(b => {
-                        if (b.textContent === correct) {
-                            b.classList.add('correct');
-                        }
-                    });
-
-                    missedQuestions.push(quizQuestions[quizIndex]);
+                    selectedButton.classList.add('incorrect');
+                    buttons.forEach(button => { if (button.textContent === correctAnswer) { button.classList.add('correct'); } });
                 }
+                setTimeout(() => {
+                    if (currentQuizIndex < flashcardData.length - 1) {
+                        currentQuizIndex++; showQuizQuestion(currentQuizIndex);
 
-                document.getElementById("quiz-next").style.display = "inline-block";
+                    } else {
+                        quizQuestion.textContent = "Quiz Complete!";
+                        quizProgress.textContent = "";
+                        quizChoicesContainer.innerHTML = '';
+                    }
+                }, 2500);
             }
-
-            document.getElementById("quiz-next").addEventListener("click", () => {
-                quizIndex++;
-                showQuizQuestion();
-            });
-
-            function showQuizResults() {
-                document.getElementById('quiz-question').textContent = "Quiz Complete!";
-                document.getElementById('quiz-status').textContent = "";
-                quizChoicesContainer.innerHTML = '';
-                document.getElementById('timer').style.display = 'none';
-                document.getElementById("quiz-next").style.display = "none";
-
-                const resultDiv = document.getElementById("quiz-result");
-                resultDiv.style.display = "block";
-                const percent = Math.round((quizScore / quizQuestions.length) * 100);
-
-                resultDiv.innerHTML = `
-                    <p>Score: ${quizScore} / ${quizQuestions.length} (${percent}%)</p>
-                    <button onclick="startQuiz()" class="btn">Retry Quiz</button>
-                `;
-
-                const review = document.getElementById("review-section");
-                review.style.display = 'block';
-                review.innerHTML = '<h3>Review</h3>';
-                quizQuestions.forEach(q => {
-                    review.innerHTML += `<p><strong>${q.term}:</strong> ${q.answer}</p>`;
-                });
-            }
-
-
-            function handleChoiceClick(event) {
-              clearInterval(timerInterval);
-              disableChoices();
-
-              const selectedButton = event.target;
-              const chosenAnswer = selectedButton.textContent;
-              const correctAnswer = flashcardData[currentQuizIndex].definition;
-
-              const buttons = quizChoicesContainer.querySelectorAll('.choice-button');
-              buttons.forEach(button => {
-                if (button.textContent === correctAnswer) {
-                  button.classList.add('correct');
-                } else if (button === selectedButton && chosenAnswer !== correctAnswer) {
-                  button.classList.add('incorrect');
-                }
-              });
-
-              if (chosenAnswer === correctAnswer) {
-                // Correct answer, increment score
-                quizScore++;
-              } else if (retryEnabled) {
-                // If retry enabled, add to missed questions
-                missedQuestions.push(quizQuestions[currentQuizIndex]);
-              }
-
-              // Automatically move to next question after 2 seconds
-              setTimeout(() => {
-              if (currentQuizIndex < flashcardData.length - 1) {
-                  currentQuizIndex++;
-                  showQuizQuestion(currentQuizIndex);
-              } else {
-                  showQuizResults();
-               }
-              }, 2000);
-          }
-
             // Initial render
             renderCard(currentIndex);
 
@@ -549,7 +429,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 // Pad the data with empty slots
                 while (dataToPrint.length % CARDS_PER_PRINT_PAGE !== 0) {
-                    dataToPrint.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` });
+                    dataToPrint.push({ term: (Empty Slot), definition: (Empty Slot) });
                 }
 
                 const printTotalPages = (dataToPrint.length / CARDS_PER_PRINT_PAGE) * 2;
@@ -562,7 +442,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     const printPageTitleElement = document.createElement('h3');
                     printPageTitleElement.className = 'print-page-title';
-                    printPageTitleElement.textContent = `Page ${i + 1} / ${printTotalPages} - ${isTermPage ? 'Terms' : 'Definitions'} (Set ${setIndex + 1})`;
+                    printPageTitleElement.textContent = Page ${i + 1} / ${printTotalPages} - ${isTermPage ? 'Terms' : 'Definitions'} (Set ${setIndex + 1});
                     printViewContainer.appendChild(printPageTitleElement);
 
                     const grid = document.createElement('div');
@@ -591,10 +471,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                         card.className = 'card-item';
 
                         const originalItemIndex = indexToFetchDataFrom + 1;
-                        const labelText = isTermPage ? `TERM ${originalItemIndex}` : `DEFINITION ${originalItemIndex}`;
+                        const labelText = isTermPage ? TERM ${originalItemIndex} : DEFINITION ${originalItemIndex};
                         const contentText = isTermPage ? itemToDisplay.term : itemToDisplay.definition;
 
-                        card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`;
+                        card.innerHTML = <span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')};
                         grid.appendChild(card);
                     }
                     printViewContainer.appendChild(grid);
@@ -609,7 +489,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             modePrintBtn.addEventListener('click', prepareAndPrintAdvanced); // Changed to call advanced function
             modeEditBtn.addEventListener('click', () => {
                 if (setId) {
-                    window.location.href = `create.html?set_id=${setId}`;
+                    window.location.href = create.html?set_id=${setId};
                 }
             });
             // Removed the categoryFilter.addEventListener as the element no longer exists
@@ -618,3 +498,5 @@ document.addEventListener('DOMContentLoaded', async () => {
 </body>
 
 </html>
+
+
