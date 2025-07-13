@@ -303,7 +303,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 adjustFontSize(flashcardBack);
 
                 document.getElementById("card-progress").textContent =
-                    Card ${currentIndex + 1} of ${flashcards.length};
+                    `Card ${currentIndex + 1} of ${flashcards.length}`;
             }
 
             // Attach event listeners once
@@ -353,7 +353,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 flashcardData.forEach(card => {
                     const row = document.createElement('div');
                     row.className = 'term-row';
-                    row.innerHTML = <div class="term">${card.term}</div><div class="definition">${card.definition}</div>;
+                    row.innerHTML = `<div class="term">${card.term}</div><div class="definition">${card.definition}</div>`;
                     termListContainer.appendChild(row);
                 });
             }
