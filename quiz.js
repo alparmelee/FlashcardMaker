@@ -9,7 +9,13 @@ function shuffle(array) {
 }
 
 function generateQuizQuestions(shuffleEnabled) {
-  quizQuestions = flashcards.map((card, i, arr) => {
+  // Check that 'flashcards' global variable exists and has data
+  if (!window.flashcards || !Array.isArray(window.flashcards) || window.flashcards.length === 0) {
+    alert("No flashcards available. Please load flashcards first.");
+    return;
+  }
+
+  quizQuestions = window.flashcards.map((card, i, arr) => {
     const incorrect = arr
       .filter((_, j) => j !== i)
       .sort(() => Math.random() - 0.5)
@@ -26,15 +32,16 @@ function generateQuizQuestions(shuffleEnabled) {
   });
 
   if (shuffleEnabled) {
-    shuffle(quizQuestions);
+    quizQuestions = shuffle(quizQuestions);
   }
 }
 
 function startQuiz() {
-  const shuffleEnabled = document.getElementById("shuffle-toggle").checked;
   retryEnabled = document.getElementById("retry-toggle").checked;
 
-  generateQuizQuestions(shuffleEnabled);
+  generateQuizQuestions(document.getElementById("shuffle-toggle").checked);
+  if (!quizQuestions.length) return; // stop if no questions
+
   quizIndex = 0;
   quizScore = 0;
   missedQuestions = [];
@@ -66,15 +73,50 @@ function showQuizQuestion() {
   document.getElementById("quiz-next").style.display = "none";
   document.getElementById("quiz-status").textContent =
     `Question ${quizIndex + 1} of ${quizQuestions.length}`;
+  document.getElementById("timer").textContent = "30s";
+
+  startTimer();
+}
+
+let timerInterval = null;
+let timeLeft = 30;
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timeLeft = 30;
+  document.getElementById("timer").textContent = `${timeLeft}s`;
+
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    document.getElementById("timer").textContent = `${timeLeft}s`;
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      disableChoices();
+
+      if (retryEnabled) missedQuestions.push(quizQuestions[quizIndex]);
+
+      document.getElementById("quiz-next").style.display = "inline-block";
+    }
+  }, 1000);
+}
+
+function disableChoices() {
+  const buttons = document.getElementById("quiz-choices").querySelectorAll("button");
+  buttons.forEach(btn => (btn.disabled = true));
 }
 
 function handleQuizChoice(button, selected, correct) {
-  const buttons = document.getElementById("quiz-choices").children;
+  clearInterval(timerInterval);
+  disableChoices();
 
-  for (let btn of buttons) {
-    btn.disabled = true;
-    btn.style.backgroundColor = btn.textContent === correct ? "lightgreen" : "lightcoral";
-  }
+  const buttons = document.getElementById("quiz-choices").querySelectorAll("button");
+  buttons.forEach(btn => {
+    if (btn.textContent === correct) {
+      btn.style.backgroundColor = "lightgreen";
+    } else if (btn === button && selected !== correct) {
+      btn.style.backgroundColor = "lightcoral";
+    }
+  });
 
   if (selected === correct) {
     quizScore++;
@@ -86,9 +128,7 @@ function handleQuizChoice(button, selected, correct) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const nextBtn = document.getElementById("quiz-next");
-
-  nextBtn.onclick = () => {
+  document.getElementById("quiz-next").onclick = () => {
     quizIndex++;
 
     if (quizIndex < quizQuestions.length) {
@@ -102,22 +142,11 @@ document.addEventListener("DOMContentLoaded", () => {
       showQuizResults();
     }
   };
-
-  // Populate topic dropdown from localStorage
-  const saved = JSON.parse(localStorage.getItem("flashcardGroups") || "{}");
-  window.flashcardGroups = saved;
-
-  const select = document.getElementById("topic-select");
-  select.innerHTML = '<option value="" disabled selected>Select a set</option>';
-  for (const key in saved) {
-    const opt = document.createElement("option");
-    opt.value = key;
-    opt.textContent = key;
-    select.appendChild(opt);
-  }
 });
 
 function showQuizResults() {
+  clearInterval(timerInterval);
+
   document.getElementById("quiz-question").style.display = "none";
   document.getElementById("quiz-choices").style.display = "none";
   document.getElementById("quiz-next").style.display = "none";
@@ -142,4 +171,17 @@ function showQuizResults() {
     <p>${feedback}</p>
     <button onclick="startQuiz()" class="btn">Try Again</button>
   `;
+
+  // Optionally show missed questions for review
+  const reviewSection = document.getElementById("review-section");
+  if (missedQuestions.length > 0) {
+    reviewSection.innerHTML = "<h3>Review Missed Questions:</h3>";
+    missedQuestions.forEach(q => {
+      const div = document.createElement("div");
+      div.innerHTML = `<strong>Q:</strong> ${q.question}<br/><strong>Answer:</strong> ${q.answer}<hr/>`;
+      reviewSection.appendChild(div);
+    });
+  } else {
+    reviewSection.innerHTML = "";
+  }
 }
