@@ -77,22 +77,14 @@
 
         <div id="quiz-view" class="hidden">
             <div class="quiz-mode-container">
-                <h2 id="quiz-status"></h2>
-
-                <div class="option-group">
-                  <label><input type="checkbox" id="shuffle-toggle" checked> Shuffle Questions</label>
-                </div>
-
+                <h2 id="quiz-progress"></h2>
                 <p class="quiz-question" id="quiz-question"></p>
-                <div id="quiz-choices"></div>
-
-                <p id="timer">30s</p>
-                <button id="quiz-next" class="btn" style="display:none;">Next</button>
-                <div id="quiz-result" style="display:none;"></div>
-                <div id="review-section"></div>
-
-                <button onclick="startQuiz()" class="btn">Start Quiz</button>
+                <div id="quiz-choices-container"></div>
             </div>
+        </div>
+
+        <div id="list-view" class="hidden">
+            <div class="term-list-container" id="term-list-container"></div>
         </div>
 
         <div id="list-view" class="hidden">
