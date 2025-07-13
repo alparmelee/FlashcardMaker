@@ -105,9 +105,12 @@
               <p id="timer">30s</p>
               <h2 id="quiz-question">Loading...</h2>
               <div id="quiz-choices"></div>
+              <button id="quiz-next" class="btn" style="display:none;">Next</button>
               <div id="quiz-result" style="display:none;"></div>
               <div id="review-section"></div>
             </div>
+
+            <button onclick="startQuiz()" class="btn">Start Quiz</button>
         </div>
     </div>
         <div id="list-view" class="hidden">[...]</div>
@@ -154,7 +157,7 @@
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json",
-                            "Authorization": `Bearer ${accessToken}`
+                            "Authorization": Bearer ${accessToken}
                         },
                         body: JSON.stringify({
                             user: {
@@ -187,11 +190,11 @@
                 }
 
                 if (profileError) {
-                    document.getElementById('welcome-msg').textContent = `Welcome, ${user.email}`;
-                    document.getElementById('user-greeting-msg').textContent = `Here are your flashcard sets, ${user.email}.`;
+                    document.getElementById('welcome-msg').textContent = Welcome, ${user.email};
+                    document.getElementById('user-greeting-msg').textContent = Here are your flashcard sets, ${user.email}.;
                 } else {
-                    document.getElementById('welcome-msg').textContent = `Welcome, ${profile.username}!`;
-                    document.getElementById('user-greeting-msg').textContent = `Here are your flashcard sets, ${profile.username}.`;
+                    document.getElementById('welcome-msg').textContent = Welcome, ${profile.username}!;
+                    document.getElementById('user-greeting-msg').textContent = Here are your flashcard sets, ${profile.username}.;
                 }
 
                 document.querySelector('.user-status').style.display = 'flex';
@@ -199,12 +202,12 @@
 
                 const { data: sets, error: setsError } = await supabase
                     .from('flashcard_sets')
-                    .select(`
+                    .select(
                         id,
                         title,
                         category,
                         flashcards(count) // <-- This is the key change!
-                    `)
+                    )
                     .eq('user_id', user.id)
                     .order('created_at', { ascending: false });
 
@@ -217,24 +220,24 @@
                         const termCount = set.flashcards[0] ? set.flashcards[0].count : 0;
                         const card = document.createElement('div');
                         card.className = 'set-card';
-                        card.innerHTML = `
+                        card.innerHTML = 
     <h3>${set.title}</h3>
     <p>${set.category ? set.category : 'No Category'}</p> <p>${termCount} terms</p> <div class="set-actions">
         <button class="edit-set-btn" data-set-id="${set.id}">Edit</button>
         <button class="delete-set-btn" data-set-id="${set.id}">Delete</button>
     </div>
-`;
+;
                         // Event listener for the whole card to navigate to flashcard_set.html
                         card.addEventListener('click', (e) => {
                             // Prevent navigation if delete button is clicked
                             if (e.target.classList.contains('delete-set-btn')) return;
-                            window.location.href = `flashcard_set.html?set_id=${set.id}`;
+                            window.location.href = flashcard_set.html?set_id=${set.id};
                         });
                         // Add event listener for the edit button
                         card.querySelector('.edit-set-btn').addEventListener('click', (e) => {
                             e.stopPropagation(); // Prevent the parent card's click listener from firing
                             const setId = e.target.getAttribute('data-set-id');
-                            window.location.href = `create.html?set_id=${setId}`;
+                            window.location.href = create.html?set_id=${setId};
                         });
                         grid.appendChild(card);
                     });
@@ -328,6 +331,8 @@
       });
     </script>
 
+//<!-- Link to quiz logic -->
+<script src="quiz.js"></script>
 </body>
 
 </html>
