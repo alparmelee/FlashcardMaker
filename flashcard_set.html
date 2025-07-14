@@ -87,10 +87,6 @@
             <div class="term-list-container" id="term-list-container"></div>
         </div>
 
-        <div id="list-view" class="hidden">
-            <div class="term-list-container" id="term-list-container"></div>
-        </div>
-
         <div class="creator-info">
             <img src="https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg"
                 alt="Creator's profile picture">
@@ -188,7 +184,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     .single();
                 // Display welcome message with username or email
                 const username = profile?.username || user.email || "User";
-                welcomeMsg.textContent = Welcome, ${username}!;
+                welcomeMsg.textContent = `Welcome, ${username}!`;
                 document.querySelector(".user-status").style.display = "block";
                 document.getElementById('logout-btn').addEventListener('click', async (e) => {
                     e.preventDefault();
@@ -257,7 +253,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             function adjustFontSize(element) {
                 const parent = element.parentElement; // flashcard-front or flashcard-back
                 let fontSize = 48; // Start with a large font size
-                element.style.fontSize = ${fontSize}px; // Apply initial font size
+                element.style.fontSize = `${fontSize}px`; // Apply initial font size
                 element.style.whiteSpace = 'normal'; // Allow text to wrap initially
 
                 // Reset overflow for accurate measurement
@@ -270,7 +266,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     fontSize > 10
                 ) {
                     fontSize -= 1; // Decrement by 1 for finer control
-                    element.style.fontSize = ${fontSize}px;
+                    element.style.fontSize = `${fontSize}px`;
                 }
 
                 // If text still overflows at min font size, hide overflow or allow scroll
@@ -303,7 +299,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 adjustFontSize(flashcardBack);
 
                 document.getElementById("card-progress").textContent =
-                    Card ${currentIndex + 1} of ${flashcards.length};
+                    `Card ${currentIndex + 1} of ${flashcards.length}`;
             }
 
             // Attach event listeners once
@@ -353,7 +349,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 flashcardData.forEach(card => {
                     const row = document.createElement('div');
                     row.className = 'term-row';
-                    row.innerHTML = <div class="term">${card.term}</div><div class="definition">${card.definition}</div>;
+                    row.innerHTML = `<div class="term">${card.term}</div><div class="definition">${card.definition}</div>`;
                     termListContainer.appendChild(row);
                 });
             }
@@ -365,8 +361,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Show a quiz question based on the current index
             function showQuizQuestion(index) {
                 const currentCard = flashcardData[index];
-                quizQuestion.textContent = What is the definition of "${currentCard.term}"?;
-                quizProgress.textContent = Question ${index + 1} of ${flashcardData.length};
+                quizQuestion.textContent = `What is the definition of "${currentCard.term}"?`;
+                quizProgress.textContent = `Question ${index + 1} of ${flashcardData.length}`;
                 const correctAnswer = currentCard.definition;
                 const incorrectAnswers = [];
                 while (incorrectAnswers.length < 3 && flashcardData.length > 3) {
@@ -421,7 +417,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                 // Pad the data with empty slots
                 while (dataToPrint.length % CARDS_PER_PRINT_PAGE !== 0) {
-                    dataToPrint.push({ term: (Empty Slot), definition: (Empty Slot) });
+                    dataToPrint.push({ term: `(Empty Slot)`, definition: `(Empty Slot)` });
                 }
 
                 const printTotalPages = (dataToPrint.length / CARDS_PER_PRINT_PAGE) * 2;
@@ -434,7 +430,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                     const printPageTitleElement = document.createElement('h3');
                     printPageTitleElement.className = 'print-page-title';
-                    printPageTitleElement.textContent = Page ${i + 1} / ${printTotalPages} - ${isTermPage ? 'Terms' : 'Definitions'} (Set ${setIndex + 1});
+                    printPageTitleElement.textContent = `Page ${i + 1} / ${printTotalPages} - ${isTermPage ? 'Terms' : 'Definitions'} (Set ${setIndex + 1})`;
                     printViewContainer.appendChild(printPageTitleElement);
 
                     const grid = document.createElement('div');
@@ -463,10 +459,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                         card.className = 'card-item';
 
                         const originalItemIndex = indexToFetchDataFrom + 1;
-                        const labelText = isTermPage ? TERM ${originalItemIndex} : DEFINITION ${originalItemIndex};
+                        const labelText = isTermPage ? `TERM ${originalItemIndex}` : `DEFINITION ${originalItemIndex}`;
                         const contentText = isTermPage ? itemToDisplay.term : itemToDisplay.definition;
 
-                        card.innerHTML = <span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')};
+                        card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`;
                         grid.appendChild(card);
                     }
                     printViewContainer.appendChild(grid);
@@ -481,7 +477,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             modePrintBtn.addEventListener('click', prepareAndPrintAdvanced); // Changed to call advanced function
             modeEditBtn.addEventListener('click', () => {
                 if (setId) {
-                    window.location.href = create.html?set_id=${setId};
+                    window.location.href = `create.html?set_id=${setId}`;
                 }
             });
             // Removed the categoryFilter.addEventListener as the element no longer exists
@@ -490,5 +486,3 @@ document.addEventListener('DOMContentLoaded', async () => {
 </body>
 
 </html>
-
-
