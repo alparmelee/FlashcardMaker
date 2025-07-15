@@ -34,7 +34,7 @@
             }
 
             const {data, error} = await supabase.auth.resetPasswordForEmail(email, {
-                redirectTo: 'https://alparmelee.github.io/FlashcardMaker/updatepassword.html'
+                redirectTo: 'https://alparmelee.github.io/FlashcardMaker/resetpassword.html'
             });
 
             if (error) {
