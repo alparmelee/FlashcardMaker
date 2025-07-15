@@ -100,14 +100,11 @@
                     messageBox.textContent = `Error: ${error.message}`;
                     messageBox.className = 'message-box error';
                     messageBox.style.display = 'block';
-                }
-                if (data) {
-                    document.querySelector('.form-container').innerHTML = `<h2>Invalid or Expired Link</h2><p>This reset link is missing required credentials. Please try again.</p>`;
-                }
-                else {
+                } else {
                     localStorage.setItem('username', username);
                     window.location.href = 'check_email.html';
                 }
+
             } catch (err) {
                 console.error('Unexpected Error:', err); // Log unexpected errors
                 messageBox.textContent = 'An unexpected error occurred. Please try again.';
