@@ -200,7 +200,8 @@
             id,
             title,
             category,
-            flashcards(count)
+            flashcards(count),
+            ratings:ratings(rating)
           `)
           .eq('user_id', user.id)
           .order('created_at', {ascending: false});
@@ -213,14 +214,23 @@
           sets.forEach((set) => {
             const termCount = set.flashcards[0] ? set.flashcards[0].count : 0;
             const card = document.createElement('div');
+            const ratings = set.ratings || [];
+            const avgRating = ratings.length
+              ? ratings.reduce((acc, r) => acc + r.rating, 0) / ratings.length
+              : 0;
+            const roundedRating = Math.round(avgRating);
+
             card.className = 'set-card';
             card.innerHTML = `
               <h3>${set.title}</h3>
                 <p>${set.category ? set.category : 'No Category'}</p>
                 <p>${termCount} terms</p>
             <div class="set-actions">
-              <div class="set-rating" data-set-id="${set.id}">
-                ${[1, 2, 3, 4, 5].map(i => `<span class="star" data-value="${i}">&#9733;</span>`).join('')}
+              <div class="set-rating" data-set-id="${set.id}"> 
+                ${[1, 2, 3, 4, 5].map(i => `
+                <span class="star ${i <= roundedRating ? 'active' : ''}" data-value="${i}">&#9733;</span>
+                `).join('')}
+                <span class="avg-rating">(${avgRating.toFixed(1)} avg)</span>
               </div>
               <div>
                 <button class="edit-set-btn" data-set-id="${set.id}">Edit</button>
@@ -232,7 +242,7 @@
             // Event listener for the whole card to navigate to flashcard_set.html
             card.addEventListener('click', (e) => {
               // Prevent navigation if delete button is clicked
-              if (e.target.classList.contains('delete-set-btn')) return;
+              if (e.target.closest('.set-rating') || e.target.classList.contains('delete-set-btn')) return;
               window.location.href = `flashcard_set.html?set_id=${set.id}`;
             });
 
@@ -244,20 +254,58 @@
             });
 
             grid.appendChild(card);
+            // Add event listener for the delete button
             const stars = card.querySelectorAll('.set-rating .star');
             stars.forEach((star, index) => {
-              star.addEventListener('click', () => {
+              star.addEventListener('click', async () => {
                 const ratingValue = index + 1;
-                const allStars = star.parentElement.querySelectorAll('.star');
-                allStars.forEach((s, i) => {
-                  s.classList.toggle('active', i < ratingValue);
-                });
+                const setId = set.id;
+                const userId = user.id;
 
-                // Optional: send rating to database (using Supabase or AJAX)
-                console.log(`Rated set ${set.id} with ${ratingValue} stars`);
+                // UI update
+                stars.forEach((s, i) => s.classList.toggle('active', i < ratingValue));
+
+                // Check if rating exists
+                const {data: existing, error: existingErr} = await supabase
+                  .from('ratings')
+                  .select('*')
+                  .eq('user_id', userId)
+                  .eq('set_id', setId)
+                  .single();
+
+                let response;
+                if (existing) {
+                  response = await supabase
+                    .from('ratings')
+                    .update({rating: ratingValue})
+                    .eq('id', existing.id);
+                } else {
+                  response = await supabase
+                    .from('ratings')
+                    .insert([{user_id: userId, set_id: setId, rating: ratingValue}]);
+                }
+
+                if (response.error) {
+                  alert('Error saving rating: ' + response.error.message);
+                  return;
+                }
+
+                // Re-fetch updated ratings to show new average
+                const {data: updatedRatings, error: fetchErr} = await supabase
+                  .from('ratings')
+                  .select('rating')
+                  .eq('set_id', setId);
+
+                if (!fetchErr && updatedRatings) {
+                  const newAvg =
+                    updatedRatings.reduce((acc, r) => acc + r.rating, 0) / updatedRatings.length;
+                  const avgDisplay = card.querySelector('.avg-rating');
+                  if (avgDisplay) avgDisplay.textContent = `(${newAvg.toFixed(1)} avg)`;
+                }
+
+                console.log(`Rating saved: ${ratingValue} for set ${setId}`);
               });
             });
-
           });
         }
       } catch (err) {
