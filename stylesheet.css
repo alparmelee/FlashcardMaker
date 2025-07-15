@@ -1255,25 +1255,33 @@ body.confirm-email-page #about-section button:hover {
 /* Add this to your stylesheet.css */
 
 .set-actions {
-    margin-top: 10px; /* Adjust spacing as needed */
+    margin-top: 10px;
+    /* Adjust spacing as needed */
     display: flex;
-    justify-content: flex-end; /* Align button to the right */
+    justify-content: flex-end;
+    /* Align button to the right */
 }
 
 .delete-set-btn {
-    background-color: #dc3545; /* Red background */
-    color: white; /* White text */
+    background-color: #dc3545;
+    /* Red background */
+    color: white;
+    /* White text */
     padding: 8px 12px;
     border: none;
-    border-radius: 5px; /* Consistent rounded corners */
+    border-radius: 5px;
+    /* Consistent rounded corners */
     cursor: pointer;
     font-size: 0.9em;
-    transition: background-color 0.2s ease; /* Smooth hover effect */
-    white-space: nowrap; /* Prevent text wrapping */
+    transition: background-color 0.2s ease;
+    /* Smooth hover effect */
+    white-space: nowrap;
+    /* Prevent text wrapping */
 }
 
 .delete-set-btn:hover {
-    background-color: #c82333; /* Darker red on hover */
+    background-color: #c82333;
+    /* Darker red on hover */
 }
 
 /* Overwrite common content-wrapper for search_page */
@@ -1660,11 +1668,13 @@ body.signup-page .message-box.error {
 
 
 @keyframes fadeInOut {
+
     0%,
     100% {
         opacity: 0;
         transform: translateX(-50%) translateY(-20px);
     }
+
     10%,
     90% {
         opacity: 1;
@@ -1779,6 +1789,7 @@ body.signup-page .message-box.error {
 }
 
 @media print {
+
     html,
     body {
         height: auto;
@@ -1848,7 +1859,7 @@ body.signup-page .message-box.error {
 
     /* All @page rules must be at the top level within @media print, and cannot have selectors like body.class */
     /* They are now moved to inline <style> tags within create.html and flashcard_set.html */
-    
+
     .print-page-title {
         display: block !important;
         text-align: center;
@@ -1869,6 +1880,7 @@ body.signup-page .message-box.error {
         grid-auto-rows: 1fr;
         border: none;
     }
+
     .flashcard-grid:last-of-type {
         page-break-after: auto;
     }
@@ -2070,4 +2082,20 @@ body.signup-page .message-box.error {
         grid-template-columns: 1fr;
         /* Stack cards on smaller screens */
     }
+}
+
+.rating-display {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 5px 0;
+}
+
+.star {
+    font-size: 1.2em;
+    color: #ccc;
+}
+
+.star.active {
+    color: gold;
 }

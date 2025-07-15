@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/png" href="images/icon.png">
+    <link rel="icon" type="image/png" href="images/icon.png">
     <link rel="stylesheet" href="stylesheet.css" />
     <title>Search Flashcards - CramCraft</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
@@ -58,7 +58,7 @@
     </div>
 
     <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
@@ -76,11 +76,11 @@
 
         // Update Auth buttons in top nav based on session on page load
         async function updateAuthUI() {
-            const { data: { session } } = await window.supabase.auth.getSession();
+            const {data: {session}} = await window.supabase.auth.getSession();
             const authButtonsDiv = document.querySelector('.auth-buttons');
 
             if (session) {
-                const { data: profile, error: profileError } = await window.supabase
+                const {data: profile, error: profileError} = await window.supabase
                     .from('profiles')
                     .select('username')
                     .eq('user_id', session.user.id)
@@ -131,7 +131,7 @@
 
 
         async function loadAllPublicSets() {
-            const { data: sets, error } = await supabase
+            const {data: sets, error} = await supabase
                 .from('flashcard_sets')
                 .select(`
                     id,
@@ -139,8 +139,10 @@
                     user_id,
                     category,
                     profiles!flashcard_sets_user_id_fkey(username),
-                    flashcards(count)  `)
-                .order('created_at', { ascending: false });
+                    flashcards(count),
+                    ratings:ratings(rating)
+                `)
+                .order('created_at', {ascending: false});
 
             if (error) {
                 console.error('Error fetching sets:', error);
@@ -191,13 +193,27 @@
 
                 const categoryDisplay = set.category ? `${set.category}` : ''; // Removed category-tag span
                 const termCount = set.flashcards[0] ? set.flashcards[0].count : 0; // GET TERM COUNT
+                const ratings = set.ratings || [];
+                const avgRating = ratings.length
+                    ? ratings.reduce((acc, r) => acc + r.rating, 0) / ratings.length
+                    : 0;
+                const roundedRating = Math.round(avgRating);
+
+                const starsHtml = [1, 2, 3, 4, 5]
+                    .map(i => `<span class="star ${i <= roundedRating ? 'active' : ''}">&#9733;</span>`)
+                    .join('');
+
 
                 card.innerHTML = `
-                    <h3>${set.title}</h3>
-                    <p>${categoryDisplay}</p> <p>Click to view flashcards in this set.</p> <p class="set-meta">
-                        ${termCount} Terms &nbsp;&bull;&nbsp; By: <strong>${set.profiles?.username || 'Unknown User'}</strong>
-                    </p>
+                <h3>${set.title}</h3>
+                <p>${categoryDisplay}</p>
+                <p class="rating-display">${starsHtml} <span class="avg-rating">(${avgRating.toFixed(1)} avg)</span></p>
+                <span class="ratings-count">(${ratings.length} ratings)</span>
+                <p class="set-meta">
+                ${termCount} Terms &nbsp;&bull;&nbsp; By: <strong>${set.profiles?.username || 'Unknown User'}</strong>
+                </p>
                 `;
+
                 resultsGrid.appendChild(card);
             });
         }
