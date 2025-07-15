@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>About CramCraft</title>
-        <link rel="icon" type="image/png" href="images/icon.png">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="images/icon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
     <link rel="stylesheet" href="stylesheet.css" />
-     <script type="module">
+    <script type="module">
         import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
@@ -24,39 +26,39 @@
         window.supabase = supabase; // Make supabase globally accessible
 
 
-            // Update Auth buttons in top nav based on session on page load
-            async function updateAuthUI() {
-                const {data: {session}} = await window.supabase.auth.getSession();
-                const authButtonsDiv = document.querySelector('.auth-buttons');
+        // Update Auth buttons in top nav based on session on page load
+        async function updateAuthUI() {
+            const {data: {session}} = await window.supabase.auth.getSession();
+            const authButtonsDiv = document.querySelector('.auth-buttons');
 
-                if (session) {
-                    const {data: profile, error: profileError} = await window.supabase
-                        .from('profiles')
-                        .select('username')
-                        .eq('user_id', session.user.id)
-                        .single();
+            if (session) {
+                const {data: profile, error: profileError} = await window.supabase
+                    .from('profiles')
+                    .select('username')
+                    .eq('user_id', session.user.id)
+                    .single();
 
-                    const username = (profile && !profileError) ? profile.username : session.user.email;
-                    authButtonsDiv.innerHTML = `
+                const username = (profile && !profileError) ? profile.username : session.user.email;
+                authButtonsDiv.innerHTML = `
                         <div class="user-status">
                             <span>Welcome, ${username}!</span>
                             <a href="#" id="logout-btn" class="logout-button btn">Logout</a>
                         </div>`;
 
-                    document.getElementById('logout-btn').addEventListener('click', async (e) => {
-                        e.preventDefault();
-                        await window.supabase.auth.signOut();
-                        window.location.href = 'login.html';
-                    });
+                document.getElementById('logout-btn').addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    await window.supabase.auth.signOut();
+                    window.location.href = 'login.html';
+                });
 
-                } else {
-                    authButtonsDiv.innerHTML = `
+            } else {
+                authButtonsDiv.innerHTML = `
                         <a href="login.html" class="btn">Login</a>
                         <a href="signup.html" class="btn">Signup</a>`;
-                }
             }
+        }
 
-            updateAuthUI();
+        updateAuthUI();
     </script>
 
 </head>
@@ -92,13 +94,12 @@
             <section class="features">
                 <h2>Why Choose CramCraft?</h2>
                 <ul>
-                    <li>Personalized dashboard to manage your flashcard sets (Coming Soon!)</li>
+                    <li>Personalized dashboard to manage your flashcard sets</li>
                     <li>Manually add or remove cards, or bulk import your data</li>
                     <li>Digital flashcard preview before printing</li>
                     <li>Print double-sided or export your flashcards as PDFs</li>
-                    <li>Interactive quiz mode to test your knowledge (Coming Soon!)</li>
-                    <li>Search and discover flashcards created by others (Coming Soon!)</li>
-                    <li>Dark and light mode toggle for comfortable studying (Future Feature)</li>
+                    <li>Interactive quiz mode to test your knowledge</li>
+                    <li>Search and discover flashcards created by others</li>
                     <li>Optimized layout for mobile devices</li>
                 </ul>
             </section>
@@ -106,16 +107,20 @@
             <section class="tutorial">
                 <h2>How to Use CramCraft</h2>
                 <div class="tutorial-video-embed-container">
-                    <iframe
-                        src="https://www.youtube.com/embed/Np4swmKgRIA" title="FASTEST way to print DOUBLE-SIDED Flashcards"
-                        frameborder="0"
+                    <iframe src="https://www.youtube.com/embed/Np4swmKgRIA"
+                        title="FASTEST way to print DOUBLE-SIDED Flashcards" frameborder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        referrerpolicy="strict-origin-when-cross-origin"
-                        allowfullscreen>
+                        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
                     </iframe>
                 </div>
             </section>
+
+            <footer class="footer">
+                <p>&copy; 2025 CramCraft. All rights reserved.</p>
+            </footer>
+
         </div>
     </div>
 </body>
+
 </html>
