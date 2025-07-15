@@ -24,13 +24,41 @@
             margin-right: 0.3in;
             margin-bottom: 0.3in;
         }
+
+        /* Hide the print page title if it exists on printed pages, MathJax will handle its own scaling */
+        @media print {
+            .print-page-title {
+                display: none !important;
+            }
+
+            /* Adjust MathJax rendering for print if necessary - usually MathJax handles this well */
+            .MathJax_Display {
+                margin: 0 !important;
+            }
+        }
     </style>
+
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
+    <script>
+        // MathJax configuration
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+
 
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwcQs5d3TxLarQaweb8';
         const supabase = createClient(supabaseUrl, supabaseKey, {
             auth: {
                 storage: localStorage,
@@ -370,11 +398,27 @@
                     }
 
                     const labelText = isTermPage ? `TERM ${displayIndex}` : `DEFINITION ${displayIndex}`;
-                    const contentText = isTermPage ? itemToDisplay.term : itemToDisplay.definition;
+                    // MODIFIED: Enclose content in MathJax delimiters if it looks like LaTeX
+                    let contentText = isTermPage ? itemToDisplay.term : itemToDisplay.definition;
+
+                    // Simple check: if it contains '$' and not just a standalone number with '$' (e.g., "$5")
+                    // This is a basic heuristic, more robust parsing would be complex.
+                    if (contentText.includes('$') && !/^\s*\$\d+(\.\d+)?\s*$/.test(contentText)) {
+                        contentText = contentText.replace(/\$(.*?)\$/g, '$$$$$1$$$$'); // Convert inline $...$ to $$...$$ for display math
+                                                                              // Or you can use specific inline delimiters like \(...\)
+                                                                              // For simplicity, converting $...$ to block $$...$$ makes it render as a separate block.
+                                                                              // If you want true inline math, MathJax.typesetPromise() needs to be called after content is set.
+                    }
+                    
                     card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`;
                     grid.appendChild(card);
                 }
                 cardsContainer.appendChild(grid);
+                // Trigger MathJax typesetting after new content is added
+                if (window.MathJax) {
+                    window.MathJax.typesetPromise([cardsContainer]).catch((err) => console.error("MathJax typesetting failed:", err));
+                }
+
                 prevBtn.disabled = currentPage === 0;
                 nextBtn.disabled = currentPage >= totalPages - 1;
                 printBtn.disabled = actualCardCount === 0;
@@ -397,14 +441,17 @@
                 const originalControlsClass = controlsDiv ? controlsDiv.className : '';
                 pageInfo.classList.add('hidden'); if (controlsDiv) controlsDiv.classList.add('hidden');
                 cardsContainer.innerHTML = '';
+
+                let printContentHtml = ''; // Build HTML string for printing
+
                 for (let i = 0; i < printTotalPages; i++) {
                     const isTermPageForPrint = i % 2 === 0;
                     const setIndexForPrint = Math.floor(i / 2);
                     const startIdxForPrint = setIndexForPrint * CARDS_PER_PAGE;
-                    const printPageTitleElement = document.createElement('h3'); printPageTitleElement.className = 'print-page-title';
-                    printPageTitleElement.textContent = `Page ${i + 1} / ${printTotalPages} - ${isTermPageForPrint ? 'Terms' : 'Definitions'} (Set ${setIndexForPrint + 1})`;
-                    cardsContainer.appendChild(printPageTitleElement);
-                    const grid = document.createElement('div'); grid.className = 'flashcard-grid';
+                    
+                    printContentHtml += `<h3 class="print-page-title">Page ${i + 1} / ${printTotalPages} - ${isTermPageForPrint ? 'Terms' : 'Definitions'} (Set ${setIndexForPrint + 1})</h3>`;
+                    printContentHtml += `<div class="flashcard-grid">`;
+
                     for (let j = 0; j < CARDS_PER_PAGE; j++) {
                         let indexToFetchDataFrom = startIdxForPrint + j;
                         if (indexToFetchDataFrom >= dataToPrint.length) break;
@@ -417,32 +464,53 @@
                         const itemToDisplay = dataToPrint[indexToFetchDataFrom];
                         const card = document.createElement('div'); card.className = 'card-item';
 
-                        // For printing, we want the actual card number, not the padded slot number
                         let originalItemIndex = -1;
                         if (itemToDisplay.term !== '(Empty Slot)') {
-                            // Find the original index from the unpadded actualCardsForPrint
                             let countActual = 0;
                             for (let k = 0; k < actualCardsForPrint.length; k++) {
-                                if (actualCardsForPrint[k] === itemToDisplay) { // Reference equality is fine here as it's the same object
+                                if (actualCardsForPrint[k] === itemToDisplay) {
                                     originalItemIndex = k + 1;
                                     break;
                                 }
                             }
                         } else {
-                            originalItemIndex = indexToFetchDataFrom + 1; // For empty slots, just use their sequential index
+                            originalItemIndex = indexToFetchDataFrom + 1;
                         }
 
                         const labelText = isTermPageForPrint ? `TERM ${originalItemIndex}` : `DEFINITION ${originalItemIndex}`;
-                        const contentText = isTermPageForPrint ? itemToDisplay.term : itemToDisplay.definition;
-                        card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`;
-                        grid.appendChild(card);
+                        let contentText = isTermPageForPrint ? itemToDisplay.term : itemToDisplay.definition;
+
+                        // MODIFIED: Enclose content in MathJax delimiters for print preview as well
+                        if (contentText.includes('$') && !/^\s*\$\d+(\.\d+)?\s*$/.test(contentText)) {
+                            contentText = contentText.replace(/\$(.*?)\$/g, '$$$$$1$$$$'); // Convert inline $...$ to block $$...$$
+                        }
+                        printContentHtml += `<div class="card-item"><span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}</div>`;
                     }
-                    cardsContainer.appendChild(grid);
+                    printContentHtml += `</div>`; // Close flashcard-grid
                 }
-                window.print();
-                cardsContainer.innerHTML = ''; pageInfo.className = originalPageInfoClass;
-                if (controlsDiv) controlsDiv.className = originalControlsClass;
-                if (!displayArea.classList.contains('hidden')) updateDisplay();
+                cardsContainer.innerHTML = printContentHtml; // Set all content at once
+
+                // Before printing, typeset the math
+                if (window.MathJax) {
+                    window.MathJax.typesetPromise([cardsContainer]).then(() => {
+                        window.print();
+                        cardsContainer.innerHTML = ''; pageInfo.className = originalPageInfoClass;
+                        if (controlsDiv) controlsDiv.className = originalControlsClass;
+                        if (!displayArea.classList.contains('hidden')) updateDisplay();
+                    }).catch((err) => {
+                        console.error("MathJax typesetting for print failed:", err);
+                        // Fallback to plain print if MathJax fails
+                        window.print();
+                        cardsContainer.innerHTML = ''; pageInfo.className = originalPageInfoClass;
+                        if (controlsDiv) controlsDiv.className = originalControlsClass;
+                        if (!displayArea.classList.contains('hidden')) updateDisplay();
+                    });
+                } else {
+                    window.print();
+                    cardsContainer.innerHTML = ''; pageInfo.className = originalPageInfoClass;
+                    if (controlsDiv) controlsDiv.className = originalControlsClass;
+                    if (!displayArea.classList.contains('hidden')) updateDisplay();
+                }
             });
 
             backBtn.addEventListener('click', () => {
@@ -750,6 +818,9 @@
                         <p><code>Capital of France,Paris;What is 2+2?,4</code></p>
                         <p><strong>Example 3 (Custom '|' for Term/Def, Custom '---' for Cards):</strong></p>
                         <p><code>Question 1|Answer 1---Question 2|Answer 2</code></p>
+                        <hr>
+                        <p><strong>For Math/Scientific notation, use LaTeX syntax enclosed in <code>$</code>.</strong></p>
+                        <p><strong>Example:</strong> <code>The equation is $E=mc^2$.</code> or <code>The derivative of $x^n$ is $nx^{n-1}$.</code></p>
                     </div>
                     <textarea id="bulk-data-input" rows="10" placeholder="Example (Tab between term/def, New Line between cards):
 Term1\tDefinition1
