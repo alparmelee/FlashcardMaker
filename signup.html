@@ -4,10 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/png" href="images/icon.png">
+    <link rel="icon" type="image/png" href="images/icon.png">
     <title>Sign Up - CramCraft</title>
     <link rel="stylesheet" href="stylesheet.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <script type="module">
         import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
@@ -88,9 +89,11 @@
                     email,
                     password,
                     options: {
-                        data: {username}
+                        data: {username},
+                        emailRedirectTo: 'https://alparmelee.github.io/FlashcardMaker/login.html'
                     }
                 });
+
 
                 if (error) {
                     console.error('Signup Error:', error); // Log the error for debugging
