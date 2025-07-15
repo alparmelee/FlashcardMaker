@@ -32,6 +32,16 @@
                 alert('Emails do not match!');
                 return;
             }
+
+            const {data, error} = await supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: 'https://alparmelee.github.io/FlashcardMaker/updatepassword.html'
+            });
+
+            if (error) {
+                alert('Error sending reset email: ' + error.message);
+            } else {
+                alert('Password reset email sent. Please check your inbox.');
+            }
         });
     </script>
 
@@ -64,8 +74,8 @@
                 </div>
                 <div class="form-group">
                     <label for="confirm-email">Confirm Email</label>
-                    <input type="email" id="confirm-email" name="confirm-email"
-                        placeholder="Re-enter your email" required>
+                    <input type="email" id="confirm-email" name="confirm-email" placeholder="Re-enter your email"
+                        required>
                 </div>
                 <button type="submit" class="form-button">Submit</button>
             </form>
