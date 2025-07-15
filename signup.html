@@ -20,6 +20,19 @@
 </head>
 
 <body class="signup-page">
+    <script type="module">
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
+
+        if (accessToken && !refreshToken) {
+            // If access token is present but no refresh token (possible broken redirect)
+            document.querySelector('.form-container').innerHTML = `
+            <h2>Invalid or Expired Link</h2>
+            <p>This signup confirmation link is missing required credentials. Please try signing up again.</p>
+        `;
+        }
+    </script>
     <nav class="top-nav">
         <div class="top-nav-inner">
             <div class="nav-logo"><a href="index.html">CramCraft</a></div>
@@ -113,6 +126,7 @@
             }
         });
     </script>
+
 </body>
 
 </html>
