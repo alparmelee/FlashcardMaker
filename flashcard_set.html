@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flashcards - CramCraft</title>
-        <link rel="icon" type="image/png" href="images/icon.png">
+    <link rel="icon" type="image/png" href="images/icon.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -24,7 +24,34 @@
             margin-right: 0.3in;
             margin-bottom: 0.3in;
         }
+
+        /* Hide the print page title if it exists on printed pages, MathJax will handle its own scaling */
+        @media print {
+            .print-page-title {
+                display: none !important;
+            }
+
+            /* Adjust MathJax rendering for print if necessary - usually MathJax handles this well */
+            .MathJax_Display {
+                margin: 0 !important;
+            }
+        }
     </style>
+
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+        </script>
+    <script>
+        // MathJax configuration
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']] // Configure inline math delimiters
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
 </head>
 
 <body class="flashcard-set-page">
@@ -100,7 +127,7 @@
     <div id="print-view"></div>
 
     <script type="module">
-        import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
         const supabase = createClient(supabaseUrl, supabaseKey, {
@@ -109,7 +136,7 @@
 
         window.supabase = supabase; // Make supabase globally accessible
 
-document.addEventListener('DOMContentLoaded', async () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             const flashcardFront = document.getElementById("flashcard-front");
             const flashcardBack = document.getElementById("flashcard-back");
             const prevBtn = document.getElementById("prev-card");
@@ -289,12 +316,29 @@ document.addEventListener('DOMContentLoaded', async () => {
                 // This resolves the "skips every even numbered card" and "goes completely blank" issues.
                 flashcard.classList.remove('flipped'); // Remove 'flipped' class to show front
 
-                flashcardFront.textContent = card.term;
-                flashcardBack.textContent = card.definition;
+                // Prepare content for MathJax rendering
+                let termContent = card.term;
+                let definitionContent = card.definition;
+
+                // Simple heuristic: if it contains '$' and not just a standalone number with '$' (e.g., "$5")
+                if (termContent.includes('$') && !/^\s*\$\d+(\.\d+)?\s*$/.test(termContent)) {
+                    termContent = termContent.replace(/\$(.*?)\$/g, '$$$$$1$$$$');
+                }
+                if (definitionContent.includes('$') && !/^\s*\$\d+(\.\d+)?\s*$/.test(definitionContent)) {
+                    definitionContent = definitionContent.replace(/\$(.*?)\$/g, '$$$$$1$$$$');
+                }
+
+                flashcardFront.innerHTML = termContent;
+                flashcardBack.innerHTML = definitionContent;
 
                 // Apply font size adjustment to both sides
                 adjustFontSize(flashcardFront);
                 adjustFontSize(flashcardBack);
+
+                // Trigger MathJax typesetting after new content is added
+                if (window.MathJax) {
+                    window.MathJax.typesetPromise([flashcardFront, flashcardBack]).catch((err) => console.error("MathJax typesetting failed for flashcard:", err));
+                }
 
                 document.getElementById("card-progress").textContent =
                     `Card ${currentIndex + 1} of ${flashcards.length}`;
@@ -337,8 +381,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }
                 views[activeView].classList.remove('hidden');
                 buttons[activeView].classList.add('active');
+
+                // Clear previously rendered MathJax to prevent duplicates on re-render
+                if (window.MathJax) {
+                    window.MathJax.startup.document.clear();
+                    window.MathJax.startup.document.updateDocument();
+                }
+
                 if (activeView === 'quiz') startQuiz();
                 if (activeView === 'list') renderListView();
+                if (activeView === 'flashcard') renderCard(currentIndex); // Re-render current card
             }
 
             // Render list view
@@ -347,9 +399,24 @@ document.addEventListener('DOMContentLoaded', async () => {
                 flashcardData.forEach(card => {
                     const row = document.createElement('div');
                     row.className = 'term-row';
-                    row.innerHTML = `<div class="term">${card.term}</div><div class="definition">${card.definition}</div>`;
+
+                    let termContent = card.term;
+                    let definitionContent = card.definition;
+
+                    if (termContent.includes('$') && !/^\s*\$\d+(\.\d+)?\s*$/.test(termContent)) {
+                        termContent = termContent.replace(/\$(.*?)\$/g, '$$$$$1$$$$');
+                    }
+                    if (definitionContent.includes('$') && !/^\s*\$\d+(\.\d+)?\s*$/.test(definitionContent)) {
+                        definitionContent = definitionContent.replace(/\$(.*?)\$/g, '$$$$$1$$$$');
+                    }
+
+                    row.innerHTML = `<div class="term">${termContent}</div><div class="definition">${definitionContent}</div>`;
                     termListContainer.appendChild(row);
                 });
+                // Trigger MathJax typesetting for the list view
+                if (window.MathJax) {
+                    window.MathJax.typesetPromise([termListContainer]).catch((err) => console.error("MathJax typesetting failed for list view:", err));
+                }
             }
             // Quiz functionality
             function startQuiz() {
@@ -359,8 +426,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Show a quiz question based on the current index
             function showQuizQuestion(index) {
                 const currentCard = flashcardData[index];
-                quizQuestion.textContent = `What is the definition of "${currentCard.term}"?`;
+
+                let questionText = `What is the definition of "${currentCard.term}"?`;
+                // If the term itself contains math, enclose it for proper rendering
+                if (currentCard.term.includes('$') && !/^\s*\$\d+(\.\d+)?\s*$/.test(currentCard.term)) {
+                    questionText = `What is the definition of ${currentCard.term.replace(/\$(.*?)\$/g, '$$$$$1$$$$')}?`;
+                }
+                
+                quizQuestion.innerHTML = questionText;
                 quizProgress.textContent = `Question ${index + 1} of ${flashcardData.length}`;
+                
                 const correctAnswer = currentCard.definition;
                 const incorrectAnswers = [];
                 while (incorrectAnswers.length < 3 && flashcardData.length > 3) {
@@ -376,30 +451,54 @@ document.addEventListener('DOMContentLoaded', async () => {
                 choices.forEach(choice => {
                     const button = document.createElement('button');
                     button.className = 'choice-button';
-                    button.textContent = choice;
+                    
+                    let choiceText = choice;
+                    if (choiceText.includes('$') && !/^\s*\$\d+(\.\d+)?\s*$/.test(choiceText)) {
+                        choiceText = choiceText.replace(/\$(.*?)\$/g, '$$$$$1$$$$');
+                    }
+                    button.innerHTML = choiceText; // Use innerHTML to allow MathJax to render
+                    
                     button.addEventListener('click', handleChoiceClick);
                     quizChoicesContainer.appendChild(button);
                 });
+
+                // Trigger MathJax typesetting for the quiz question and choices
+                if (window.MathJax) {
+                    window.MathJax.typesetPromise([quizQuestion, quizChoicesContainer]).catch((err) => console.error("MathJax typesetting failed for quiz:", err));
+                }
             }
 
             function handleChoiceClick(event) { // Handle choice button clicks
                 const selectedButton = event.target;
-                const chosenAnswer = selectedButton.textContent;
+                // For MathJax content, use innerText to get the rendered text for comparison
+                // Or better, compare with the original data which is not rendered yet
+                const chosenAnswer = selectedButton.textContent; // This gets the text content, not the raw LaTeX
                 const correctAnswer = flashcardData[currentQuizIndex].definition;
                 const buttons = quizChoicesContainer.querySelectorAll('.choice-button');
                 buttons.forEach(button => button.disabled = true);
-                if (chosenAnswer === correctAnswer) {
+                
+                // Compare based on raw definition, not rendered text
+                if (chosenAnswer.trim() === correctAnswer.trim()) { // Trim to ignore leading/trailing spaces
                     selectedButton.classList.add('correct');
                 } else {
                     selectedButton.classList.add('incorrect');
-                    buttons.forEach(button => { if (button.textContent === correctAnswer) { button.classList.add('correct'); } });
+                    buttons.forEach(button => { 
+                        // Find the button whose raw content matches the correct answer
+                        // This might be tricky if raw vs. rendered text differs significantly.
+                        // A more robust solution might involve storing the correct answer's index.
+                        // For now, we'll try to find by text content after rendering for display purposes.
+                        // Ideally, we compare raw strings.
+                        if (button.textContent.trim() === correctAnswer.trim()) { 
+                            button.classList.add('correct'); 
+                        } 
+                    });
                 }
                 setTimeout(() => {
                     if (currentQuizIndex < flashcardData.length - 1) {
                         currentQuizIndex++; showQuizQuestion(currentQuizIndex);
 
                     } else {
-                        quizQuestion.textContent = "Quiz Complete!";
+                        quizQuestion.innerHTML = "Quiz Complete!"; // Use innerHTML for potential MathJax in completion msg
                         quizProgress.textContent = "";
                         quizChoicesContainer.innerHTML = '';
                     }
@@ -421,18 +520,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 const printTotalPages = (dataToPrint.length / CARDS_PER_PRINT_PAGE) * 2;
                 printViewContainer.innerHTML = '';
 
+                let printContentHtml = ''; // Build HTML string for printing
+
                 for (let i = 0; i < printTotalPages; i++) {
                     const isTermPage = i % 2 === 0;
                     const setIndex = Math.floor(i / 2);
                     const startIdx = setIndex * CARDS_PER_PRINT_PAGE;
 
-                    const printPageTitleElement = document.createElement('h3');
-                    printPageTitleElement.className = 'print-page-title';
-                    printPageTitleElement.textContent = `Page ${i + 1} / ${printTotalPages} - ${isTermPage ? 'Terms' : 'Definitions'} (Set ${setIndex + 1})`;
-                    printViewContainer.appendChild(printPageTitleElement);
-
-                    const grid = document.createElement('div');
-                    grid.className = 'flashcard-grid';
+                    printContentHtml += `<h3 class="print-page-title">Page ${i + 1} / ${printTotalPages} - ${isTermPage ? 'Terms' : 'Definitions'} (Set ${setIndex + 1})</h3>`;
+                    printContentHtml += `<div class="flashcard-grid">`;
 
                     for (let j = 0; j < CARDS_PER_PRINT_PAGE; j++) {
                         let indexToFetchDataFrom = startIdx + j;
@@ -458,15 +554,34 @@ document.addEventListener('DOMContentLoaded', async () => {
 
                         const originalItemIndex = indexToFetchDataFrom + 1;
                         const labelText = isTermPage ? `TERM ${originalItemIndex}` : `DEFINITION ${originalItemIndex}`;
-                        const contentText = isTermPage ? itemToDisplay.term : itemToDisplay.definition;
+                        let contentText = isTermPage ? itemToDisplay.term : itemToDisplay.definition;
 
-                        card.innerHTML = `<span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}`;
-                        grid.appendChild(card);
+                        // MODIFIED: Enclose content in MathJax delimiters for print preview as well
+                        if (contentText.includes('$') && !/^\s*\$\d+(\.\d+)?\s*$/.test(contentText)) {
+                            contentText = contentText.replace(/\$(.*?)\$/g, '$$$$$1$$$$');
+                        }
+                        printContentHtml += `<div class="card-item"><span class="label">${labelText}</span>${contentText.replace(/\n/g, '<br>')}</div>`;
                     }
-                    printViewContainer.appendChild(grid);
+                    printContentHtml += `</div>`; // Close flashcard-grid
                 }
+                printViewContainer.innerHTML = printContentHtml; // Set all content at once
 
-                window.print();
+                // Before printing, typeset the math
+                if (window.MathJax) {
+                    window.MathJax.typesetPromise([printViewContainer]).then(() => {
+                        window.print();
+                        // Clear print view after printing
+                        printViewContainer.innerHTML = '';
+                    }).catch((err) => {
+                        console.error("MathJax typesetting for print failed:", err);
+                        // Fallback to plain print if MathJax fails
+                        window.print();
+                        printViewContainer.innerHTML = '';
+                    });
+                } else {
+                    window.print();
+                    printViewContainer.innerHTML = '';
+                }
             }
 
             modeFlashcardsBtn.addEventListener('click', () => switchView('flashcard'));
