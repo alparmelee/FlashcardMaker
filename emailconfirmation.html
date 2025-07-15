@@ -40,8 +40,8 @@
             if (error) {
                 alert('Error sending reset email: ' + error.message);
             } else {
-                alert('Password reset email sent. Please check your inbox.');
-            }
+                    window.location.href = 'confirm_email.html';
+                }
         });
     </script>
 
