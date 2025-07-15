@@ -34,13 +34,15 @@
             }
 
             const {data, error} = await supabase.auth.resetPasswordForEmail(email, {
-                redirectTo: 'https://alparmelee.github.io/FlashcardMaker/resetpassword.html'
+                redirectTo: 'https://alparmelee.github.io/FlashcardMaker/reset-password.html'
             });
 
             if (error) {
                 alert('Error sending reset email: ' + error.message);
             } else {
-                    window.location.href = 'confirm_email.html';
+                alert('Reset email sent! Please check your inbox.');
+                // Redirect to confirmation page
+                    window.location.href = 'https://alparmelee.github.io/FlashcardMaker/confirm_email.html';
                 }
         });
     </script>
