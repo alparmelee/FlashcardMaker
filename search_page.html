@@ -9,6 +9,24 @@
     <title>Search Flashcards - CramCraft</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
+    <style>
+        /* Add some basic styling for the stars if not already in stylesheet.css */
+        .star {
+            cursor: pointer;
+            color: #ccc; /* Grey for unselected stars */
+            font-size: 1.5em;
+        }
+
+        .star.active {
+            color: gold; /* Gold for selected stars */
+        }
+
+        .rating-display {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+    </style>
 </head>
 
 <body class="search-page">
@@ -58,7 +76,7 @@
     </div>
 
     <script type="module">
-        import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
         const supabaseUrl = 'https://uxytxzliqxpinajccvbu.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4eXR4emxpcXhwaW5hamNjdmJ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg1Nzg4MjgsImV4cCI6MjA2NDE1NDgyOH0.1RE6lzGdoj7kfaExaJrBUap9TwuQs5d3TxLarQaweb8';
@@ -76,11 +94,11 @@
 
         // Update Auth buttons in top nav based on session on page load
         async function updateAuthUI() {
-            const {data: {session}} = await window.supabase.auth.getSession();
+            const { data: { session } } = await window.supabase.auth.getSession();
             const authButtonsDiv = document.querySelector('.auth-buttons');
 
             if (session) {
-                const {data: profile, error: profileError} = await window.supabase
+                const { data: profile, error: profileError } = await window.supabase
                     .from('profiles')
                     .select('username')
                     .eq('user_id', session.user.id)
@@ -131,7 +149,7 @@
 
 
         async function loadAllPublicSets() {
-            const {data: sets, error} = await supabase
+            const { data: sets, error } = await supabase
                 .from('flashcard_sets')
                 .select(`
                     id,
@@ -140,9 +158,9 @@
                     category,
                     profiles!flashcard_sets_user_id_fkey(username),
                     flashcards(count),
-                    ratings:ratings(rating)
+                    ratings:ratings(rating, user_id)
                 `)
-                .order('created_at', {ascending: false});
+                .order('created_at', { ascending: false });
 
             if (error) {
                 console.error('Error fetching sets:', error);
@@ -174,6 +192,35 @@
             displaySets(filteredSets);
         }
 
+        async function upsertRating(set_id, rating) {
+            const { data: { session } } = await supabase.auth.getSession();
+
+            if (!session) {
+                alert('You must be logged in to rate a set.');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const user_id = session.user.id;
+
+            const { error } = await supabase
+                .from('ratings')
+                .upsert(
+                    { set_id, user_id, rating },
+                    { onConflict: 'set_id, user_id' } // This ensures a user can only rate a set once
+                );
+
+            if (error) {
+                console.error('Error upserting rating:', error.message);
+                alert('Failed to submit rating. Please try again.');
+            } else {
+                console.log(`Rating ${rating} submitted for set ${set_id} by user ${user_id}`);
+                // Re-fetch and display sets to update the rating display
+                loadAllPublicSets();
+            }
+        }
+
+
         function displaySets(setsToDisplay) {
             resultsGrid.innerHTML = ''; // Clear previous results
             resultsInfo.textContent = `Showing ${setsToDisplay.length} sets.`;
@@ -186,35 +233,53 @@
             setsToDisplay.forEach(set => {
                 const card = document.createElement('div');
                 card.classList.add('set-card');
-                card.style.cursor = 'pointer';
-                card.onclick = () => {
-                    window.location.href = `flashcard_set.html?set_id=${set.id}`;
-                };
+                // Removed card.style.cursor = 'pointer'; and card.onclick
 
-                const categoryDisplay = set.category ? `${set.category}` : ''; // Removed category-tag span
-                const termCount = set.flashcards[0] ? set.flashcards[0].count : 0; // GET TERM COUNT
+                const categoryDisplay = set.category ? `${set.category}` : '';
+                const termCount = set.flashcards[0] ? set.flashcards[0].count : 0;
                 const ratings = set.ratings || [];
                 const avgRating = ratings.length
                     ? ratings.reduce((acc, r) => acc + r.rating, 0) / ratings.length
                     : 0;
                 const roundedRating = Math.round(avgRating);
 
-                const starsHtml = [1, 2, 3, 4, 5]
-                    .map(i => `<span class="star ${i <= roundedRating ? 'active' : ''}">&#9733;</span>`)
-                    .join('');
+                const starsHtmlArray = [];
+                for (let i = 1; i <= 5; i++) {
+                    starsHtmlArray.push(`<span class="star ${i <= roundedRating ? 'active' : ''}" data-rating="${i}" data-set-id="${set.id}">&#9733;</span>`);
+                }
+                const starsHtml = starsHtmlArray.join('');
 
 
                 card.innerHTML = `
                 <h3>${set.title}</h3>
                 <p>${categoryDisplay}</p>
-                <p class="rating-display">${starsHtml} <span class="avg-rating">(${avgRating.toFixed(1)} avg)</span></p>
-                <span class="ratings-count">(${ratings.length} ratings)</span>
+                <div class="rating-section">
+                    <p class="rating-display">${starsHtml}</p>
+                    <span class="avg-rating">(${avgRating.toFixed(1)} avg)</span>
+                    <span class="ratings-count">(${ratings.length} ratings)</span>
+                </div>
                 <p class="set-meta">
                 ${termCount} Terms &nbsp;&bull;&nbsp; By: <strong>${set.profiles?.username || 'Unknown User'}</strong>
                 </p>
                 `;
 
                 resultsGrid.appendChild(card);
+
+                // Add event listeners to the stars within this card
+                const stars = card.querySelectorAll('.star');
+                stars.forEach(star => {
+                    star.addEventListener('click', async (event) => {
+                        event.stopPropagation(); // Prevent the card's click event from firing
+                        const rating = parseInt(star.dataset.rating);
+                        const setId = star.dataset.setId;
+                        await upsertRating(setId, rating);
+                    });
+                });
+
+                // Add a separate click listener for the card to navigate to the set page
+                card.addEventListener('click', () => {
+                    window.location.href = `flashcard_set.html?set_id=${set.id}`;
+                });
             });
         }
 
