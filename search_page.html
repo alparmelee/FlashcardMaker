@@ -192,7 +192,7 @@
             displaySets(filteredSets);
         }
 
-        async function upsertRating(set_id, rating) {
+        async function upsertRating(set_id, rating, cardElement) {
             const { data: { session } } = await supabase.auth.getSession();
 
             if (!session) {
@@ -203,20 +203,73 @@
 
             const user_id = session.user.id;
 
-            const { error } = await supabase
+            // Check if rating exists (similar to user_dashboard.html)
+            const { data: existing, error: existingErr } = await supabase
                 .from('ratings')
-                .upsert(
-                    { set_id, user_id, rating },
-                    { onConflict: 'set_id, user_id' } // This ensures a user can only rate a set once
-                );
+                .select('*')
+                .eq('user_id', user_id)
+                .eq('set_id', set_id)
+                .single();
 
-            if (error) {
-                console.error('Error upserting rating:', error.message);
-                alert('Failed to submit rating. Please try again.');
+            let response;
+            if (existing) {
+                response = await supabase
+                    .from('ratings')
+                    .update({ rating: rating })
+                    .eq('id', existing.id); // Update by the rating's ID
+            } else {
+                response = await supabase
+                    .from('ratings')
+                    .insert([{ user_id: user_id, set_id: set_id, rating: rating }]);
+            }
+
+            if (response.error) {
+                console.error('Error saving rating:', response.error.message);
+                alert('Failed to submit rating. Please try again. Error: ' + response.error.message);
+                return;
             } else {
                 console.log(`Rating ${rating} submitted for set ${set_id} by user ${user_id}`);
-                // Re-fetch and display sets to update the rating display
-                loadAllPublicSets();
+                // Instead of reloading all sets, update the specific card's rating display
+                updateCardRatingDisplay(cardElement, set_id);
+            }
+        }
+
+        async function updateCardRatingDisplay(cardElement, set_id) {
+            // Fetch updated ratings for this specific set
+            const { data: updatedSet, error: fetchErr } = await supabase
+                .from('flashcard_sets')
+                .select(`
+                    ratings:ratings(rating)
+                `)
+                .eq('id', set_id)
+                .single();
+
+            if (fetchErr) {
+                console.error('Error fetching updated ratings:', fetchErr.message);
+                return;
+            }
+
+            const ratings = updatedSet.ratings || [];
+            const avgRating = ratings.length
+                ? ratings.reduce((acc, r) => acc + r.rating, 0) / ratings.length
+                : 0;
+            const roundedRating = Math.round(avgRating);
+
+            const starsContainer = cardElement.querySelector('.rating-display');
+            const avgRatingSpan = cardElement.querySelector('.avg-rating');
+            const ratingsCountSpan = cardElement.querySelector('.ratings-count');
+
+            if (starsContainer && avgRatingSpan && ratingsCountSpan) {
+                // Update stars
+                starsContainer.querySelectorAll('.star').forEach((star, index) => {
+                    star.classList.toggle('active', index < roundedRating);
+                });
+
+                // Update average rating text
+                avgRatingSpan.textContent = `(${avgRating.toFixed(1)} avg)`;
+
+                // Update ratings count
+                ratingsCountSpan.textContent = `(${ratings.length} ratings)`;
             }
         }
 
@@ -245,7 +298,8 @@
 
                 const starsHtmlArray = [];
                 for (let i = 1; i <= 5; i++) {
-                    starsHtmlArray.push(`<span class="star ${i <= roundedRating ? 'active' : ''}" data-rating="${i}" data-set-id="${set.id}">&#9733;</span>`);
+                    // Added a data-set-id to each star for direct access
+                    starsHtmlArray.push(`<span class="star ${i <= roundedRating ? 'active' : ''}" data-rating="${i}">&#9733;</span>`);
                 }
                 const starsHtml = starsHtmlArray.join('');
 
@@ -266,13 +320,13 @@
                 resultsGrid.appendChild(card);
 
                 // Add event listeners to the stars within this card
-                const stars = card.querySelectorAll('.star');
+                const stars = card.querySelectorAll('.rating-display .star');
                 stars.forEach(star => {
                     star.addEventListener('click', async (event) => {
                         event.stopPropagation(); // Prevent the card's click event from firing
                         const rating = parseInt(star.dataset.rating);
-                        const setId = star.dataset.setId;
-                        await upsertRating(setId, rating);
+                        const setId = set.id; // Get setId from the outer set object
+                        await upsertRating(setId, rating, card); // Pass the card element
                     });
                 });
 
